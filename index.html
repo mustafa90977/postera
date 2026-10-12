@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>بوستيرا | POSTERA — متجر بوسترات معدنية</title>
+  <meta name="description" content="بوستيرا (POSTERA) - متجر متخصص في طباعة البوسترات واللوحات الفنية على ألواح ألومنيوم معدنية مصقولة بأعلى دقة ومقاومة للخدش والرطوبة.">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app" dir="rtl" lang="ar">
+
+  <!-- الهيدر وشعار بوستيرا -->
+  <header class="top">
+    <div class="wrap">
+      <a class="brand" href="#top" data-scroll="hero"><b>بوستيرا</b><span>POSTERA</span></a>
+      <nav class="nav" aria-label="التنقل">
+        <a href="#gallery" data-scroll="gallery">التشكيلة</a>
+        <a href="#custom" data-scroll="custom">اطبع صورتك</a>
+        <a href="#how" data-scroll="how">إزاي تطلب</a>
+      </nav>
+      <button class="cartbtn" id="openCart" type="button" aria-label="فتح السلة">
+        <span>السلة</span><span class="badge num" id="badge">0</span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- قسم الهيرو الرئيسي -->
+    <section class="hero" id="hero">
+      <div class="wrap">
+        <div>
+          <p class="eyebrow">بوسترات مطبوعة على ألومنيوم</p>
+          <h1>حيطتك تستاهل <em>معدن</em>.</h1>
+          <p class="lead">الصورة بتتطبع على لوح ألومنيوم مصقول، فألوانها بتطلع عميقة ولامعة، ومقاومة للخدش والرطوبة. اختار من تشكيلتنا، أو ارفع صورتك إنت.</p>
+          <div class="cta">
+            <a class="btn" href="#gallery" data-scroll="gallery">شوف التشكيلة</a>
+            <a class="btn ghost" href="#custom" data-scroll="custom">اطبع صورتك</a>
+          </div>
+          <dl class="specs">
+            <div><dt class="num">1.1 مم</dt><dd>سُمك لوح الألومنيوم</dd></div>
+            <div><dt class="num">4 مقاسات</dt><dd>من 20×30 لحد 50×75 سم</dd></div>
+            <div><dt class="num">3–5 أيام</dt><dd>طباعة وتجهيز</dd></div>
+          </dl>
+        </div>
+        <div class="hero-art">
+          <div class="plate" aria-hidden="false"><div class="art" id="heroArt"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- قسم المعرض والتشكيلة -->
+    <section class="block" id="gallery">
+      <div class="wrap">
+        <div class="head">
+          <div>
+            <p class="eyebrow">التشكيلة</p>
+            <h2>لوحات جاهزة للتعليق</h2>
+          </div>
+          <div class="seg" id="filters" role="group" aria-label="تصنيف اللوحات"></div>
+        </div>
+        <div class="grid" id="grid"></div>
+      </div>
+    </section>
+
+    <!-- قسم الطباعة الخاصة (صورتك على معدن) -->
+    <section class="block custom" id="custom">
+      <div class="wrap">
+        <div>
+          <p class="eyebrow">طباعة خاصة</p>
+          <h2>صورتك، على معدن.</h2>
+          <p class="muted">ارفع صورة من موبايلك أو الكاميرا، واختار المقاس. هنقولك لو جودة الصورة مناسبة للمقاس ده قبل ما تطلب.</p>
+          <div class="ctl">
+            <div>
+              <span class="lab">الصورة</span>
+              <label class="drop" id="drop">
+                <input class="vh" type="file" id="customFile" accept="image/*">
+                <strong id="dropTitle">اضغط لاختيار صورة أو اسحبها هنا</strong>
+                <small id="dropSub">JPG أو PNG — كل ما كانت أكبر كل ما كانت أوضح</small>
+              </label>
+            </div>
+            <div><span class="lab">المقاس (سم)</span><div class="seg" id="cSize" role="group" aria-label="المقاس"></div></div>
+            <div><span class="lab">الاتجاه</span>
+              <div class="seg" id="cOrient" role="group" aria-label="الاتجاه">
+                <button type="button" data-v="p" aria-pressed="true">طولي</button>
+                <button type="button" data-v="l" aria-pressed="false">عرضي</button>
+              </div></div>
+            <div><span class="lab">ظبط الصورة</span>
+              <div class="seg" id="cFit" role="group" aria-label="ظبط الصورة">
+                <button type="button" data-v="cover" aria-pressed="true">تملا اللوحة</button>
+                <button type="button" data-v="contain" aria-pressed="false">الصورة كاملة</button>
+              </div></div>
+            <div><span class="lab">التشطيب</span>
+              <div class="seg" id="cFinish" role="group" aria-label="التشطيب">
+                <button type="button" data-v="لامع" aria-pressed="true">لامع</button>
+                <button type="button" data-v="مطفي" aria-pressed="false">مطفي</button>
+              </div></div>
+            <div class="q" id="quality" aria-live="polite"><span class="dot"></span><span id="qText">ارفع صورة عشان نقيّم جودتها للمقاس.</span></div>
+            <div class="buyrow">
+              <div class="price num" id="cPrice"></div>
+              <button class="btn" id="cAdd" type="button" disabled>ضيف للسلة</button>
+            </div>
+          </div>
+        </div>
+        <div class="preview">
+          <div class="plate" id="cPlate"><div class="art" id="cArt"></div></div>
+          <p class="tag" id="cTag">مثال توضيحي — صورتك هتظهر هنا بنفس شكل اللوحة.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- قسم خطوات الطلب -->
+    <section class="block" id="how">
+      <div class="wrap">
+        <div class="head"><div><p class="eyebrow">الطلب</p><h2>إزاي تطلب؟</h2></div></div>
+        <ol class="steps3">
+          <li><div class="n">1</div><h3>اختار لوحتك</h3><p>من التشكيلة أو ارفع صورتك، وحدد المقاس وضيفها للسلة.</p></li>
+          <li><div class="n">2</div><h3>حوّل المبلغ</h3><p>حوّل على إنستا باي أو محفظة كاش بالمبلغ الإجمالي، واكتب المبلغ اللي حوّلته.</p></li>
+          <li><div class="n">3</div><h3>ارفع سكرين التحويل</h3><p>بنراجع التحويل ونكلمك، وبعدها نبدأ الطباعة والشحن لحد باب البيت.</p></li>
+        </ol>
+      </div>
+    </section>
+  </main>
+
+  <!-- الفوتر -->
+  <footer>
+    <div class="wrap">
+      <div><b style="font-family:var(--font-display);font-size:1.3rem;color:var(--gold-text)">بوستيرا</b> — بوسترات معدنية</div>
+      <div>واتساب: <bdi dir="ltr" class="num" id="footWa"></bdi></div>
+      <div>الشحن لكل المحافظات</div>
+    </div>
+  </footer>
+</div>
+
+<!-- نافذة السلة وإنهاء الطلب (Drawer) -->
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-hidden="true" inert dir="rtl" lang="ar" aria-labelledby="dTitle">
+  <div class="dhead"><h2 id="dTitle">سلتك</h2><button class="iconbtn" id="closeCart" type="button" aria-label="إغلاق">✕</button></div>
+  <div class="dbody" id="dbody">
+    <div class="stepbar" id="stepbar"><span class="on">السلة</span><span>البيانات والدفع</span><span>تم</span></div>
+
+    <section id="stepCart">
+      <div id="cartList"></div>
+      <div class="totals" id="cartTotals"></div>
+    </section>
+
+    <section id="stepCheckout" hidden>
+      <form class="f" id="form" novalidate>
+        <div class="err" id="errBox" role="alert" hidden></div>
+        <div class="field"><label for="fName">الاسم بالكامل</label><input id="fName" autocomplete="name" required></div>
+        <div class="row">
+          <div class="field"><label for="fPhone">رقم الموبايل</label><input id="fPhone" inputmode="tel" autocomplete="tel" dir="ltr" placeholder="01xxxxxxxxx" required></div>
+          <div class="field"><label for="fGov">المحافظة</label><select id="fGov" required></select></div>
+        </div>
+        <div class="field"><label for="fAddr">العنوان بالتفصيل</label><textarea id="fAddr" autocomplete="street-address" required></textarea></div>
+
+        <div class="field">
+          <label>طريقة الدفع</label>
+          <div class="paypick" role="radiogroup" aria-label="طريقة الدفع">
+            <label><input type="radio" name="pay" value="instapay" checked> إنستا باي</label>
+            <label><input type="radio" name="pay" value="wallet"> محفظة كاش</label>
+          </div>
+        </div>
+        <div class="payinfo">
+          <p id="payHow"></p>
+          <div class="paynum"><bdi dir="ltr" id="payNum" class="num"></bdi><button class="btn ghost sm" id="copyNum" type="button">نسخ</button></div>
+          <p class="muted" style="font-size:.84rem">حوّل الإجمالي بالظبط، وبعدها اكتب المبلغ وارفع سكرين التحويل.</p>
+        </div>
+        <div class="field">
+          <label for="fAmount">المبلغ اللي حوّلته (ج.م)</label>
+          <input id="fAmount" inputmode="decimal" dir="ltr" required>
+          <div class="hint" id="amtHint"></div>
+        </div>
+        <div class="field">
+          <label for="fShot">سكرين التحويل</label>
+          <div class="shot"><input class="vh" type="file" id="fShot" accept="image/*"><label for="fShot" class="btn ghost sm" style="margin:0;color:var(--fg)" id="shotBtn">اختار الصورة</label><img id="shotImg" alt="معاينة سكرين التحويل" hidden></div>
+        </div>
+        <div class="totals" id="coTotals"></div>
+      </form>
+    </section>
+
+    <section id="stepDone" hidden>
+      <div class="done">
+        <div class="tick" aria-hidden="true">✓</div>
+        <h3>وصلنا طلبك</h3>
+        <p class="muted">رقم الطلب</p>
+        <p class="ord num" id="ordNo"></p>
+        <p class="muted">هنراجع التحويل ونكلمك على الموبايل لتأكيد الطلب وميعاد الشحن.</p>
+        <button class="btn" id="backShop" type="button">رجوع للمتجر</button>
+      </div>
+    </section>
+  </div>
+  <div class="dfoot" id="dfoot"></div>
+</aside>
+
+<!-- إشعار التوست -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- ملف السكريبت المنفصل -->
+<script src="script.js"></script>
+</body>
+</html>

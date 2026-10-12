@@ -1,0 +1,606 @@
+﻿<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>بوستيرا | POSTERA — متجر بوسترات معدنية</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap">
+<style>
+/* Layout: dark gallery-wall storefront. One bold moment = the brushed-metal plates with a slow light sweep; everything else stays quiet. */
+:root{
+  --bg:#0e0d0c; --surface:#161412; --surface-2:#1e1b18;
+  --fg:#eee8dc; --muted:#a1988a; --line:rgba(238,232,220,.13);
+  --gold:#c9a45c; --gold-hi:#e2c88a; --gold-text:#d8b672; --on-gold:#1a1408;
+  --glass:rgba(14,13,12,.86);
+  --ok:#6dbb8e; --warn:#e69a4a; --bad:#e5736a;
+  --metal:linear-gradient(135deg,#55514b 0%,#e2ddd1 20%,#7d776e 42%,#d3cdbf 66%,#58534c 100%);
+  --shadow:0 36px 60px -24px rgba(0,0,0,.75);
+  --font-display:'Amiri','Noto Naskh Arabic',serif;
+  --font-body:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#ebe9e4; --surface:#f6f4f0; --surface-2:#dedbd4;
+    --fg:#1c1a17; --muted:#5f5a52; --line:rgba(28,26,23,.16);
+    --gold:#a47e32; --gold-hi:#c29a4a; --gold-text:#7a5a1a; --on-gold:#1a1408;
+    --glass:rgba(235,233,228,.88);
+    --ok:#1f7a48; --warn:#a85d0a; --bad:#b3372d;
+    --shadow:0 30px 50px -26px rgba(40,30,10,.5);
+    color-scheme:light;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#ebe9e4; --surface:#f6f4f0; --surface-2:#dedbd4;
+  --fg:#1c1a17; --muted:#5f5a52; --line:rgba(28,26,23,.16);
+  --gold:#a47e32; --gold-hi:#c29a4a; --gold-text:#7a5a1a; --on-gold:#1a1408;
+  --glass:rgba(235,233,228,.88);
+  --ok:#1f7a48; --warn:#a85d0a; --bad:#b3372d;
+  --shadow:0 30px 50px -26px rgba(40,30,10,.5);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--font-display);font-weight:700;line-height:1.3;text-wrap:balance;margin:0}
+p{margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--gold-text);outline-offset:3px}
+.wrap{max-width:1180px;margin-inline:auto;padding-inline:20px}
+.eyebrow{font-size:.78rem;letter-spacing:.14em;color:var(--gold-text);font-weight:600}
+.muted{color:var(--muted)}
+bdi{unicode-bidi:isolate}
+.num{font-variant-numeric:tabular-nums}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:24px;min-height:64px}
+.brand{display:flex;align-items:baseline;gap:10px;text-decoration:none;color:var(--fg)}
+.brand b{font-family:var(--font-display);font-size:1.7rem;color:var(--gold-text)}
+.brand span{font-size:.72rem;letter-spacing:.2em;color:var(--muted)}
+.nav{display:flex;gap:22px;margin-inline-start:auto}
+.nav a{color:var(--muted);text-decoration:none;font-size:.95rem}
+.nav a:hover{color:var(--fg)}
+.cartbtn{position:relative;display:flex;align-items:center;gap:8px;background:transparent;border:1px solid var(--line);border-radius:999px;padding:.45rem 1rem;cursor:pointer}
+.cartbtn:hover{border-color:var(--gold)}
+.badge{min-width:22px;height:22px;border-radius:999px;background:var(--gold);color:var(--on-gold);font-size:.78rem;font-weight:600;display:grid;place-items:center;padding-inline:6px}
+@media (max-width:700px){.nav{display:none}.cartbtn{margin-inline-start:auto}}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:.8rem 1.6rem;font-weight:600;cursor:pointer;text-decoration:none;background:linear-gradient(135deg,var(--gold-hi),var(--gold));color:var(--on-gold);transition:transform .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn[disabled]{opacity:.45;cursor:not-allowed;transform:none}
+.btn.ghost{background:transparent;color:var(--fg);border:1px solid var(--line)}
+.btn.ghost:hover{border-color:var(--gold)}
+.btn.sm{padding:.5rem 1.1rem;font-size:.9rem}
+.btn.block{width:100%}
+
+/* hero */
+.hero{padding-block:clamp(36px,7vw,88px);background:radial-gradient(60% 55% at 72% 30%,rgba(201,164,92,.16),transparent 70%)}
+.hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(28px,5vw,72px);align-items:center}
+.hero h1{font-size:clamp(2.6rem,6.4vw,4.6rem);margin-block:14px 18px}
+.hero h1 em{font-style:normal;color:var(--gold-text)}
+.hero .lead{max-width:34rem;color:var(--muted);font-size:1.08rem}
+.cta{display:flex;flex-wrap:wrap;gap:12px;margin-block:28px 36px}
+.specs{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;border-top:1px solid var(--line);padding-top:20px;margin:0}
+.specs div{min-width:0}
+.specs dt{font-family:var(--font-display);font-size:1.5rem;color:var(--gold-text);line-height:1.2}
+.specs dd{margin:4px 0 0;font-size:.82rem;color:var(--muted)}
+.hero-art{display:flex;justify-content:center}
+.hero-art .plate{width:min(100%,340px)}
+@media (max-width:820px){.hero .wrap{grid-template-columns:1fr}.hero-art{order:-1}.hero-art .plate{width:min(70%,260px)}}
+
+/* metal plate */
+.plate{position:relative;border-radius:12px;padding:7px;background:var(--metal);box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.5)}
+.plate .art{position:relative;border-radius:6px;overflow:hidden;aspect-ratio:2/3;background:#000}
+.plate .art>svg,.plate .art>img{display:block;width:100%;height:100%}
+.plate .art>img{object-fit:var(--fit,cover)}
+.plate::after{content:"";position:absolute;inset:7px;border-radius:6px;pointer-events:none;background:linear-gradient(115deg,transparent 36%,rgba(255,255,255,.24) 49%,transparent 62%);background-size:260% 100%;background-position:135% 0;transition:background-position .9s ease}
+.card:hover .plate::after,.card:focus-within .plate::after{background-position:-35% 0}
+.hero .plate::after{animation:sweep 8s ease-in-out infinite}
+@keyframes sweep{0%,62%{background-position:135% 0}100%{background-position:-35% 0}}
+@media (prefers-reduced-motion:reduce){.hero .plate::after{animation:none}.plate::after{transition:none}html{scroll-behavior:auto}.drawer,.scrim{transition:none!important}}
+
+/* sections */
+section.block{padding-block:clamp(48px,7vw,88px)}
+.head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:20px;margin-bottom:36px}
+.head h2{font-size:clamp(2rem,4vw,2.8rem);margin-top:6px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{font-size:.84rem;padding:.35rem .85rem;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}
+.seg button:hover{color:var(--fg);border-color:var(--gold)}
+.seg button[aria-pressed="true"]{background:var(--gold);color:var(--on-gold);border-color:var(--gold);font-weight:600}
+
+/* gallery */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:44px 28px}
+.card{display:flex;flex-direction:column;gap:16px;min-width:0}
+.card .meta{display:flex;flex-direction:column;gap:10px}
+.card h3{font-size:1.4rem}
+.card .cat{font-size:.78rem;color:var(--muted)}
+.card .buy{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.price{font-weight:600;font-size:1.1rem;font-variant-numeric:tabular-nums}
+.price small{color:var(--muted);font-weight:400;font-size:.78rem}
+
+/* custom upload */
+.custom{background:var(--surface);border-block:1px solid var(--line)}
+.custom .wrap{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,5vw,64px);align-items:start}
+.custom h2{font-size:clamp(2rem,4vw,2.8rem);margin-block:6px 12px}
+.ctl{display:flex;flex-direction:column;gap:20px;margin-top:24px}
+.ctl label.lab,.ctl .lab{font-size:.85rem;color:var(--muted);display:block;margin-bottom:8px}
+.drop{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:26px 16px;border:1.5px dashed var(--line);border-radius:14px;cursor:pointer;background:var(--surface-2);transition:border-color .2s}
+.drop:hover,.drop.over,.drop:focus-within{border-color:var(--gold)}
+.drop strong{font-weight:600}
+.drop small{color:var(--muted)}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.q{display:flex;align-items:center;gap:10px;font-size:.9rem;min-height:1.7rem}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--muted);flex:none}
+.q.ok .dot{background:var(--ok)}.q.warn .dot{background:var(--warn)}.q.bad .dot{background:var(--bad)}
+.preview{display:flex;flex-direction:column;align-items:center;gap:14px;min-width:0}
+.preview .plate{width:min(100%,var(--pw,340px))}
+.preview .tag{font-size:.8rem;color:var(--muted)}
+.buyrow{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding-top:6px}
+.buyrow .price{font-size:1.4rem}
+@media (max-width:820px){.custom .wrap{grid-template-columns:1fr}}
+
+/* steps */
+.steps3{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;list-style:none;padding:0;margin:0}
+.steps3 li{border-top:1px solid var(--gold);padding-top:18px}
+.steps3 .n{font-family:var(--font-display);font-size:2.2rem;color:var(--gold-text);line-height:1}
+.steps3 h3{font-size:1.25rem;margin-block:10px 6px}
+.steps3 p{color:var(--muted);font-size:.95rem}
+@media (max-width:760px){.steps3{grid-template-columns:1fr}}
+
+footer{border-top:1px solid var(--line);padding-block:36px;color:var(--muted);font-size:.9rem}
+footer .wrap{display:flex;flex-wrap:wrap;gap:16px 40px;justify-content:space-between;align-items:center}
+
+/* cart drawer */
+.scrim{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:opacity .25s}
+.scrim.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;bottom:0;left:0;z-index:50;width:min(460px,100%);background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;transform:translateX(-104%);transition:transform .3s ease;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.drawer.open{transform:none}
+.dhead{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line)}
+.dhead h2{font-size:1.5rem}
+.iconbtn{background:transparent;border:1px solid var(--line);border-radius:50%;width:38px;height:38px;cursor:pointer;display:grid;place-items:center;font-size:1.1rem}
+.iconbtn:hover{border-color:var(--gold)}
+.dbody{flex:1;overflow-y:auto;padding:20px}
+.stepbar{display:flex;gap:8px;font-size:.78rem;color:var(--muted);margin-bottom:18px}
+.stepbar span{flex:1;border-top:2px solid var(--line);padding-top:6px}
+.stepbar span.on{border-color:var(--gold);color:var(--gold-text);font-weight:600}
+.item{display:grid;grid-template-columns:64px 1fr auto;gap:14px;padding-block:14px;border-bottom:1px solid var(--line);align-items:start}
+.item .thumb{width:64px;aspect-ratio:2/3;border-radius:5px;overflow:hidden;background:var(--metal);padding:2px}
+.item .thumb>*{display:block;width:100%;height:100%;border-radius:3px;object-fit:cover}
+.item h4{margin:0;font-family:var(--font-display);font-size:1.12rem}
+.item small{color:var(--muted);display:block}
+.qty{display:inline-flex;align-items:center;gap:10px;margin-top:8px;border:1px solid var(--line);border-radius:999px;padding:2px}
+.qty button{width:28px;height:28px;border-radius:50%;border:0;background:transparent;cursor:pointer}
+.qty button:hover{background:var(--surface-2)}
+.rm{background:none;border:0;color:var(--muted);font-size:.8rem;cursor:pointer;text-decoration:underline;margin-top:6px;padding:0}
+.totals{display:flex;flex-direction:column;gap:8px;padding-block:18px;font-size:.95rem}
+.totals div{display:flex;justify-content:space-between}
+.totals .grand{font-size:1.2rem;font-weight:600;border-top:1px solid var(--line);padding-top:12px;margin-top:4px}
+.dfoot{padding:16px 20px;border-top:1px solid var(--line)}
+.empty{text-align:center;padding:60px 10px;color:var(--muted);display:flex;flex-direction:column;gap:18px;align-items:center}
+
+/* forms */
+.f{display:flex;flex-direction:column;gap:14px}
+.f .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:480px){.f .row{grid-template-columns:1fr}}
+.field label{display:block;font-size:.85rem;color:var(--muted);margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:.65rem .8rem}
+.field textarea{resize:vertical;min-height:70px}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold);outline:none}
+.field .hint{font-size:.78rem;color:var(--muted);margin-top:4px}
+.paypick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.paypick label{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:12px;padding:.8rem;cursor:pointer;margin:0;color:var(--fg);font-size:.92rem}
+.paypick input{width:auto;accent-color:var(--gold)}
+.paypick label:has(input:checked){border-color:var(--gold);background:var(--surface-2)}
+.payinfo{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;font-size:.92rem}
+.paynum{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.paynum bdi{font-size:1.2rem;font-weight:600;letter-spacing:.04em;color:var(--gold-text);word-break:break-all}
+.shot{display:flex;align-items:center;gap:12px}
+.shot img{width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+.err{background:rgba(229,115,106,.12);border:1px solid var(--bad);color:var(--bad);border-radius:10px;padding:.7rem .9rem;font-size:.88rem}
+.err ul{margin:0;padding-inline-start:18px}
+.done{text-align:center;display:flex;flex-direction:column;gap:14px;align-items:center;padding-block:30px}
+.done .tick{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--gold-hi),var(--gold));color:var(--on-gold);display:grid;place-items:center;font-size:1.8rem}
+.done h3{font-size:1.7rem}
+.done .ord{font-size:1.3rem;font-weight:600;color:var(--gold-text);letter-spacing:.06em}
+.toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translate(-50%,20px);background:var(--fg);color:var(--bg);padding:.65rem 1.2rem;border-radius:999px;font-size:.92rem;opacity:0;pointer-events:none;transition:all .25s;z-index:60}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+
+<div id="app" dir="rtl" lang="ar">
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top" data-scroll="hero"><b>بوستيرا</b><span>POSTERA</span></a>
+    <nav class="nav" aria-label="التنقل">
+      <a href="#gallery" data-scroll="gallery">التشكيلة</a>
+      <a href="#custom" data-scroll="custom">اطبع صورتك</a>
+      <a href="#how" data-scroll="how">إزاي تطلب</a>
+    </nav>
+    <button class="cartbtn" id="openCart" type="button" aria-label="فتح السلة">
+      <span>السلة</span><span class="badge num" id="badge">0</span>
+    </button>
+  </div>
+</header>
+
+<main>
+<section class="hero" id="hero">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">بوسترات مطبوعة على ألومنيوم</p>
+      <h1>حيطتك تستاهل <em>معدن</em>.</h1>
+      <p class="lead">الصورة بتتطبع على لوح ألومنيوم مصقول، فألوانها بتطلع عميقة ولامعة، ومقاومة للخدش والرطوبة. اختار من تشكيلتنا، أو ارفع صورتك إنت.</p>
+      <div class="cta">
+        <a class="btn" href="#gallery" data-scroll="gallery">شوف التشكيلة</a>
+        <a class="btn ghost" href="#custom" data-scroll="custom">اطبع صورتك</a>
+      </div>
+      <dl class="specs">
+        <div><dt class="num">1.1 مم</dt><dd>سُمك لوح الألومنيوم</dd></div>
+        <div><dt class="num">4 مقاسات</dt><dd>من 20×30 لحد 50×75 سم</dd></div>
+        <div><dt class="num">3–5 أيام</dt><dd>طباعة وتجهيز</dd></div>
+      </dl>
+    </div>
+    <div class="hero-art">
+      <div class="plate" aria-hidden="false"><div class="art" id="heroArt"></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="gallery">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <p class="eyebrow">التشكيلة</p>
+        <h2>لوحات جاهزة للتعليق</h2>
+      </div>
+      <div class="seg" id="filters" role="group" aria-label="تصنيف اللوحات"></div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+</section>
+
+<section class="block custom" id="custom">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">طباعة خاصة</p>
+      <h2>صورتك، على معدن.</h2>
+      <p class="muted">ارفع صورة من موبايلك أو الكاميرا، واختار المقاس. هنقولك لو جودة الصورة مناسبة للمقاس ده قبل ما تطلب.</p>
+      <div class="ctl">
+        <div>
+          <span class="lab">الصورة</span>
+          <label class="drop" id="drop">
+            <input class="vh" type="file" id="customFile" accept="image/*">
+            <strong id="dropTitle">اضغط لاختيار صورة أو اسحبها هنا</strong>
+            <small id="dropSub">JPG أو PNG — كل ما كانت أكبر كل ما كانت أوضح</small>
+          </label>
+        </div>
+        <div><span class="lab">المقاس (سم)</span><div class="seg" id="cSize" role="group" aria-label="المقاس"></div></div>
+        <div><span class="lab">الاتجاه</span>
+          <div class="seg" id="cOrient" role="group" aria-label="الاتجاه">
+            <button type="button" data-v="p" aria-pressed="true">طولي</button>
+            <button type="button" data-v="l" aria-pressed="false">عرضي</button>
+          </div></div>
+        <div><span class="lab">ظبط الصورة</span>
+          <div class="seg" id="cFit" role="group" aria-label="ظبط الصورة">
+            <button type="button" data-v="cover" aria-pressed="true">تملا اللوحة</button>
+            <button type="button" data-v="contain" aria-pressed="false">الصورة كاملة</button>
+          </div></div>
+        <div><span class="lab">التشطيب</span>
+          <div class="seg" id="cFinish" role="group" aria-label="التشطيب">
+            <button type="button" data-v="لامع" aria-pressed="true">لامع</button>
+            <button type="button" data-v="مطفي" aria-pressed="false">مطفي</button>
+          </div></div>
+        <div class="q" id="quality" aria-live="polite"><span class="dot"></span><span id="qText">ارفع صورة عشان نقيّم جودتها للمقاس.</span></div>
+        <div class="buyrow">
+          <div class="price num" id="cPrice"></div>
+          <button class="btn" id="cAdd" type="button" disabled>ضيف للسلة</button>
+        </div>
+      </div>
+    </div>
+    <div class="preview">
+      <div class="plate" id="cPlate"><div class="art" id="cArt"></div></div>
+      <p class="tag" id="cTag">مثال توضيحي — صورتك هتظهر هنا بنفس شكل اللوحة.</p>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="how">
+  <div class="wrap">
+    <div class="head"><div><p class="eyebrow">الطلب</p><h2>إزاي تطلب؟</h2></div></div>
+    <ol class="steps3">
+      <li><div class="n">1</div><h3>اختار لوحتك</h3><p>من التشكيلة أو ارفع صورتك، وحدد المقاس وضيفها للسلة.</p></li>
+      <li><div class="n">2</div><h3>حوّل المبلغ</h3><p>حوّل على إنستا باي أو محفظة كاش بالمبلغ الإجمالي، واكتب المبلغ اللي حوّلته.</p></li>
+      <li><div class="n">3</div><h3>ارفع سكرين التحويل</h3><p>بنراجع التحويل ونكلمك، وبعدها نبدأ الطباعة والشحن لحد باب البيت.</p></li>
+    </ol>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div><b style="font-family:var(--font-display);font-size:1.3rem;color:var(--gold-text)">بوستيرا</b> — بوسترات معدنية</div>
+    <div>واتساب: <bdi dir="ltr" class="num" id="footWa"></bdi></div>
+    <div>الشحن لكل المحافظات</div>
+  </div>
+</footer>
+</div>
+
+<!-- cart + checkout drawer -->
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-hidden="true" inert dir="rtl" lang="ar" aria-labelledby="dTitle">
+  <div class="dhead"><h2 id="dTitle">سلتك</h2><button class="iconbtn" id="closeCart" type="button" aria-label="إغلاق">✕</button></div>
+  <div class="dbody" id="dbody">
+    <div class="stepbar" id="stepbar"><span class="on">السلة</span><span>البيانات والدفع</span><span>تم</span></div>
+
+    <section id="stepCart">
+      <div id="cartList"></div>
+      <div class="totals" id="cartTotals"></div>
+    </section>
+
+    <section id="stepCheckout" hidden>
+      <form class="f" id="form" novalidate>
+        <div class="err" id="errBox" role="alert" hidden></div>
+        <div class="field"><label for="fName">الاسم بالكامل</label><input id="fName" autocomplete="name" required></div>
+        <div class="row">
+          <div class="field"><label for="fPhone">رقم الموبايل</label><input id="fPhone" inputmode="tel" autocomplete="tel" dir="ltr" placeholder="01xxxxxxxxx" required></div>
+          <div class="field"><label for="fGov">المحافظة</label><select id="fGov" required></select></div>
+        </div>
+        <div class="field"><label for="fAddr">العنوان بالتفصيل</label><textarea id="fAddr" autocomplete="street-address" required></textarea></div>
+
+        <div class="field">
+          <label>طريقة الدفع</label>
+          <div class="paypick" role="radiogroup" aria-label="طريقة الدفع">
+            <label><input type="radio" name="pay" value="instapay" checked> إنستا باي</label>
+            <label><input type="radio" name="pay" value="wallet"> محفظة كاش</label>
+          </div>
+        </div>
+        <div class="payinfo">
+          <p id="payHow"></p>
+          <div class="paynum"><bdi dir="ltr" id="payNum" class="num"></bdi><button class="btn ghost sm" id="copyNum" type="button">نسخ</button></div>
+          <p class="muted" style="font-size:.84rem">حوّل الإجمالي بالظبط، وبعدها اكتب المبلغ وارفع سكرين التحويل.</p>
+        </div>
+        <div class="field">
+          <label for="fAmount">المبلغ اللي حوّلته (ج.م)</label>
+          <input id="fAmount" inputmode="decimal" dir="ltr" required>
+          <div class="hint" id="amtHint"></div>
+        </div>
+        <div class="field">
+          <label for="fShot">سكرين التحويل</label>
+          <div class="shot"><input class="vh" type="file" id="fShot" accept="image/*"><label for="fShot" class="btn ghost sm" style="margin:0;color:var(--fg)" id="shotBtn">اختار الصورة</label><img id="shotImg" alt="معاينة سكرين التحويل" hidden></div>
+        </div>
+        <div class="totals" id="coTotals"></div>
+      </form>
+    </section>
+
+    <section id="stepDone" hidden>
+      <div class="done">
+        <div class="tick" aria-hidden="true">✓</div>
+        <h3>وصلنا طلبك</h3>
+        <p class="muted">رقم الطلب</p>
+        <p class="ord num" id="ordNo"></p>
+        <p class="muted">هنراجع التحويل ونكلمك على الموبايل لتأكيد الطلب وميعاد الشحن.</p>
+        <button class="btn" id="backShop" type="button">رجوع للمتجر</button>
+      </div>
+    </section>
+  </div>
+  <div class="dfoot" id="dfoot"></div>
+</aside>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ============ إعدادات المتجر — غيّر القيم دي بس ============ */
+const SHOP = {
+  instapay: 'postera@instapay',        // عنوان إنستا باي بتاعك
+  wallet:   '01000000000',            // رقم محفظة كاش بتاعك
+  whatsapp: '01000000000',            // واتساب خدمة العملاء
+  shipping: 60,                       // سعر الشحن (جنيه)
+  freeShippingOver: 2500,             // الشحن ببلاش لو الطلب فوق المبلغ ده
+  // المقاسات بالسنتيمتر والأسعار بالجنيه (أمثلة — غيّرها)
+  sizes: [
+    { id:'s',  label:'20×30', w:20, h:30, price:450 },
+    { id:'m',  label:'30×45', w:30, h:45, price:750 },
+    { id:'l',  label:'40×60', w:40, h:60, price:1200 },
+    { id:'xl', label:'50×75', w:50, h:75, price:1800 }
+  ]
+};
+/* ========================================================== */
+
+try{ document.documentElement.lang='ar'; document.documentElement.dir='rtl'; }catch(e){}
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const egp=n=>Number(n).toLocaleString('en-US')+' ج.م';
+const sizeOf=id=>SHOP.sizes.find(s=>s.id===id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const toLatin=s=>String(s).replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+
+/* ---------- artwork (placeholder posters drawn in code) ---------- */
+function rng(seed){let s=seed;return()=>(s=(s*1664525+1013904223)%4294967296)/4294967296}
+let uidN=0;
+const ART={
+moon(u){const r=rng(7);let st='';for(let i=0;i<46;i++)st+=`<circle cx="${(r()*200).toFixed(1)}" cy="${(r()*210).toFixed(1)}" r="${(r()*.9+.2).toFixed(2)}" fill="#f1e6c8" opacity="${(r()*.6+.25).toFixed(2)}"/>`;
+return `<defs><radialGradient id="a${u}" cx="50%" cy="36%" r="75%"><stop offset="0" stop-color="#2b2535"/><stop offset="1" stop-color="#09080d"/></radialGradient><linearGradient id="b${u}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6e6bb"/><stop offset="1" stop-color="#b78a3a"/></linearGradient></defs><rect width="200" height="300" fill="url(#a${u})"/>${st}<circle cx="100" cy="124" r="62" fill="none" stroke="#c9a45c" stroke-width=".6" opacity=".7"/><circle cx="100" cy="124" r="46" fill="url(#b${u})"/><circle cx="84" cy="110" r="9" fill="#a37a30" opacity=".35"/><circle cx="116" cy="138" r="6" fill="#a37a30" opacity=".3"/><circle cx="108" cy="104" r="4" fill="#a37a30" opacity=".25"/><path d="M0 250Q50 236 100 248T200 242V300H0Z" fill="#050408"/><path d="M0 270Q60 258 110 268T200 262V300H0Z" fill="#0d0b12"/>`},
+mountains(u){return `<defs><linearGradient id="a${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1f2447"/><stop offset=".55" stop-color="#7a4d6b"/><stop offset="1" stop-color="#e8a26b"/></linearGradient></defs><rect width="200" height="300" fill="url(#a${u})"/><circle cx="100" cy="170" r="34" fill="#ffd9a0" opacity=".95"/><path d="M0 205L45 150L78 185L120 120L165 180L200 150V300H0Z" fill="#4a3558"/><path d="M0 235L55 185L95 225L140 170L200 230V300H0Z" fill="#2f2340"/><path d="M0 265L40 235L90 262L150 225L200 258V300H0Z" fill="#1b1428"/><path d="M0 285L70 272L130 284L200 270V300H0Z" fill="#0e0a16"/>`},
+pyramids(u){const r=rng(21);let st='';for(let i=0;i<22;i++)st+=`<circle cx="${(r()*200).toFixed(1)}" cy="${(r()*90).toFixed(1)}" r=".7" fill="#fff4d6" opacity="${(r()*.6+.3).toFixed(2)}"/>`;
+return `<defs><linearGradient id="a${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0f1a2c"/><stop offset=".55" stop-color="#b8763f"/><stop offset="1" stop-color="#e0b36a"/></linearGradient></defs><rect width="200" height="300" fill="url(#a${u})"/>${st}<circle cx="150" cy="66" r="14" fill="#f6ead0"/><path d="M30 232L105 120L180 232Z" fill="#6b4424"/><path d="M105 120L180 232L122 232Z" fill="#4a2e18"/><path d="M-10 240L45 170L100 240Z" fill="#7d5230"/><path d="M45 170L100 240L62 240Z" fill="#5a3a20"/><path d="M150 242L185 196L220 242Z" fill="#7d5230"/><path d="M0 240Q60 222 120 238T200 232V300H0Z" fill="#c28a4a"/><path d="M0 265Q70 248 140 262T200 258V300H0Z" fill="#9a6531"/>`},
+desert(u){return `<defs><linearGradient id="a${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b1a3a"/><stop offset=".55" stop-color="#d9733f"/><stop offset="1" stop-color="#f2b366"/></linearGradient></defs><rect width="200" height="300" fill="url(#a${u})"/><circle cx="100" cy="150" r="28" fill="#fff1c9"/><path d="M0 200Q50 170 110 195T200 185V300H0Z" fill="#c9703a"/><path d="M0 230Q70 200 130 225T200 215V300H0Z" fill="#a5542c"/><path d="M0 260Q60 238 120 256T200 246V300H0Z" fill="#7c3a21"/><path d="M0 285Q80 268 200 282V300H0Z" fill="#4a2217"/>`},
+deco(u){let arcs='';for(let i=0;i<6;i++){const x=34+i*11,rr=100-x;arcs+=`<path d="M${x} 262V130A${rr} ${rr} 0 0 1 ${200-x} 130V262" fill="none" stroke="url(#b${u})" stroke-width="${(1.3-i*.12).toFixed(2)}" opacity="${(1-i*.1).toFixed(2)}"/>`}
+return `<defs><linearGradient id="b${u}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3dca0"/><stop offset="1" stop-color="#a8792e"/></linearGradient></defs><rect width="200" height="300" fill="#0d1512"/>${arcs}<circle cx="100" cy="134" r="5" fill="url(#b${u})"/><path d="M26 262H174M18 270H182" stroke="url(#b${u})" stroke-width=".9" fill="none"/><path d="M100 40V52M92 46H108" stroke="url(#b${u})" stroke-width=".8"/>`},
+waves(u){let p='';for(let k=0;k<16;k++){const y0=70+k*12,amp=9+k*.8;let d='';for(let x=0;x<=200;x+=4){const y=y0+Math.sin(x/200*Math.PI*3+k*.35)*amp;d+=(x?'L':'M')+x+' '+y.toFixed(1)}p+=`<path d="${d}" fill="none" stroke="url(#b${u})" stroke-width=".9" opacity="${(.22+k*.05).toFixed(2)}"/>`}
+return `<defs><linearGradient id="a${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a1220"/><stop offset="1" stop-color="#10253b"/></linearGradient><linearGradient id="b${u}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d9b46a"/><stop offset="1" stop-color="#f0e3bd"/></linearGradient></defs><rect width="200" height="300" fill="url(#a${u})"/>${p}`},
+city(u){const r=rng(5);let far='',near='',x=0;while(x<200){const w=14+r()*12,h=50+r()*70;far+=`<rect x="${x.toFixed(1)}" y="${(300-h).toFixed(1)}" width="${(w+.5).toFixed(1)}" height="${h.toFixed(1)}" fill="#3b2252" opacity=".9"/>`;x+=w}
+x=-4;while(x<200){const w=16+r()*14,h=70+r()*110,top=300-h;near+=`<rect x="${x.toFixed(1)}" y="${top.toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" fill="#130b20"/>`;for(let wy=top+8;wy<290;wy+=8)for(let wx=x+3;wx<x+w-3;wx+=6)if(r()<.33)near+=`<rect x="${wx.toFixed(1)}" y="${wy.toFixed(1)}" width="2.2" height="3.2" fill="#f7c978" opacity=".8"/>`;x+=w+1}
+return `<defs><linearGradient id="a${u}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a1030"/><stop offset=".7" stop-color="#d0546e"/><stop offset="1" stop-color="#f39a6b"/></linearGradient></defs><rect width="200" height="300" fill="url(#a${u})"/><circle cx="140" cy="118" r="22" fill="#ffe3b0" opacity=".9"/>${far}${near}`},
+calli(u){return `<defs><linearGradient id="b${u}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3dca0"/><stop offset="1" stop-color="#a8792e"/></linearGradient></defs><rect width="200" height="300" fill="#12100c"/><rect x="10" y="10" width="180" height="280" fill="none" stroke="url(#b${u})" stroke-width=".9"/><rect x="16" y="16" width="168" height="268" fill="none" stroke="url(#b${u})" stroke-width=".4"/><text x="100" y="172" text-anchor="middle" font-family="Amiri,serif" font-size="88" font-weight="700" fill="url(#b${u})">جمال</text><path d="M70 202H130" stroke="url(#b${u})" stroke-width=".8"/><circle cx="100" cy="202" r="2.4" fill="url(#b${u})"/>`}
+};
+function artSvg(kind,label){const u=++uidN;return `<svg viewBox="0 0 200 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${esc(label||'')}" xmlns="http://www.w3.org/2000/svg">${ART[kind](u)}</svg>`}
+
+const POSTERS=[
+ {id:1,kind:'pyramids',title:'ليل الأهرامات',cat:'مصر'},
+ {id:2,kind:'moon',title:'القمر الذهبي',cat:'فضاء'},
+ {id:3,kind:'mountains',title:'جبال الفجر',cat:'طبيعة'},
+ {id:4,kind:'deco',title:'أقواس الآرت ديكو',cat:'تجريدي'},
+ {id:5,kind:'city',title:'مدينة بعد الغروب',cat:'مدن'},
+ {id:6,kind:'calli',title:'جمال',cat:'مصر'},
+ {id:7,kind:'desert',title:'كثبان الصحراء',cat:'طبيعة'},
+ {id:8,kind:'waves',title:'خطوط الموج',cat:'تجريدي'}
+];
+const CATS=['الكل',...new Set(POSTERS.map(p=>p.cat))];
+
+/* ---------- state ---------- */
+let cart=[];
+const st={filter:'الكل',sizes:{}};
+
+/* ---------- toast ---------- */
+let tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),1800)}
+
+/* ---------- smooth scroll for in-page links ---------- */
+document.addEventListener('click',e=>{const a=e.target.closest('[data-scroll]');if(!a)return;e.preventDefault();const el=document.getElementById(a.dataset.scroll);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})});
+
+/* ---------- hero + gallery ---------- */
+$('#heroArt').innerHTML=artSvg('moon','لوحة القمر الذهبي');
+$('#footWa').textContent=SHOP.whatsapp;
+function segHTML(items,cur,attr){return items.map(i=>`<button type="button" ${attr}="${i.id}" aria-pressed="${i.id===cur}">${i.html}</button>`).join('')}
+function renderFilters(){$('#filters').innerHTML=CATS.map(c=>`<button type="button" data-cat="${c}" aria-pressed="${c===st.filter}">${c}</button>`).join('')}
+function renderGrid(){
+  const list=POSTERS.filter(p=>st.filter==='الكل'||p.cat===st.filter);
+  $('#grid').innerHTML=list.map(p=>{const cur=st.sizes[p.id]||'m';
+    return `<article class="card" data-id="${p.id}">
+      <div class="plate"><div class="art">${artSvg(p.kind,p.title)}</div></div>
+      <div class="meta">
+        <div><h3>${p.title}</h3><span class="cat">${p.cat}</span></div>
+        <div class="seg" role="group" aria-label="المقاس">${segHTML(SHOP.sizes.map(s=>({id:s.id,html:`<bdi>${s.label}</bdi>`})),cur,'data-size')}</div>
+        <div class="buy"><div class="price num"><span data-p>${egp(sizeOf(cur).price)}</span></div><button class="btn sm" type="button" data-add>ضيف للسلة</button></div>
+      </div></article>`}).join('')}
+$('#filters').addEventListener('click',e=>{const b=e.target.closest('[data-cat]');if(!b)return;st.filter=b.dataset.cat;renderFilters();renderGrid()});
+$('#grid').addEventListener('click',e=>{
+  const card=e.target.closest('.card');if(!card)return;const id=+card.dataset.id,p=POSTERS.find(x=>x.id===id);
+  const sb=e.target.closest('[data-size]');
+  if(sb){st.sizes[id]=sb.dataset.size;$$('[data-size]',card).forEach(b=>b.setAttribute('aria-pressed',b===sb));$('[data-p]',card).textContent=egp(sizeOf(sb.dataset.size).price);return}
+  if(e.target.closest('[data-add]')){const sz=sizeOf(st.sizes[id]||'m');addItem({key:`g-${id}-${sz.id}`,title:p.title,sub:`${sz.label} سم`,price:sz.price,kind:p.kind})}
+});
+
+/* ---------- custom upload ---------- */
+const C={size:'m',orient:'p',fit:'cover',finish:'لامع',url:null,w:0,h:0,name:''};
+$('#cSize').innerHTML=segHTML(SHOP.sizes.map(s=>({id:s.id,html:`<bdi>${s.label}</bdi>`})),C.size,'data-v');
+function renderCustom(){
+  const sz=sizeOf(C.size),pw=C.orient==='p'?sz.w:sz.h,ph=C.orient==='p'?sz.h:sz.w;
+  const art=$('#cArt');art.style.aspectRatio=`${pw} / ${ph}`;
+  $('#cPlate').style.setProperty('--pw',C.orient==='p'?'340px':'470px');
+  art.style.setProperty('--fit',C.fit);
+  if(C.url){if(!art.firstElementChild||art.firstElementChild.tagName!=='IMG'){art.innerHTML='<img alt="معاينة صورتك على اللوحة">'}const im=art.firstElementChild;if(im.getAttribute('src')!==C.url)im.src=C.url}
+  else if(!art.firstElementChild||art.firstElementChild.tagName!=='svg'){art.innerHTML=artSvg('mountains','مثال توضيحي')}
+  $('#cPrice').textContent=egp(sz.price);
+  $('#cAdd').disabled=!C.url;
+  $('#cTag').textContent=C.url?`${pw}×${ph} سم — ${C.finish}`:'مثال توضيحي — صورتك هتظهر هنا بنفس شكل اللوحة.';
+  const q=$('#quality'),qt=$('#qText');q.className='q';
+  if(!C.url){qt.textContent='ارفع صورة عشان نقيّم جودتها للمقاس.';return}
+  const needW=pw/2.54*150,needH=ph/2.54*150,ratio=Math.min(C.w/needW,C.h/needH);
+  if(ratio>=1){q.classList.add('ok');qt.textContent=`جودة ممتازة للمقاس ده (${C.w}×${C.h} بكسل).`}
+  else if(ratio>=.6){q.classList.add('warn');qt.textContent=`جودة مقبولة (${C.w}×${C.h} بكسل). هتبان أحسن في مقاس أصغر.`}
+  else{q.classList.add('bad');qt.textContent=`الصورة صغيرة للمقاس ده (${C.w}×${C.h} بكسل) وممكن تطلع مش واضحة. جرّب مقاس أصغر أو صورة أكبر.`}
+}
+function bindSeg(sel,key){$(sel).addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;C[key]=b.dataset.v;$$('button',$(sel)).forEach(x=>x.setAttribute('aria-pressed',x===b));renderCustom()})}
+bindSeg('#cSize','size');bindSeg('#cOrient','orient');bindSeg('#cFit','fit');bindSeg('#cFinish','finish');
+function loadCustom(file){
+  if(!file||!file.type.startsWith('image/')){toast('اختار ملف صورة');return}
+  if(C.url)try{URL.revokeObjectURL(C.url)}catch(e){}
+  const url=URL.createObjectURL(file),im=new Image();
+  im.onload=()=>{C.url=url;C.w=im.naturalWidth;C.h=im.naturalHeight;C.name=file.name;$('#dropTitle').textContent=file.name;$('#dropSub').textContent='اضغط عشان تغيّر الصورة';renderCustom()};
+  im.onerror=()=>toast('مقدرناش نفتح الصورة دي، جرّب صورة تانية');
+  im.src=url;
+}
+$('#customFile').addEventListener('change',e=>loadCustom(e.target.files[0]));
+const drop=$('#drop');
+['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('over')}));
+['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('over')}));
+drop.addEventListener('drop',e=>loadCustom(e.dataTransfer.files[0]));
+$('#cAdd').addEventListener('click',()=>{
+  if(!C.url)return;const sz=sizeOf(C.size),pw=C.orient==='p'?sz.w:sz.h,ph=C.orient==='p'?sz.h:sz.w;
+  addItem({key:'c-'+Date.now(),title:'لوحة بصورتك',sub:`${pw}×${ph} سم — ${C.finish}`,price:sz.price,img:C.url,custom:true});
+});
+
+/* ---------- cart ---------- */
+function addItem(it){const ex=cart.find(c=>c.key===it.key);if(ex)ex.qty++;else cart.push({...it,qty:1});renderCart();toast('اتضافت للسلة');const b=$('#badge');b.animate&&b.animate([{transform:'scale(1.35)'},{transform:'scale(1)'}],{duration:260})}
+const subtotal=()=>cart.reduce((a,i)=>a+i.price*i.qty,0);
+const shipping=()=>cart.length&&subtotal()<SHOP.freeShippingOver?SHOP.shipping:0;
+const total=()=>subtotal()+shipping();
+function totalsHTML(){const s=shipping();return `<div><span>المجموع</span><span class="num">${egp(subtotal())}</span></div><div><span>الشحن</span><span class="num">${s?egp(s):'ببلاش'}</span></div><div class="grand"><span>الإجمالي</span><span class="num">${egp(total())}</span></div>`}
+function renderCart(){
+  $('#badge').textContent=cart.reduce((a,i)=>a+i.qty,0);
+  const list=$('#cartList');
+  if(!cart.length){list.innerHTML='<div class="empty"><p>السلة فاضية لسه.</p><button class="btn ghost sm" type="button" id="emptyGo">شوف التشكيلة</button></div>';$('#cartTotals').innerHTML=''}
+  else{
+    list.innerHTML=cart.map(i=>`<div class="item" data-key="${i.key}"><div class="thumb">${i.custom?`<img src="${i.img}" alt="">`:artSvg(i.kind,i.title)}</div><div><h4>${esc(i.title)}</h4><small>${esc(i.sub)}</small><div class="qty"><button type="button" data-act="dec" aria-label="تقليل">−</button><span class="num" aria-live="polite">${i.qty}</span><button type="button" data-act="inc" aria-label="زيادة">+</button></div><br><button class="rm" type="button" data-act="del">حذف</button></div><div class="price num">${egp(i.price*i.qty)}</div></div>`).join('');
+    $('#cartTotals').innerHTML=totalsHTML();
+  }
+  $('#coTotals').innerHTML=totalsHTML();
+  updateAmtHint();renderFoot();
+}
+$('#cartList').addEventListener('click',e=>{
+  if(e.target.id==='emptyGo'){closeDrawer();document.getElementById('gallery').scrollIntoView({behavior:'smooth'});return}
+  const row=e.target.closest('.item'),b=e.target.closest('[data-act]');if(!row||!b)return;
+  const it=cart.find(c=>c.key===row.dataset.key);if(!it)return;
+  if(b.dataset.act==='inc')it.qty++;
+  else if(b.dataset.act==='dec'){it.qty--;if(it.qty<=0)cart=cart.filter(c=>c!==it)}
+  else cart=cart.filter(c=>c!==it);
+  renderCart();
+});
+
+/* ---------- drawer + steps ---------- */
+let step='cart',lastFocus=null;
+function openDrawer(){lastFocus=document.activeElement;$('#drawer').inert=false;$('#drawer').setAttribute('aria-hidden','false');$('#drawer').classList.add('open');$('#scrim').classList.add('open');document.body.style.overflow='hidden';setTimeout(()=>$('#closeCart').focus(),50)}
+function closeDrawer(){$('#drawer').classList.remove('open');$('#scrim').classList.remove('open');$('#drawer').setAttribute('aria-hidden','true');$('#drawer').inert=true;document.body.style.overflow='';if(lastFocus&&lastFocus.focus)lastFocus.focus()}
+function setStep(s){
+  step=s;$('#stepCart').hidden=s!=='cart';$('#stepCheckout').hidden=s!=='checkout';$('#stepDone').hidden=s!=='done';
+  $('#dTitle').textContent=s==='cart'?'سلتك':s==='checkout'?'بيانات الطلب والدفع':'تم';
+  $$('#stepbar span').forEach((sp,i)=>sp.classList.toggle('on',i===['cart','checkout','done'].indexOf(s)));
+  $('#stepbar').hidden=false;$('#dbody').scrollTop=0;renderFoot();
+}
+function renderFoot(){
+  const f=$('#dfoot');
+  if(step==='cart'){f.hidden=false;f.innerHTML=`<button class="btn block" type="button" id="goCheckout" ${cart.length?'':'disabled'}>إتمام الطلب</button>`}
+  else if(step==='checkout'){f.hidden=false;f.innerHTML=`<div style="display:flex;gap:10px"><button class="btn ghost" type="button" id="backCart">رجوع</button><button class="btn block" type="button" id="submitOrder">تأكيد الطلب</button></div>`}
+  else f.hidden=true;
+}
+$('#dfoot').addEventListener('click',e=>{
+  if(e.target.id==='goCheckout'&&cart.length)setStep('checkout');
+  if(e.target.id==='backCart')setStep('cart');
+  if(e.target.id==='submitOrder')submitOrder();
+});
+$('#openCart').addEventListener('click',()=>{setStep(step==='done'?'cart':step);openDrawer()});
+$('#closeCart').addEventListener('click',closeDrawer);
+$('#scrim').addEventListener('click',closeDrawer);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#drawer').classList.contains('open'))closeDrawer()});
+$('#backShop').addEventListener('click',()=>{cart=[];renderCart();setStep('cart');closeDrawer();window.scrollTo({top:0,behavior:'smooth'})});
+
+/* ---------- checkout ---------- */
+const GOVS=['القاهرة','الجيزة','الإسكندرية','القليوبية','الشرقية','الدقهلية','الغربية','المنوفية','البحيرة','كفر الشيخ','دمياط','بورسعيد','الإسماعيلية','السويس','الفيوم','بني سويف','المنيا','أسيوط','سوهاج','قنا','الأقصر','أسوان','البحر الأحمر','مطروح','شمال سيناء','جنوب سيناء','الوادي الجديد'];
+$('#fGov').innerHTML='<option value="">اختار المحافظة</option>'+GOVS.map(g=>`<option>${g}</option>`).join('');
+function payMethod(){return ($('input[name="pay"]:checked')||{}).value||'instapay'}
+function renderPay(){const w=payMethod()==='wallet';$('#payHow').textContent=w?'حوّل على رقم محفظة كاش ده:':'حوّل على إنستا باي على العنوان ده:';$('#payNum').textContent=w?SHOP.wallet:SHOP.instapay}
+$$('input[name="pay"]').forEach(r=>r.addEventListener('change',renderPay));renderPay();
+$('#copyNum').addEventListener('click',()=>{const t=$('#payNum').textContent;const done=()=>toast('اتنسخ');try{navigator.clipboard.writeText(t).then(done,()=>{selectNum();toast('حدد الرقم وانسخه')})}catch(e){selectNum();toast('حدد الرقم وانسخه')}});
+function selectNum(){const r=document.createRange();r.selectNodeContents($('#payNum'));const s=getSelection();s.removeAllRanges();s.addRange(r)}
+function updateAmtHint(){const h=$('#amtHint');if(h)h.textContent=cart.length?`الإجمالي المطلوب: ${egp(total())}`:''}
+let shotFile=null;
+$('#fShot').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;if(!f.type.startsWith('image/')){toast('اختار صورة السكرين');e.target.value='';return}shotFile=f;const im=$('#shotImg');if(im.src)try{URL.revokeObjectURL(im.src)}catch(_){}im.src=URL.createObjectURL(f);im.hidden=false;$('#shotBtn').textContent='غيّر الصورة'});
+function submitOrder(){
+  const errs=[],name=$('#fName').value.trim(),phone=toLatin($('#fPhone').value).replace(/[\s-]/g,''),gov=$('#fGov').value,addr=$('#fAddr').value.trim(),amt=parseFloat(toLatin($('#fAmount').value).replace(/[,،]/g,''));
+  if(!cart.length)errs.push(['fName','السلة فاضية.']);
+  if(name.length<3)errs.push(['fName','اكتب الاسم بالكامل.']);
+  if(!/^01[0125]\d{8}$/.test(phone))errs.push(['fPhone','رقم الموبايل لازم يكون 11 رقم ويبدأ بـ 01.']);
+  if(!gov)errs.push(['fGov','اختار المحافظة.']);
+  if(addr.length<8)errs.push(['fAddr','اكتب العنوان بالتفصيل (الشارع والمنطقة).']);
+  if(!(amt>0))errs.push(['fAmount','اكتب المبلغ اللي حوّلته.']);
+  else if(amt<total())errs.push(['fAmount',`المبلغ أقل من الإجمالي (${egp(total())}).`]);
+  if(!shotFile)errs.push(['fShot','ارفع سكرين التحويل.']);
+  const box=$('#errBox');
+  if(errs.length){box.hidden=false;box.innerHTML='<ul>'+errs.map(e=>`<li>${e[1]}</li>`).join('')+'</ul>';box.scrollIntoView({block:'nearest'});const f=$('#'+errs[0][0]);if(f&&f.focus&&errs[0][0]!=='fShot')f.focus();return}
+  box.hidden=true;
+  /* دلوقتي الطلب بيظهر للعميل بس. لما تربطه بسيرفر أو إيميل أو شيت، ابعت البيانات دي من هنا: */
+  const order={no:'PST-'+String(Math.floor(1000+Math.random()*9000)),name,phone,gov,addr,pay:payMethod(),amount:amt,total:total(),items:cart.map(i=>({title:i.title,sub:i.sub,qty:i.qty,price:i.price})),screenshot:shotFile};
+  $('#ordNo').textContent=order.no;setStep('done');
+}
+
+/* ---------- init ---------- */
+renderFilters();renderGrid();renderCustom();renderCart();setStep('cart');
+</script>
+
+</body></html>
