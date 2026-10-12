@@ -187,7 +187,8 @@
         <p class="muted">رقم الطلب</p>
         <p class="ord num" id="ordNo"></p>
         <p class="muted">هنراجع التحويل ونكلمك على الموبايل لتأكيد الطلب وميعاد الشحن.</p>
-        <button class="btn" id="backShop" type="button">رجوع للمتجر</button>
+        <a class="btn sm" id="waOrderBtn" href="#" target="_blank" style="display:none;background:#25D366;color:#fff;text-decoration:none">تأكيد الطلب على واتساب 💬</a>
+        <button class="btn ghost" id="backShop" type="button">رجوع للمتجر</button>
       </div>
     </section>
   </div>
@@ -197,7 +198,8 @@
 <!-- إشعار التوست -->
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<!-- ملف السكريبت المنفصل -->
+<!-- مكتبة Supabase وملف السكريبت -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="script.js"></script>
 </body>
 </html>

@@ -20,6 +20,22 @@ const SHOP = {
     { id: 'xl', label: '50×75', w: 50, h: 75, price: 1800 }
   ]
 };
+
+/* ============ إعدادات الربط مع Supabase ============ */
+// الصق رابط مشروعك والمفتاح العام من Supabase Dashboard -> Settings -> API
+const SUPABASE_CONFIG = {
+  url: '',      // مثال: 'https://xyzcompany.supabase.co'
+  anonKey: ''   // مثال: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+};
+
+let supabaseClient = null;
+if (window.supabase && SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey) {
+  try {
+    supabaseClient = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+  } catch (e) {
+    console.warn('فشل تهيئة Supabase:', e);
+  }
+}
 /* ================================================================== */
 
 // ضبط اتجاه ولغة الصفحة
@@ -275,6 +291,7 @@ function loadCustom(file) {
   if (C.url) {
     try { URL.revokeObjectURL(C.url); } catch (e) {}
   }
+  C.file = file; // الاحتفاظ بملف الصورة لرفعه للتخزين الخاص
   const url = URL.createObjectURL(file), im = new Image();
   im.onload = () => {
     C.url = url;
@@ -304,6 +321,10 @@ $('#cAdd').addEventListener('click', () => {
     sub: `${pw}×${ph} سم — ${C.finish}`,
     price: sz.price,
     img: C.url,
+    file: C.file,
+    orientation: C.orient,
+    fit: C.fit,
+    finish: C.finish,
     custom: true
   });
 });
@@ -526,7 +547,7 @@ $('#fShot').addEventListener('change', e => {
   $('#shotBtn').textContent = 'غيّر الصورة';
 });
 
-function submitOrder() {
+async function submitOrder() {
   const errs = [];
   const name = $('#fName').value.trim();
   const phone = toLatin($('#fPhone').value).replace(/[\s-]/g, '');
@@ -554,6 +575,12 @@ function submitOrder() {
   }
   box.hidden = true;
 
+  const submitBtn = $('#submitOrder');
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'جاري إرسال الطلب...';
+  }
+
   /* توليد رقم الطلب ببادئة بوستيرا PST- */
   const order = {
     no: 'PST-' + String(Math.floor(1000 + Math.random() * 9000)),
@@ -564,12 +591,130 @@ function submitOrder() {
     pay: payMethod(),
     amount: amt,
     total: total(),
-    items: cart.map(i => ({ title: i.title, sub: i.sub, qty: i.qty, price: i.price })),
+    items: cart.map(i => ({
+      title: i.title,
+      sub: i.sub,
+      qty: i.qty,
+      price: i.price,
+      custom: i.custom,
+      file: i.file,
+      orientation: i.orientation,
+      fit: i.fit,
+      finish: i.finish
+    })),
     screenshot: shotFile
   };
 
+  /* في حال كان Supabase مربوطاً */
+  if (supabaseClient) {
+    try {
+      // 1. رفع سكرين التحويل للحاوية الخاصة (Private Storage)
+      let screenshotPath = null;
+      if (shotFile) {
+        const fileExt = shotFile.name.split('.').pop() || 'jpg';
+        const fileName = `${order.no}_receipt_${Date.now()}.${fileExt}`;
+        const { error: shotErr } = await supabaseClient.storage
+          .from('payment_screenshots')
+          .upload(fileName, shotFile);
+        if (!shotErr) screenshotPath = fileName;
+      }
+
+      // 2. رفع صور الطباعة الخاصة للحاوية الخاصة (Private Storage)
+      for (const it of order.items) {
+        if (it.custom && it.file) {
+          const ext = it.file.name.split('.').pop() || 'jpg';
+          const customName = `${order.no}_custom_${Date.now()}_${Math.random().toString(36).substring(7)}.${ext}`;
+          const { error: cErr } = await supabaseClient.storage
+            .from('custom_designs')
+            .upload(customName, it.file);
+          if (!cErr) it.uploadedPath = customName;
+        }
+      }
+
+      // 3. إدخال الطلب في جدول orders (INSERT فقط مسموح للزائر)
+      const { data: orderData, error: orderErr } = await supabaseClient
+        .from('orders')
+        .insert([{
+          order_number: order.no,
+          customer_name: order.name,
+          customer_phone: order.phone,
+          governorate: order.gov,
+          address: order.addr,
+          payment_method: order.pay,
+          total_amount: order.total,
+          transferred_amount: order.amount,
+          payment_screenshot_url: screenshotPath,
+          status: 'pending'
+        }])
+        .select('id')
+        .single();
+
+      // 4. إدخال عناصر الطلب في جدول order_items
+      if (orderData && orderData.id) {
+        const dbItems = order.items.map(i => ({
+          order_id: orderData.id,
+          product_title: i.title,
+          size_label: i.sub,
+          quantity: i.qty,
+          unit_price: i.price,
+          total_price: i.price * i.qty,
+          is_custom: !!i.custom,
+          custom_image_url: i.uploadedPath || null,
+          orientation: i.orientation || null,
+          fit: i.fit || null,
+          finish: i.finish || null
+        }));
+        await supabaseClient.from('order_items').insert(dbItems);
+      }
+    } catch (err) {
+      console.warn('تنبيه حفظ Supabase (سيتم الاستمرار محلياً):', err);
+    }
+  }
+
+  if (submitBtn) {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'تأكيد الطلب';
+  }
+
+  // تفعيل رابط وتفاصيل الطلب عبر واتساب
+  const waBtn = $('#waOrderBtn');
+  if (waBtn) {
+    const waMsg = encodeURIComponent(
+      `مرحباً بوستيرا، قمت بطلب جديد عبر المتجر:\n` +
+      `📌 رقم الطلب: ${order.no}\n` +
+      `👤 الاسم: ${order.name}\n` +
+      `📱 الموبايل: ${order.phone}\n` +
+      `📍 المحافظة: ${order.gov}\n` +
+      `🏠 العنوان: ${order.addr}\n` +
+      `💳 طريقة الدفع: ${order.pay === 'instapay' ? 'إنستا باي' : 'محفظة كاش'}\n` +
+      `💵 المبلغ المحوّل: ${egp(order.amount)}\n` +
+      `💰 إجمالي الطلب: ${egp(order.total)}`
+    );
+    waBtn.href = `https://wa.me/20${SHOP.whatsapp.replace(/^0/, '')}?text=${waMsg}`;
+    waBtn.style.display = 'inline-flex';
+  }
+
   $('#ordNo').textContent = order.no;
   setStep('done');
+}
+
+/* ---------- مزامنة الإعدادات مع Supabase (اختياري) ---------- */
+async function syncWithSupabase() {
+  if (!supabaseClient) return;
+  try {
+    const { data: sData } = await supabaseClient.from('settings').select('*').single();
+    if (sData) {
+      if (sData.instapay_handle) SHOP.instapay = sData.instapay_handle;
+      if (sData.wallet_number) SHOP.wallet = sData.wallet_number;
+      if (sData.whatsapp_number) SHOP.whatsapp = sData.whatsapp_number;
+      if (sData.shipping_fee) SHOP.shipping = Number(sData.shipping_fee);
+      if (sData.free_shipping_threshold) SHOP.freeShippingOver = Number(sData.free_shipping_threshold);
+      $('#footWa').textContent = SHOP.whatsapp;
+      renderPay();
+    }
+  } catch (e) {
+    // تجاهل الأخطاء واستخدام الإعدادات الافتراضية
+  }
 }
 
 /* ---------- بدء التشغيل (Init) ---------- */
@@ -578,3 +723,4 @@ renderGrid();
 renderCustom();
 renderCart();
 setStep('cart');
+syncWithSupabase();
