@@ -1,0 +1,1155 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>لوحة الإدارة | بوستيرا POSTERA</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ==========================================================================
+       أنماط لوحة الإدارة المخصصة - بوستيرا POSTERA
+       ========================================================================== */
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-color: var(--bg);
+    }
+    
+    .admin-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      gap: 16px;
+    }
+
+    .admin-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--fg);
+    }
+    .admin-brand b {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      color: var(--gold-text);
+    }
+    .admin-badge {
+      font-size: 0.72rem;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--surface-2);
+      border: 1px solid var(--gold);
+      color: var(--gold-text);
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    .admin-user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.88rem;
+    }
+
+    /* شاشة تسجيل الدخول */
+    .auth-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+    .auth-card {
+      width: min(440px, 100%);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: clamp(24px, 5vw, 36px);
+      box-shadow: var(--shadow);
+    }
+    .auth-card h1 {
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+      text-align: center;
+      color: var(--gold-text);
+    }
+    .auth-card p.sub {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 24px;
+    }
+
+    /* لوحة التحكم الرئيسية */
+    .admin-content {
+      flex: 1;
+      padding-block: 28px 48px;
+    }
+
+    /* بطاقات الإحصائيات */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+      overflow: hidden;
+    }
+    .kpi-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: 3px;
+      background: var(--line);
+    }
+    .kpi-card.gold::before { background: var(--gold); }
+    .kpi-card.warn::before { background: var(--warn); }
+    .kpi-card.ok::before { background: var(--ok); }
+    .kpi-card.info::before { background: #5a9cf8; }
+    .kpi-card .val {
+      font-family: var(--font-display);
+      font-size: 2.1rem;
+      font-weight: 700;
+      color: var(--fg);
+      line-height: 1.1;
+    }
+    .kpi-card .lbl {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    /* شريط أدوات البحث والفلترة */
+    .toolbar {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .search-box {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+    }
+    .search-box input {
+      flex: 1;
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 0.65rem 1.2rem;
+      color: var(--fg);
+      outline: none;
+    }
+    .search-box input:focus {
+      border-color: var(--gold);
+    }
+    
+    .status-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .status-filters button {
+      font-size: 0.82rem;
+      padding: 0.35rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .status-filters button:hover {
+      border-color: var(--gold);
+      color: var(--fg);
+    }
+    .status-filters button.active {
+      background: var(--gold);
+      color: var(--on-gold);
+      border-color: var(--gold);
+      font-weight: 600;
+    }
+
+    /* جدول وقائمة الطلبات */
+    .orders-table-wrap {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .orders-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: right;
+      font-size: 0.92rem;
+    }
+    .orders-table th {
+      background: var(--surface-2);
+      padding: 14px 16px;
+      color: var(--muted);
+      font-weight: 600;
+      border-bottom: 1px solid var(--line);
+    }
+    .orders-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: middle;
+    }
+    .orders-table tr:hover td {
+      background: rgba(201, 164, 92, 0.04);
+    }
+    .orders-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* شارات الحالة (Status Badges) */
+    .st-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .st-badge::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+    .st-pending   { background: rgba(230, 154, 74, 0.14); color: #f2a65a; }
+    .st-pending::before { background: #f2a65a; }
+    
+    .st-confirmed { background: rgba(90, 156, 248, 0.14); color: #7db0fb; }
+    .st-confirmed::before { background: #7db0fb; }
+    
+    .st-printing  { background: rgba(194, 154, 74, 0.18); color: var(--gold-hi); }
+    .st-printing::before { background: var(--gold-hi); }
+    
+    .st-shipped   { background: rgba(168, 85, 247, 0.14); color: #c084fc; }
+    .st-shipped::before { background: #c084fc; }
+    
+    .st-completed { background: rgba(109, 187, 142, 0.14); color: #6dbb8e; }
+    .st-completed::before { background: #6dbb8e; }
+    
+    .st-cancelled { background: rgba(229, 115, 106, 0.14); color: #e5736a; }
+    .st-cancelled::before { background: #e5736a; }
+
+    /* تنبيه فرق المبلغ */
+    .amt-alert {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.76rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(229, 115, 106, 0.16);
+      color: var(--bad);
+      font-weight: 600;
+      margin-top: 4px;
+    }
+    .amt-ok {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.76rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(109, 187, 142, 0.14);
+      color: var(--ok);
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    /* نافذة تفاصيل الطلب (Modal) */
+    .modal-scrim {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      display: grid;
+      place-items: center;
+      padding: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .modal-scrim.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal-card {
+      width: min(840px, 100%);
+      max-height: 90vh;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .modal-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      background: var(--surface-2);
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .detail-box {
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .detail-box h4 {
+      margin: 0 0 6px 0;
+      font-size: 0.95rem;
+      color: var(--gold-text);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .info-line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      gap: 12px;
+    }
+    .info-line span.lbl { color: var(--muted); }
+    .info-line span.val { color: var(--fg); font-weight: 500; }
+
+    /* بنود الطلب في المودال */
+    .items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .item-card {
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+      display: grid;
+      grid-template-columns: 60px 1fr auto;
+      gap: 14px;
+      align-items: center;
+    }
+    .item-card .thumb {
+      width: 60px;
+      aspect-ratio: 2/3;
+      border-radius: 6px;
+      overflow: hidden;
+      background: var(--metal);
+      padding: 2px;
+    }
+    .item-card .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+    .item-meta h5 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+    }
+    .item-meta p {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-top: 2px;
+    }
+
+    /* سكرين التحويل وصور العملاء */
+    .receipt-preview {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .receipt-img-wrap {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000;
+      max-height: 380px;
+      border: 1px solid var(--line);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .receipt-img-wrap img {
+      max-height: 380px;
+      object-fit: contain;
+      cursor: zoom-in;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .orders-table th:nth-child(3),
+      .orders-table td:nth-child(3),
+      .orders-table th:nth-child(4),
+      .orders-table td:nth-child(4) {
+        display: none;
+      }
+      .item-card {
+        grid-template-columns: 50px 1fr;
+      }
+      .item-card .price {
+        grid-column: 1 / -1;
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- الهيدر الخاص بالإدارة -->
+  <header class="top">
+    <div class="wrap">
+      <div class="admin-nav">
+        <a class="admin-brand" href="index.html">
+          <b>بوستيرا</b>
+          <span class="admin-badge">إدارة المتجر</span>
+        </a>
+
+        <div id="authNavArea" class="admin-user-info" style="display:none;">
+          <span id="adminEmailDisplay" class="muted num"></span>
+          <button id="refreshBtn" class="btn ghost sm" type="button" title="تحديث البيانات">🔄 تحديث</button>
+          <button id="logoutBtn" class="btn ghost sm" type="button" style="border-color:var(--bad);color:var(--bad);">خروج</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- شاشة 1: تسجيل دخول الإدارة (تظهر فقط عند عدم وجود جلسة نشطة) -->
+  <section id="loginSection" class="auth-wrap">
+    <div class="auth-card">
+      <div style="text-align:center;margin-bottom:14px;">
+        <span class="plate" style="display:inline-block;padding:8px 24px;border-radius:999px;">
+          <b style="font-family:var(--font-display);font-size:1.5rem;color:var(--gold-text)">POSTERA ADMIN</b>
+        </span>
+      </div>
+      <h1>تسجيل دخول المدير</h1>
+      <p class="sub">هذه اللوحة خاصة بمدير متجر بوستيرا فقط لمتابعة الطلبات والطباعة.</p>
+
+      <form id="loginForm" class="f" novalidate>
+        <div id="loginErr" class="err" style="display:none;" role="alert"></div>
+
+        <div class="field">
+          <label for="adminEmail">البريد الإلكتروني</label>
+          <input id="adminEmail" type="email" autocomplete="email" dir="ltr" placeholder="admin@postera.com" required>
+        </div>
+
+        <div class="field">
+          <label for="adminPass">كلمة المرور</label>
+          <input id="adminPass" type="password" autocomplete="current-password" dir="ltr" required>
+        </div>
+
+        <button id="loginSubmitBtn" class="btn block" type="submit" style="margin-top:10px;">
+          تسجيل الدخول
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- شاشة 2: لوحة إدارة ومتابعة الطلبات (تظهر بعد تسجيل الدخول) -->
+  <main id="dashboardSection" class="admin-content" style="display:none;">
+    <div class="wrap">
+      
+      <!-- شريط الإحصائيات (KPIs) -->
+      <div class="kpi-grid">
+        <div class="kpi-card gold">
+          <span class="lbl">إجمالي الطلبات</span>
+          <span class="val num" id="kpiTotal">0</span>
+        </div>
+        <div class="kpi-card warn">
+          <span class="lbl">جديد (في الانتظار)</span>
+          <span class="val num" id="kpiPending">0</span>
+        </div>
+        <div class="kpi-card info">
+          <span class="lbl">قيد الطباعة</span>
+          <span class="val num" id="kpiPrinting">0</span>
+        </div>
+        <div class="kpi-card ok">
+          <span class="lbl">المكتملة والمسلّمة</span>
+          <span class="val num" id="kpiCompleted">0</span>
+        </div>
+        <div class="kpi-card">
+          <span class="lbl">إجمالي المبيعات المؤكدة</span>
+          <span class="val num" id="kpiRevenue" style="font-size:1.6rem;color:var(--gold-text)">0 ج.م</span>
+        </div>
+      </div>
+
+      <!-- شريط البحث والفلترة -->
+      <div class="toolbar">
+        <div class="search-box">
+          <input id="searchInput" type="text" placeholder="🔍 بحث برقم الطلب (PST-xxxx)، اسم العميل، أو رقم الموبايل...">
+        </div>
+        <div class="status-filters" id="statusFilterBar">
+          <button type="button" class="active" data-status="all">الكل (<span id="cntAll">0</span>)</button>
+          <button type="button" data-status="pending">جديد (<span id="cntPending">0</span>)</button>
+          <button type="button" data-status="confirmed">تم التحقق من الدفع (<span id="cntConfirmed">0</span>)</button>
+          <button type="button" data-status="printing">قيد الطباعة (<span id="cntPrinting">0</span>)</button>
+          <button type="button" data-status="shipped">تم الشحن (<span id="cntShipped">0</span>)</button>
+          <button type="button" data-status="completed">تم التسليم (<span id="cntCompleted">0</span>)</button>
+          <button type="button" data-status="cancelled">مرفوض (<span id="cntCancelled">0</span>)</button>
+        </div>
+      </div>
+
+      <!-- قائمة الطلبات -->
+      <div class="orders-table-wrap">
+        <div id="tableLoading" style="text-align:center;padding:40px;color:var(--muted)">
+          جاري تحميل الطلبات من Supabase...
+        </div>
+        <div id="tableEmpty" style="display:none;text-align:center;padding:50px;color:var(--muted)">
+          لا توجد طلبات مطابقة للبحث أو الفلتر المختار.
+        </div>
+        <table id="ordersTable" class="orders-table" style="display:none;">
+          <thead>
+            <tr>
+              <th>رقم الطلب</th>
+              <th>العميل والموبايل</th>
+              <th>المحافظة</th>
+              <th>طريقة الدفع</th>
+              <th>المبلغ والتحويل</th>
+              <th>الحالة</th>
+              <th>التاريخ</th>
+              <th>إجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="ordersTbody">
+            <!-- سيتم توليد الصفوف برمجياً -->
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- نافذة منبثقة لتفاصيل الطلب المحددة (Order Modal) -->
+  <div id="orderModal" class="modal-scrim" role="dialog" aria-modal="true" aria-labelledby="modalOrderNo">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h2 id="modalOrderNo" style="font-family:var(--font-display);color:var(--gold-text);margin:0;font-size:1.6rem"></h2>
+          <small id="modalOrderDate" class="muted num"></small>
+        </div>
+        <button id="closeModalBtn" class="iconbtn" type="button" aria-label="إغلاق">✕</button>
+      </div>
+
+      <div class="modal-body" id="modalBody">
+        
+        <!-- تفاصيل العميل والدفع -->
+        <div class="detail-grid">
+          <div class="detail-box">
+            <h4>👤 بيانات العميل والشحن</h4>
+            <div class="info-line"><span class="lbl">الاسم:</span><span class="val" id="mCustName"></span></div>
+            <div class="info-line">
+              <span class="lbl">الموبايل:</span>
+              <span class="val">
+                <a id="mCustPhone" href="#" style="color:var(--gold-text);text-decoration:none;" class="num"></a>
+                <a id="mCustWa" href="#" target="_blank" style="margin-right:8px;font-size:0.85rem;color:#25d366;text-decoration:none;">واتساب 💬</a>
+              </span>
+            </div>
+            <div class="info-line"><span class="lbl">المحافظة:</span><span class="val" id="mCustGov"></span></div>
+            <div class="info-line"><span class="lbl">العنوان:</span><span class="val" id="mCustAddr" style="line-height:1.4"></span></div>
+          </div>
+
+          <div class="detail-box">
+            <h4>💳 التحقق من الدفع والمبالغ</h4>
+            <div class="info-line"><span class="lbl">طريقة الدفع:</span><span class="val" id="mPayMethod"></span></div>
+            <div class="info-line"><span class="lbl">الإجمالي المطلوب:</span><span class="val num" id="mTotalAmt" style="font-weight:700"></span></div>
+            <div class="info-line"><span class="lbl">المبلغ المحوّل:</span><span class="val num" id="mTransAmt" style="font-weight:700"></span></div>
+            <div id="mAmtCheckAlert"></div>
+          </div>
+        </div>
+
+        <!-- سكرين التحويل -->
+        <div class="detail-box receipt-preview">
+          <h4>🧾 إيصال وسكرين التحويل</h4>
+          <div id="mReceiptContainer">
+            <div id="mReceiptLoading" class="muted" style="padding:14px;text-align:center;">جاري تجهيز صورة الإيصال المحمية...</div>
+            <div class="receipt-img-wrap" id="mReceiptWrap" style="display:none;">
+              <img id="mReceiptImg" alt="إيصال التحويل">
+            </div>
+            <div style="margin-top:8px;">
+              <a id="mReceiptDownloadBtn" class="btn ghost sm" href="#" target="_blank" style="display:none;">فتح الإيصال بالحجم الكامل 🔍</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- بنود الطلب مع روابط تحميل الصور الأصلية -->
+        <div class="detail-box">
+          <h4>🖼️ بنود الطلب واللوحات</h4>
+          <div class="items-list" id="mItemsList">
+            <!-- بنود الطلب برمجياً -->
+          </div>
+        </div>
+
+        <!-- تغيير حالة الطلب -->
+        <div class="detail-box" style="border-color:var(--gold);">
+          <h4>⚡ تحديث حالة الطلب</h4>
+          <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;">
+            <label for="mStatusSelect" class="muted" style="font-size:0.9rem">الحالة الحالية:</label>
+            <select id="mStatusSelect" style="flex:1;min-width:200px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:0.6rem 0.8rem;color:var(--fg);">
+              <option value="pending">جديد (في الانتظار)</option>
+              <option value="confirmed">تم التأكد من الدفع</option>
+              <option value="printing">قيد الطباعة في الورشة</option>
+              <option value="shipped">تم الشحن للعميل</option>
+              <option value="completed">تم التسليم بنجاح</option>
+              <option value="cancelled">مرفوض / ملغي</option>
+            </select>
+            <button id="mSaveStatusBtn" class="btn sm" type="button">حفظ وتحديث</button>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <div>
+          <button id="mDeleteOrderBtn" class="btn ghost sm" type="button" style="border-color:var(--bad);color:var(--bad);">حذف الطلب 🗑️</button>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <a id="mDirectWaUpdate" href="#" target="_blank" class="btn sm" style="background:#25d366;color:#fff;text-decoration:none;">مراسلة العميل بالواتساب 💬</a>
+          <button id="mCloseBottomBtn" class="btn ghost sm" type="button">إغلاق</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- التوست للإشعارات السريعة -->
+  <div class="toast" id="adminToast" role="status" aria-live="polite"></div>
+
+  <!-- مكتبة Supabase وملف الإعدادات المشترك -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script>
+    /**
+     * ==============================================================================
+     * كود إدارة متجر بوستيرا | POSTERA Admin Controller
+     * ==============================================================================
+     */
+    
+    // استخدام نفس إعدادات Supabase من المتجر الرئيسي أو محلياً
+    const ADMIN_CONFIG = {
+      url: (typeof SUPABASE_CONFIG !== 'undefined' && SUPABASE_CONFIG.url) ? SUPABASE_CONFIG.url : localStorage.getItem('postera_sb_url') || '',
+      anonKey: (typeof SUPABASE_CONFIG !== 'undefined' && SUPABASE_CONFIG.anonKey) ? SUPABASE_CONFIG.anonKey : localStorage.getItem('postera_sb_key') || ''
+    };
+
+    let sb = null;
+    let currentUser = null;
+    let allOrders = [];
+    let currentFilter = 'all';
+    let currentSearch = '';
+    let selectedOrder = null;
+
+    // دوال مساعدة
+    const toastAdmin = (m) => {
+      const t = document.getElementById('adminToast');
+      t.textContent = m;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2200);
+    };
+
+    const STATUS_MAP = {
+      pending:   { text: 'جديد (انتظار)', class: 'st-pending' },
+      confirmed: { text: 'تم التحقق من الدفع', class: 'st-confirmed' },
+      printing:  { text: 'قيد الطباعة', class: 'st-printing' },
+      shipped:   { text: 'تم الشحن', class: 'st-shipped' },
+      completed: { text: 'تم التسليم', class: 'st-completed' },
+      cancelled: { text: 'مرفوض', class: 'st-cancelled' }
+    };
+
+    function initClient() {
+      if (ADMIN_CONFIG.url && ADMIN_CONFIG.anonKey && window.supabase) {
+        sb = window.supabase.createClient(ADMIN_CONFIG.url, ADMIN_CONFIG.anonKey);
+      }
+    }
+
+    // التحقق من حالة تسجيل الدخول
+    async function checkAuth() {
+      initClient();
+      if (!sb) {
+        showLoginError('لم يتم العثور على مفاتيح Supabase. يرجى ملء SUPABASE_CONFIG في script.js');
+        return;
+      }
+      const { data: { session } } = await sb.auth.getSession();
+      if (session && session.user) {
+        currentUser = session.user;
+        onLoggedIn();
+      } else {
+        onLoggedOut();
+      }
+    }
+
+    function onLoggedIn() {
+      document.getElementById('loginSection').style.display = 'none';
+      document.getElementById('dashboardSection').style.display = 'block';
+      document.getElementById('authNavArea').style.display = 'flex';
+      document.getElementById('adminEmailDisplay').textContent = currentUser.email;
+      loadOrders();
+    }
+
+    function onLoggedOut() {
+      currentUser = null;
+      document.getElementById('loginSection').style.display = 'flex';
+      document.getElementById('dashboardSection').style.display = 'none';
+      document.getElementById('authNavArea').style.display = 'none';
+    }
+
+    function showLoginError(msg) {
+      const err = document.getElementById('loginErr');
+      err.textContent = msg;
+      err.style.display = 'block';
+    }
+
+    // تسجيل الدخول
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      initClient();
+      if (!sb) {
+        showLoginError('يرجى ضبط رابط ومفتاح Supabase في script.js أولاً.');
+        return;
+      }
+
+      const email = document.getElementById('adminEmail').value.trim();
+      const password = document.getElementById('adminPass').value;
+      const btn = document.getElementById('loginSubmitBtn');
+
+      btn.disabled = true;
+      btn.textContent = 'جاري التحقق...';
+      document.getElementById('loginErr').style.display = 'none';
+
+      try {
+        const { data, error } = await sb.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        currentUser = data.user;
+        toastAdmin('مرحباً بك! تم تسجيل الدخول بنجاح');
+        onLoggedIn();
+      } catch (err) {
+        showLoginError(err.message === 'Invalid login credentials' ? 'البريد الإلكتروني أو كلمة المرور غير صحيحة.' : err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'تسجيل الدخول';
+      }
+    });
+
+    // تسجيل الخروج
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      if (sb) await sb.auth.signOut();
+      onLoggedOut();
+      toastAdmin('تم تسجيل الخروج');
+    });
+
+    // تحميل كافة الطلبات من جدول orders
+    async function loadOrders() {
+      if (!sb) return;
+      document.getElementById('tableLoading').style.display = 'block';
+      document.getElementById('tableEmpty').style.display = 'none';
+      document.getElementById('ordersTable').style.display = 'none';
+
+      try {
+        const { data, error } = await sb
+          .from('orders')
+          .select('*, order_items(*)')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        allOrders = data || [];
+        updateKPIs();
+        renderOrdersTable();
+      } catch (err) {
+        console.error('Error fetching orders:', err);
+        toastAdmin('حدث خطأ أثناء تحميل الطلبات: ' + err.message);
+      } finally {
+        document.getElementById('tableLoading').style.display = 'none';
+      }
+    }
+
+    // تحديث بطاقات الأرقام والعدادات
+    function updateKPIs() {
+      const total = allOrders.length;
+      const pending = allOrders.filter(o => o.status === 'pending').length;
+      const printing = allOrders.filter(o => o.status === 'printing').length;
+      const completed = allOrders.filter(o => o.status === 'completed').length;
+      const revenue = allOrders
+        .filter(o => o.status !== 'cancelled')
+        .reduce((sum, o) => sum + Number(o.total_amount || 0), 0);
+
+      document.getElementById('kpiTotal').textContent = total;
+      document.getElementById('kpiPending').textContent = pending;
+      document.getElementById('kpiPrinting').textContent = printing;
+      document.getElementById('kpiCompleted').textContent = completed;
+      document.getElementById('kpiRevenue').textContent = Number(revenue).toLocaleString('en-US') + ' ج.م';
+
+      // تحديث عدادات الفلاتر
+      document.getElementById('cntAll').textContent = total;
+      document.getElementById('cntPending').textContent = pending;
+      document.getElementById('cntConfirmed').textContent = allOrders.filter(o => o.status === 'confirmed').length;
+      document.getElementById('cntPrinting').textContent = printing;
+      document.getElementById('cntShipped').textContent = allOrders.filter(o => o.status === 'shipped').length;
+      document.getElementById('cntCompleted').textContent = completed;
+      document.getElementById('cntCancelled').textContent = allOrders.filter(o => o.status === 'cancelled').length;
+    }
+
+    // تصفية وعرض جدول الطلبات
+    function renderOrdersTable() {
+      let filtered = [...allOrders];
+
+      // فلترة بالحالة
+      if (currentFilter !== 'all') {
+        filtered = filtered.filter(o => o.status === currentFilter);
+      }
+
+      // بحث بالاسم أو الموبايل أو رقم الطلب
+      if (currentSearch.trim()) {
+        const q = currentSearch.trim().toLowerCase();
+        filtered = filtered.filter(o => 
+          (o.order_number && o.order_number.toLowerCase().includes(q)) ||
+          (o.customer_name && o.customer_name.toLowerCase().includes(q)) ||
+          (o.customer_phone && o.customer_phone.includes(q)) ||
+          (o.governorate && o.governorate.includes(q))
+        );
+      }
+
+      const tbody = document.getElementById('ordersTbody');
+      tbody.innerHTML = '';
+
+      if (!filtered.length) {
+        document.getElementById('tableEmpty').style.display = 'block';
+        document.getElementById('ordersTable').style.display = 'none';
+        return;
+      }
+
+      document.getElementById('tableEmpty').style.display = 'none';
+      document.getElementById('ordersTable').style.display = 'table';
+
+      tbody.innerHTML = filtered.map(o => {
+        const st = STATUS_MAP[o.status] || { text: o.status, class: 'st-pending' };
+        const isUnderpaid = Number(o.transferred_amount) < Number(o.total_amount);
+        const dateStr = new Date(o.created_at).toLocaleDateString('ar-EG', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+        return `
+          <tr data-id="${o.id}">
+            <td><strong style="color:var(--gold-text);letter-spacing:0.04em;" class="num">${o.order_number}</strong></td>
+            <td>
+              <div><strong>${escapeHtml(o.customer_name)}</strong></div>
+              <small class="muted num" dir="ltr">${o.customer_phone}</small>
+            </td>
+            <td>${escapeHtml(o.governorate)}</td>
+            <td>${o.payment_method === 'instapay' ? 'إنستا باي' : 'محفظة كاش'}</td>
+            <td>
+              <div class="num font-bold">${Number(o.total_amount).toLocaleString('en-US')} ج.م</div>
+              ${isUnderpaid 
+                ? `<div class="amt-alert num">حوّل: ${Number(o.transferred_amount).toLocaleString('en-US')} ج.م ⚠️</div>` 
+                : `<div class="amt-ok num">حوّل: ${Number(o.transferred_amount).toLocaleString('en-US')} ج.م ✓</div>`}
+            </td>
+            <td><span class="st-badge ${st.class}">${st.text}</span></td>
+            <td><small class="muted num">${dateStr}</small></td>
+            <td>
+              <button class="btn ghost sm view-order-btn" data-id="${o.id}" type="button">عرض وتفاصيل 🔍</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function escapeHtml(str) {
+      return String(str || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    }
+
+    // فلترة بالحالة
+    document.getElementById('statusFilterBar').addEventListener('click', e => {
+      const b = e.target.closest('button');
+      if (!b) return;
+      document.querySelectorAll('#statusFilterBar button').forEach(btn => btn.classList.remove('active'));
+      b.classList.add('active');
+      currentFilter = b.dataset.status;
+      renderOrdersTable();
+    });
+
+    // البحث المباشر
+    document.getElementById('searchInput').addEventListener('input', e => {
+      currentSearch = e.target.value;
+      renderOrdersTable();
+    });
+
+    document.getElementById('refreshBtn').addEventListener('click', () => {
+      loadOrders();
+      toastAdmin('تم تحديث البيانات');
+    });
+
+    // فتح تفاصيل الطلب عند الضغط على الجدول
+    document.getElementById('ordersTbody').addEventListener('click', e => {
+      const btn = e.target.closest('.view-order-btn');
+      if (!btn) return;
+      const orderId = btn.dataset.id;
+      const order = allOrders.find(o => o.id === orderId);
+      if (order) openOrderModal(order);
+    });
+
+    // فتح المودال وعرض كافة التفاصيل
+    async function openOrderModal(order) {
+      selectedOrder = order;
+      document.getElementById('modalOrderNo').textContent = order.order_number;
+      document.getElementById('modalOrderDate').textContent = 'تاريخ الطلب: ' + new Date(order.created_at).toLocaleString('ar-EG');
+      
+      // العميل
+      document.getElementById('mCustName').textContent = order.customer_name;
+      const phoneEl = document.getElementById('mCustPhone');
+      phoneEl.textContent = order.customer_phone;
+      phoneEl.href = 'tel:' + order.customer_phone;
+      
+      const cleanPhone = order.customer_phone.replace(/^0/, '');
+      document.getElementById('mCustWa').href = `https://wa.me/20${cleanPhone}`;
+      document.getElementById('mCustGov').textContent = order.governorate;
+      document.getElementById('mCustAddr').textContent = order.address;
+
+      // الدفع والمبالغ
+      document.getElementById('mPayMethod').textContent = order.payment_method === 'instapay' ? 'إنستا باي (InstaPay)' : 'محفظة كاش إلكترونية';
+      document.getElementById('mTotalAmt').textContent = Number(order.total_amount).toLocaleString('en-US') + ' ج.م';
+      document.getElementById('mTransAmt').textContent = Number(order.transferred_amount).toLocaleString('en-US') + ' ج.م';
+
+      const diff = Number(order.total_amount) - Number(order.transferred_amount);
+      const alertDiv = document.getElementById('mAmtCheckAlert');
+      if (diff > 0) {
+        alertDiv.innerHTML = `<div class="amt-alert" style="padding:8px 12px;font-size:0.88rem;width:100%;">
+          ⚠️ تنبيه: المبلغ المحول أقل من المطلوب بفارق ${diff.toLocaleString('en-US')} ج.م! يرجى التواصل مع العميل.
+        </div>`;
+      } else {
+        alertDiv.innerHTML = `<div class="amt-ok" style="padding:8px 12px;font-size:0.88rem;width:100%;">
+          ✓ المبلغ المحول يطابق إجمالي الطلب بالكامل.
+        </div>`;
+      }
+
+      // جلب وتجهيز سكرين التحويل من الحاوية الخاصة
+      setupReceiptImage(order);
+
+      // بنود الطلب وتحميل الصور الأصلية
+      setupOrderItems(order);
+
+      // تحديد الحالة الحالية في القائمة
+      document.getElementById('mStatusSelect').value = order.status;
+
+      // رابط تحديث واتساب
+      const waMsg = encodeURIComponent(`مرحباً أستاذ ${order.customer_name}، نتواصل معك بخصوص طلبك من بوستيرا رقم ${order.order_number}:\nحالة الطلب الحالية: ${STATUS_MAP[order.status]?.text || order.status}`);
+      document.getElementById('mDirectWaUpdate').href = `https://wa.me/20${cleanPhone}?text=${waMsg}`;
+
+      // فتح المودال
+      document.getElementById('orderModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    // جلب سكرين التحويل عبر Signed URL من التخزين الخاص
+    async function setupReceiptImage(order) {
+      const loading = document.getElementById('mReceiptLoading');
+      const wrap = document.getElementById('mReceiptWrap');
+      const img = document.getElementById('mReceiptImg');
+      const dlBtn = document.getElementById('mReceiptDownloadBtn');
+
+      loading.style.display = 'block';
+      wrap.style.display = 'none';
+      dlBtn.style.display = 'none';
+
+      if (!order.payment_screenshot_url) {
+        loading.textContent = 'لم يتم إرفاق سكرين تحويل مع هذا الطلب.';
+        return;
+      }
+
+      try {
+        // إنشاء رابط موقّع صالح لمدة ساعة من الحاوية الخاصة
+        const { data, error } = await sb.storage
+          .from('payment_screenshots')
+          .createSignedUrl(order.payment_screenshot_url, 3600);
+
+        if (error) throw error;
+        img.src = data.signedUrl;
+        dlBtn.href = data.signedUrl;
+        dlBtn.style.display = 'inline-flex';
+        wrap.style.display = 'flex';
+        loading.style.display = 'none';
+      } catch (err) {
+        console.warn('Receipt image signed URL error:', err);
+        loading.textContent = 'تعذر تحميل سكرين التحويل: ' + err.message;
+      }
+    }
+
+    // تجهيز بنود الطلب وأزرار تحميل صور العملاء
+    async function setupOrderItems(order) {
+      const container = document.getElementById('mItemsList');
+      const items = order.order_items || [];
+
+      if (!items.length) {
+        container.innerHTML = '<p class="muted">لا توجد تفاصيل مسجلة لبنود هذا الطلب.</p>';
+        return;
+      }
+
+      container.innerHTML = items.map((it, idx) => {
+        return `
+          <div class="item-card" id="itemRow_${it.id || idx}">
+            <div class="thumb">
+              <div style="width:100%;height:100%;background:var(--metal);display:grid;place-items:center;color:var(--gold-text);font-size:1.2rem;">🖼️</div>
+            </div>
+            <div class="item-meta">
+              <h5>${escapeHtml(it.product_title)}</h5>
+              <p>المقاس: <strong class="num">${it.size_label}</strong> | الكمية: <strong class="num">${it.quantity}</strong> ${it.finish ? `| التشطيب: ${it.finish}` : ''}</p>
+              ${it.is_custom ? `<span style="font-size:0.78rem;background:rgba(201,164,92,0.18);color:var(--gold-text);padding:2px 8px;border-radius:4px;display:inline-block;margin-top:4px;">✨ طباعة صورة خاصة للعميل</span>` : ''}
+              ${it.custom_image_url ? `
+                <div style="margin-top:8px;">
+                  <button type="button" class="btn sm dl-custom-btn" data-path="${it.custom_image_url}" data-title="${it.product_title}" style="background:var(--gold);color:var(--on-gold);font-size:0.82rem;padding:0.4rem 0.9rem;">
+                    📥 تحميل صورة العميل بجودتها الأصلية للطباعة
+                  </button>
+                </div>
+              ` : ''}
+            </div>
+            <div class="price num font-bold" style="font-size:1.15rem;">
+              ${Number(it.total_price).toLocaleString('en-US')} ج.م
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // ربط أزرار تحميل صور العملاء الأصلية
+      container.querySelectorAll('.dl-custom-btn').forEach(b => {
+        b.addEventListener('click', async () => {
+          const path = b.dataset.path;
+          b.disabled = true;
+          b.textContent = 'جاري تحضير الملف الأصلي...';
+          try {
+            // توليد Signed URL لتحميل الصورة الأصلية بكامل الدقة من الحاوية الخاصة
+            const { data, error } = await sb.storage.from('custom_designs').createSignedUrl(path, 3600);
+            if (error) throw error;
+            
+            // فتح الرابط أو تنزيل الملف مباشرة
+            const a = document.createElement('a');
+            a.href = data.signedUrl;
+            a.target = '_blank';
+            a.download = `postera_custom_${order.order_number}_${path.split('/').pop()}`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            toastAdmin('بدأ تحميل الصورة الأصلية');
+          } catch (err) {
+            toastAdmin('فشل تحميل الصورة: ' + err.message);
+          } finally {
+            b.disabled = false;
+            b.textContent = '📥 تحميل صورة العميل بجودتها الأصلية للطباعة';
+          }
+        });
+      });
+    }
+
+    // حفظ وتحديث حالة الطلب
+    document.getElementById('mSaveStatusBtn').addEventListener('click', async () => {
+      if (!selectedOrder || !sb) return;
+      const newStatus = document.getElementById('mStatusSelect').value;
+      const btn = document.getElementById('mSaveStatusBtn');
+      btn.disabled = true;
+      btn.textContent = 'جاري الحفظ...';
+
+      try {
+        const { error } = await sb
+          .from('orders')
+          .update({ status: newStatus, updated_at: new Date().toISOString() })
+          .eq('id', selectedOrder.id);
+
+        if (error) throw error;
+        selectedOrder.status = newStatus;
+        toastAdmin('تم تحديث حالة الطلب إلى: ' + (STATUS_MAP[newStatus]?.text || newStatus));
+        updateKPIs();
+        renderOrdersTable();
+      } catch (err) {
+        toastAdmin('حدث خطأ أثناء حفظ الحالة: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'حفظ وتحديث';
+      }
+    });
+
+    // حذف الطلب
+    document.getElementById('mDeleteOrderBtn').addEventListener('click', async () => {
+      if (!selectedOrder || !sb) return;
+      if (!confirm(`هل أنت متأكد من حذف الطلب ${selectedOrder.order_number} نهائياً؟`)) return;
+
+      try {
+        const { error } = await sb.from('orders').delete().eq('id', selectedOrder.id);
+        if (error) throw error;
+        allOrders = allOrders.filter(o => o.id !== selectedOrder.id);
+        closeModal();
+        updateKPIs();
+        renderOrdersTable();
+        toastAdmin('تم حذف الطلب بنجاح');
+      } catch (err) {
+        toastAdmin('فشل حذف الطلب: ' + err.message);
+      }
+    });
+
+    // إغلاق المودال
+    function closeModal() {
+      document.getElementById('orderModal').classList.remove('open');
+      document.body.style.overflow = '';
+      selectedOrder = null;
+    }
+    document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+    document.getElementById('mCloseBottomBtn').addEventListener('click', closeModal);
+    document.getElementById('orderModal').addEventListener('click', (e) => {
+      if (e.target.id === 'orderModal') closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && document.getElementById('orderModal').classList.contains('open')) closeModal();
+    });
+
+    // بدء فحص الجلسة عند تحميل الصفحة
+    checkAuth();
+  </script>
+</body>
+</html>

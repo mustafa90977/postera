@@ -5,8 +5,8 @@
  * ==========================================================================
  */
 
-/* ============ إعدادات المتجر — غيّر القيم دي حسب رغبتك ============ */
-const SHOP = {
+/* ============ إعدادات المتجر وبيانات الربط ============ */
+var SHOP = window.SHOP || {
   instapay: 'postera@instapay',        // عنوان إنستا باي للمتجر
   wallet:   '01000000000',            // رقم محفظة كاش (فودافون كاش / غيرها)
   whatsapp: '01000000000',            // واتساب خدمة العملاء
@@ -21,11 +21,9 @@ const SHOP = {
   ]
 };
 
-/* ============ إعدادات الربط مع Supabase ============ */
-// الصق رابط مشروعك والمفتاح العام من Supabase Dashboard -> Settings -> API
-const SUPABASE_CONFIG = {
-  url: '',      // مثال: 'https://xyzcompany.supabase.co'
-  anonKey: ''   // مثال: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+var SUPABASE_CONFIG = window.SUPABASE_CONFIG || {
+  url: '',
+  anonKey: ''
 };
 
 let supabaseClient = null;
