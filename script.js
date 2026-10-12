@@ -133,7 +133,7 @@ function artSvg(kind, label) {
 }
 
 // قائمة اللوحات الجاهزة
-const POSTERS = [
+let POSTERS = [
   { id: 1, kind: 'pyramids',  title: 'ليل الأهرامات',      cat: 'مصر' },
   { id: 2, kind: 'moon',      title: 'القمر الذهبي',       cat: 'فضاء' },
   { id: 3, kind: 'mountains', title: 'جبال الفجر',        cat: 'طبيعة' },
@@ -143,7 +143,7 @@ const POSTERS = [
   { id: 7, kind: 'desert',    title: 'كثبان الصحراء',     cat: 'طبيعة' },
   { id: 8, kind: 'waves',     title: 'خطوط الموج',        cat: 'تجريدي' }
 ];
-const CATS = ['الكل', ...new Set(POSTERS.map(p => p.cat))];
+let CATS = ['الكل', ...new Set(POSTERS.map(p => p.cat))];
 
 /* ---------- إدارة الحالة (State) ---------- */
 let cart = [];
@@ -182,15 +182,20 @@ function renderFilters() {
 
 function renderGrid() {
   const list = POSTERS.filter(p => st.filter === 'الكل' || p.cat === st.filter);
+  const defaultSz = (SHOP.sizes[0] && SHOP.sizes[0].id) || 'm';
   $('#grid').innerHTML = list.map(p => {
-    const cur = st.sizes[p.id] || 'm';
+    const cur = st.sizes[p.id] || defaultSz;
+    const szObj = sizeOf(cur) || SHOP.sizes[0] || { price: 0 };
+    const artContent = p.image_url 
+      ? `<img src="${p.image_url}" alt="${esc(p.title)}" style="width:100%;height:100%;object-fit:cover;">` 
+      : (p.kind ? artSvg(p.kind, p.title) : artSvg('moon', p.title));
     return `<article class="card" data-id="${p.id}">
-      <div class="plate"><div class="art">${artSvg(p.kind, p.title)}</div></div>
+      <div class="plate"><div class="art">${artContent}</div></div>
       <div class="meta">
-        <div><h3>${p.title}</h3><span class="cat">${p.cat}</span></div>
+        <div><h3>${esc(p.title)}</h3><span class="cat">${esc(p.cat)}</span></div>
         <div class="seg" role="group" aria-label="المقاس">${segHTML(SHOP.sizes.map(s => ({ id: s.id, html: `<bdi>${s.label}</bdi>` })), cur, 'data-size')}</div>
         <div class="buy">
-          <div class="price num"><span data-p>${egp(sizeOf(cur).price)}</span></div>
+          <div class="price num"><span data-p>${egp(szObj.price)}</span></div>
           <button class="btn sm" type="button" data-add>ضيف للسلة</button>
         </div>
       </div>
@@ -209,17 +214,28 @@ $('#filters').addEventListener('click', e => {
 $('#grid').addEventListener('click', e => {
   const card = e.target.closest('.card');
   if (!card) return;
-  const id = +card.dataset.id, p = POSTERS.find(x => x.id === id);
+  const id = card.dataset.id, p = POSTERS.find(x => String(x.id) === String(id));
+  if (!p) return;
   const sb = e.target.closest('[data-size]');
   if (sb) {
     st.sizes[id] = sb.dataset.size;
     $$('[data-size]', card).forEach(b => b.setAttribute('aria-pressed', b === sb));
-    $('[data-p]', card).textContent = egp(sizeOf(sb.dataset.size).price);
+    const szObj = sizeOf(sb.dataset.size) || SHOP.sizes[0];
+    $('[data-p]', card).textContent = egp(szObj ? szObj.price : 0);
     return;
   }
   if (e.target.closest('[data-add]')) {
-    const sz = sizeOf(st.sizes[id] || 'm');
-    addItem({ key: `g-${id}-${sz.id}`, title: p.title, sub: `${sz.label} سم`, price: sz.price, kind: p.kind });
+    const defaultSz = (SHOP.sizes[0] && SHOP.sizes[0].id) || 'm';
+    const sz = sizeOf(st.sizes[id] || defaultSz) || SHOP.sizes[0];
+    addItem({
+      key: `g-${id}-${sz.id}`,
+      title: p.title,
+      sub: `${sz.label} سم`,
+      price: sz.price,
+      kind: p.kind,
+      img: p.image_url,
+      custom: false
+    });
   }
 });
 
@@ -360,7 +376,7 @@ function renderCart() {
   } else {
     list.innerHTML = cart.map(i => `
       <div class="item" data-key="${i.key}">
-        <div class="thumb">${i.custom ? `<img src="${i.img}" alt="">` : artSvg(i.kind, i.title)}</div>
+        <div class="thumb">${i.img ? `<img src="${i.img}" alt="">` : (i.kind ? artSvg(i.kind, i.title) : '<div style="background:var(--metal);width:100%;height:100%"></div>')}</div>
         <div>
           <h4>${esc(i.title)}</h4>
           <small>${esc(i.sub)}</small>
@@ -696,22 +712,66 @@ async function submitOrder() {
   setStep('done');
 }
 
-/* ---------- مزامنة الإعدادات مع Supabase (اختياري) ---------- */
+/* ---------- مزامنة المتجر الحية مع Supabase ---------- */
 async function syncWithSupabase() {
   if (!supabaseClient) return;
   try {
+    // 1. مزامنة الإعدادات (Settings)
     const { data: sData } = await supabaseClient.from('settings').select('*').single();
     if (sData) {
       if (sData.instapay_handle) SHOP.instapay = sData.instapay_handle;
       if (sData.wallet_number) SHOP.wallet = sData.wallet_number;
       if (sData.whatsapp_number) SHOP.whatsapp = sData.whatsapp_number;
-      if (sData.shipping_fee) SHOP.shipping = Number(sData.shipping_fee);
-      if (sData.free_shipping_threshold) SHOP.freeShippingOver = Number(sData.free_shipping_threshold);
+      if (sData.shipping_fee !== null && sData.shipping_fee !== undefined) SHOP.shipping = Number(sData.shipping_fee);
+      if (sData.free_shipping_threshold !== null && sData.free_shipping_threshold !== undefined) SHOP.freeShippingOver = Number(sData.free_shipping_threshold);
       $('#footWa').textContent = SHOP.whatsapp;
       renderPay();
+      renderCart();
+    }
+
+    // 2. مزامنة المقاسات والأسعار (Sizes & Prices)
+    const { data: szData } = await supabaseClient
+      .from('sizes')
+      .select('*')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true });
+
+    if (szData && szData.length) {
+      SHOP.sizes = szData.map(s => ({
+        id: s.id,
+        label: s.label,
+        w: Number(s.width_cm),
+        h: Number(s.height_cm),
+        price: Number(s.price)
+      }));
+      if (!sizeOf(C.size)) C.size = SHOP.sizes[0].id;
+      $('#cSize').innerHTML = segHTML(SHOP.sizes.map(s => ({ id: s.id, html: `<bdi>${s.label}</bdi>` })), C.size, 'data-v');
+      renderCustom();
+      renderGrid();
+    }
+
+    // 3. مزامنة المنتجات والكتالوج (Products)
+    const { data: pData } = await supabaseClient
+      .from('products')
+      .select('*')
+      .eq('is_visible', true)
+      .order('sort_order', { ascending: true });
+
+    if (pData && pData.length) {
+      POSTERS = pData.map(p => ({
+        id: p.id,
+        kind: p.kind,
+        title: p.title,
+        cat: p.category,
+        image_url: p.image_url
+      }));
+      CATS = ['الكل', ...new Set(POSTERS.map(p => p.cat))];
+      if (!CATS.includes(st.filter)) st.filter = 'الكل';
+      renderFilters();
+      renderGrid();
     }
   } catch (e) {
-    // تجاهل الأخطاء واستخدام الإعدادات الافتراضية
+    console.warn('تنبيه المزامنة مع Supabase (سيتم استخدام البيانات المحلية):', e);
   }
 }
 
