@@ -673,6 +673,7 @@
                 <th>المحافظة</th>
                 <th>طريقة الدفع</th>
                 <th>المبلغ والتحويل</th>
+                <th>سكرين التحويل</th>
                 <th>الحالة</th>
                 <th>التاريخ</th>
                 <th>إجراءات</th>
@@ -841,20 +842,20 @@
         </div>
 
         <div class="detail-box receipt-preview">
-          <h4>🧾 إيصال وسكرين التحويل</h4>
+          <h4>إيصال وسكرين التحويل</h4>
           <div id="mReceiptContainer">
             <div id="mReceiptLoading" class="muted" style="padding:14px;text-align:center;">جاري تجهيز صورة الإيصال...</div>
             <div class="receipt-img-wrap" id="mReceiptWrap" style="display:none;">
               <img id="mReceiptImg" alt="إيصال التحويل">
             </div>
             <div style="margin-top:8px;">
-              <a id="mReceiptDownloadBtn" class="btn ghost sm" href="#" target="_blank" style="display:none;">فتح الإيصال بالحجم الكامل 🔍</a>
+              <a id="mReceiptDownloadBtn" class="btn ghost sm" href="#" target="_blank" style="display:none;">فتح الإيصال بالحجم الكامل</a>
             </div>
           </div>
         </div>
 
         <div class="detail-box">
-          <h4>🖼️ بنود الطلب واللوحات</h4>
+          <h4>بنود الطلب واللوحات</h4>
           <div class="items-list" id="mItemsList"></div>
         </div>
 
@@ -1412,12 +1413,17 @@
             <td>
               <div class="num font-bold">${Number(o.total_amount).toLocaleString('en-US')} ج.م</div>
               ${isUnderpaid 
-                ? `<div class="amt-alert num">حوّل: ${Number(o.transferred_amount).toLocaleString('en-US')} ج.م ⚠️</div>` 
-                : `<div class="amt-ok num">حوّل: ${Number(o.transferred_amount).toLocaleString('en-US')} ج.م ✓</div>`}
+                ? `<div class="amt-alert num">حوّل: ${Number(o.transferred_amount).toLocaleString('en-US')} ج.م</div>` 
+                : `<div class="amt-ok num">حوّل: ${Number(o.transferred_amount).toLocaleString('en-US')} ج.م</div>`}
+            </td>
+            <td>
+              ${o.payment_screenshot_url 
+                ? `<button class="btn sm view-order-btn" data-id="${o.id}" type="button" style="background:rgba(201,164,92,0.15);color:var(--gold-text);border:1px solid var(--gold-border);font-size:0.78rem;padding:4px 8px;cursor:pointer;">عرض الإيصال</button>` 
+                : `<span class="muted" style="font-size:0.8rem;">غير مرفق</span>`}
             </td>
             <td><span class="st-badge ${st.class}">${st.text}</span></td>
             <td><small class="muted num">${dateStr}</small></td>
-            <td><button class="btn ghost sm view-order-btn" data-id="${o.id}" type="button">عرض وتفاصيل 🔍</button></td>
+            <td><button class="btn ghost sm view-order-btn" data-id="${o.id}" type="button">التفاصيل</button></td>
           </tr>
         `;
       }).join('');
