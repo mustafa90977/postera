@@ -10,7 +10,7 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 -- 2. إنشاء الجداول (Tables)
 -- ==============================================================================
 
--- جدول الإعدادات العامة للمتجر (Settings)
+-- جدول الإعدادات العامة للمتجر (Settings - بيانات عامة يقرأها المتجر والزوار)
 CREATE TABLE IF NOT EXISTS public.settings (
     id INT PRIMARY KEY DEFAULT 1 CHECK (id = 1),
     store_name TEXT NOT NULL DEFAULT 'بوستيرا | POSTERA',
@@ -19,6 +19,15 @@ CREATE TABLE IF NOT EXISTS public.settings (
     whatsapp_number TEXT NOT NULL DEFAULT '01000000000',
     shipping_fee NUMERIC(10, 2) NOT NULL DEFAULT 60.00,
     free_shipping_threshold NUMERIC(10, 2) NOT NULL DEFAULT 2500.00,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
+);
+
+-- جدول إعدادات الإدارة المحمية (Admin Settings - خاص بالأدمن فقط ومحمي تماماً من الزوار)
+CREATE TABLE IF NOT EXISTS public.admin_settings (
+    id INT PRIMARY KEY DEFAULT 1 CHECK (id = 1),
+    notification_email TEXT DEFAULT 'admin@postera.com',
+    resend_api_key TEXT DEFAULT '',
+    email_webhook_url TEXT DEFAULT '',
     updated_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
 );
 
@@ -50,12 +59,12 @@ CREATE TABLE IF NOT EXISTS public.products (
 CREATE TABLE IF NOT EXISTS public.orders (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     order_number TEXT UNIQUE NOT NULL,         -- رقم الطلب ببادئة PST-xxxx
-    customer_name TEXT NOT NULL,               -- اسم العميل بالكامل
-    customer_phone TEXT NOT NULL,              -- رقم الموبايل (01xxxxxxxxx)
+    customer_name TEXT NOT NULL CHECK (char_length(trim(customer_name)) >= 3), -- الاسم لا يقل عن 3 حروف
+    customer_phone TEXT NOT NULL CHECK (customer_phone ~ '^01[0125][0-9]{8}$'), -- الموبايل 11 رقم مصري ويبدأ بـ 01
     governorate TEXT NOT NULL,                 -- المحافظة
-    address TEXT NOT NULL,                     -- العنوان بالتفصيل
+    address TEXT NOT NULL CHECK (char_length(trim(address)) >= 5), -- العنوان لا يقل عن 5 حروف
     payment_method TEXT NOT NULL CHECK (payment_method IN ('instapay', 'wallet')),
-    total_amount NUMERIC(10, 2) NOT NULL CHECK (total_amount >= 0),       -- المبلغ المطلوب
+    total_amount NUMERIC(10, 2) NOT NULL CHECK (total_amount > 0),       -- المبلغ المطلوب
     transferred_amount NUMERIC(10, 2) NOT NULL CHECK (transferred_amount >= 0), -- المبلغ المحوّل
     payment_screenshot_url TEXT,               -- رابط سكرين التحويل في التخزين الخاص
     status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'confirmed', 'printing', 'shipped', 'completed', 'cancelled')),
@@ -83,14 +92,51 @@ CREATE TABLE IF NOT EXISTS public.order_items (
 );
 
 -- ==============================================================================
--- 3. الفهارس لتحسين سرعة الاستعلام (Indexes)
+-- 3. الفهارس وحماية تكرار الطلبات (Indexes & Rate Limiting Trigger)
 -- ==============================================================================
 CREATE INDEX IF NOT EXISTS idx_orders_order_number ON public.orders(order_number);
+CREATE INDEX IF NOT EXISTS idx_orders_customer_phone ON public.orders(customer_phone);
 CREATE INDEX IF NOT EXISTS idx_orders_status ON public.orders(status);
 CREATE INDEX IF NOT EXISTS idx_orders_created_at ON public.orders(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON public.order_items(order_id);
 CREATE INDEX IF NOT EXISTS idx_products_category ON public.products(category);
 CREATE INDEX IF NOT EXISTS idx_products_visible ON public.products(is_visible);
+
+-- تفعيل قيود التحقق الصارمة على الطلبات في حال كان الجدول منشأ مسبقاً
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'orders_customer_phone_check') THEN
+        ALTER TABLE public.orders ADD CONSTRAINT orders_customer_phone_check CHECK (customer_phone ~ '^01[0125][0-9]{8}$');
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'orders_customer_name_check') THEN
+        ALTER TABLE public.orders ADD CONSTRAINT orders_customer_name_check CHECK (char_length(trim(customer_name)) >= 3);
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'orders_address_check') THEN
+        ALTER TABLE public.orders ADD CONSTRAINT orders_address_check CHECK (char_length(trim(address)) >= 5);
+    END IF;
+EXCEPTION
+    WHEN others THEN NULL;
+END $$;
+
+-- دالة وتريجر حماية من الإغراق والطلبات المزيفة (Anti-Spam Rate Limiter)
+CREATE OR REPLACE FUNCTION public.check_order_rate_limit()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- منع إرسال أكثر من 3 طلبات من نفس رقم الموبايل خلال 10 دقائق
+    IF (SELECT COUNT(*) FROM public.orders 
+        WHERE customer_phone = NEW.customer_phone 
+        AND created_at > now() - INTERVAL '10 minutes') >= 3 THEN
+        RAISE EXCEPTION 'تم إرسال عدة طلبات مؤخراً من هذا الرقم. يرجى الانتظار 10 دقائق قبل إرسال طلب جديد.';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS trg_order_rate_limit ON public.orders;
+CREATE TRIGGER trg_order_rate_limit
+BEFORE INSERT ON public.orders
+FOR EACH ROW
+EXECUTE FUNCTION public.check_order_rate_limit();
 
 -- ==============================================================================
 -- 4. إعداد حاويات التخزين (Storage Buckets)
@@ -142,6 +188,7 @@ ON CONFLICT (id) DO UPDATE SET
 -- 5. تفعيل أمان مستوى الصف (Row Level Security - RLS)
 -- ==============================================================================
 ALTER TABLE public.settings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.admin_settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.sizes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
@@ -237,6 +284,15 @@ TO authenticated
 USING (true)
 WITH CHECK (true);
 
+-- سياسات إعدادات الإدارة المحمية (Admin Settings Policy):
+-- المشرف فقط (Authenticated) يستطيع القراءة والتحديث، ولا يمكن لأي زائر قراءتها.
+DROP POLICY IF EXISTS "Admin full access on admin_settings" ON public.admin_settings;
+CREATE POLICY "Admin full access on admin_settings"
+ON public.admin_settings FOR ALL
+TO authenticated
+USING (true)
+WITH CHECK (true);
+
 -- ==============================================================================
 -- 6. سياسات حماية التخزين (Storage RLS Policies)
 -- ==============================================================================
@@ -301,7 +357,7 @@ WITH CHECK (bucket_id = 'product_images');
 -- 7. البيانات الأولية التجريبية (Seed Initial Data)
 -- ==============================================================================
 
--- إدخال الإعدادات الافتراضية
+-- إدخال الإعدادات العامة الافتراضية
 INSERT INTO public.settings (id, store_name, instapay_handle, wallet_number, whatsapp_number, shipping_fee, free_shipping_threshold)
 VALUES (1, 'بوستيرا | POSTERA', 'postera@instapay', '01000000000', '01000000000', 60.00, 2500.00)
 ON CONFLICT (id) DO UPDATE SET
@@ -311,6 +367,11 @@ ON CONFLICT (id) DO UPDATE SET
     whatsapp_number = EXCLUDED.whatsapp_number,
     shipping_fee = EXCLUDED.shipping_fee,
     free_shipping_threshold = EXCLUDED.free_shipping_threshold;
+
+-- إدخال إعدادات الإدارة المحمية الافتراضية
+INSERT INTO public.admin_settings (id, notification_email, resend_api_key, email_webhook_url)
+VALUES (1, 'admin@postera.com', '', '')
+ON CONFLICT (id) DO NOTHING;
 
 -- إدخال المقاسات الأساسية
 INSERT INTO public.sizes (id, label, width_cm, height_cm, price, is_active, sort_order)
@@ -339,3 +400,24 @@ VALUES
     ('كثبان الصحراء',   'طبيعة',   'desert',    true, 7),
     ('خطوط الموج',      'تجريدي',  'waves',     true, 8)
 ON CONFLICT DO NOTHING;
+
+-- ==============================================================================
+-- 8. إنشاء حساب المدير (Admin Credentials) في Supabase Auth
+-- ==============================================================================
+-- الطريقة الرسمية الموصى بها لإنشاء حساب الأدمن للدخول إلى لوحة /admin:
+-- 1. افتح لوحة تحكم مشروعك في Supabase Dashboard.
+-- 2. من القائمة الجانبية اليسرى ادخل على: Authentication -> Users.
+-- 3. اضغط على زر: "Add user" واقترح اختيار "Create user".
+-- 4. اكتب بيانات الحساب:
+--    - Email: admin@postera.com
+--    - Password: postera123  (أو أي كلمة مرور قوية من اختيارك)
+--    - فعّل خيار: "Auto Confirm User?" ليتفعل الحساب فوراً دون الحاجة لتأكيد البريد.
+-- 5. اضغط Save.
+--
+-- بمجرد إضافة هذا المستخدم ووضع مفاتيح Supabase في ADMIN_CONFIG بصفحة admin.html،
+-- ستسجل الدخول فوراً بالبريد وكلمة المرور المشفرين بأعلى معايير الأمان (Argon2 / Bcrypt).
+--
+-- ملحوظة: يمكنك أيضاً اختبار لوحة الأدمن محلياً في أي وقت بدون ربط Supabase
+-- بالضغط على زر "⚡ تجربة الدخول الفوري بضغطة زر" بنفس هذه البيانات!
+-- ==============================================================================
+

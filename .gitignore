@@ -12,3 +12,8 @@ desktop.ini
 # Logs and temp files
 *.log
 *.tmp
+supabase/.temp/
+.vercel
+.env*
+
+.vercel

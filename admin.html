@@ -505,6 +505,26 @@
       background: var(--surface-2);
     }
 
+    /* أنماط السحب والإفلات لرفع شيت الإكسيل */
+    .excel-drop-zone {
+      border: 2px dashed var(--line);
+      border-radius: 12px;
+      padding: 28px 18px;
+      text-align: center;
+      cursor: pointer;
+      background: var(--surface);
+      transition: all 0.2s ease;
+    }
+    .excel-drop-zone:hover, .excel-drop-zone.dragover {
+      border-color: var(--gold);
+      background: rgba(201, 164, 92, 0.06);
+    }
+    @media (max-width: 640px) {
+      .upload-split-boxes {
+        grid-template-columns: 1fr !important;
+      }
+    }
+
     /* استجابة الموبايل */
     @media (max-width: 768px) {
       .admin-table th:nth-child(3),
@@ -570,6 +590,13 @@
         <button id="loginSubmitBtn" class="btn block" type="submit" style="margin-top:10px;">
           تسجيل الدخول
         </button>
+
+        <div style="background:var(--surface-2);border:1px dashed var(--gold);border-radius:12px;padding:14px;margin-top:16px;font-size:0.86rem;text-align:right;">
+          <div style="color:var(--gold-text);font-weight:bold;margin-bottom:6px;">🔑 بيانات الدخول المؤقتة لتجربة اللوحة:</div>
+          <div style="margin-bottom:3px;">البريد: <strong style="color:var(--fg);direction:ltr;display:inline-block;">admin@postera.com</strong></div>
+          <div style="margin-bottom:8px;">كلمة المرور: <strong style="color:var(--fg);direction:ltr;display:inline-block;">postera123</strong></div>
+          <button type="button" id="fillDemoLoginBtn" class="btn ghost sm" style="width:100%;font-size:0.82rem;padding:0.45rem;">⚡ تجربة الدخول الفوري بضغطة زر</button>
+        </div>
       </form>
     </div>
   </section>
@@ -577,6 +604,11 @@
   <!-- شاشة 2: لوحة الإدارة المتكاملة (تظهر بعد تسجيل الدخول) -->
   <main id="dashboardSection" class="admin-content" style="display:none;">
     <div class="wrap">
+      
+      <!-- تنبيه وضع المعاينة المؤقت -->
+      <div id="tempAdminNotice" style="display:none;background:rgba(201,164,92,0.12);border:1px dashed var(--gold);border-radius:12px;padding:12px 18px;margin-bottom:18px;font-size:0.9rem;color:var(--gold-text);">
+        ⚡ <strong>وضع المعاينة المؤقت:</strong> أنت داخل حالياً بحساب الأدمن المؤقت لتجربة اللوحة. عند ربط Supabase سيتم التحقق الحقيقي من قاعدة البيانات السحابية.
+      </div>
       
       <!-- شريط التبويبات الرئيسي -->
       <nav class="admin-tabs" role="tablist">
@@ -612,12 +644,13 @@
           </div>
         </div>
 
-        <!-- شريط البحث والفلترة -->
-        <div class="toolbar">
-          <div class="search-box">
+        <!-- شريط البحث والفلترة وتصدير الطلبات -->
+        <div class="toolbar" style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;">
+          <div class="search-box" style="flex:1;min-width:240px;">
             <input id="searchInput" type="text" placeholder="🔍 بحث برقم الطلب (PST-xxxx)، اسم العميل، أو رقم الموبايل...">
           </div>
-          <div class="status-filters" id="statusFilterBar">
+          <button id="exportOrdersExcelBtn" class="btn sm ghost" type="button" style="white-space:nowrap;">📊 تصدير الطلبات لإكسيل</button>
+          <div class="status-filters" id="statusFilterBar" style="width:100%;">
             <button type="button" class="active" data-status="all">الكل (<span id="cntAll">0</span>)</button>
             <button type="button" data-status="pending">جديد (<span id="cntPending">0</span>)</button>
             <button type="button" data-status="confirmed">تم التحقق من الدفع (<span id="cntConfirmed">0</span>)</button>
@@ -657,7 +690,11 @@
             <h2 style="font-family:var(--font-display);margin:0;font-size:1.6rem;">لوحات المعرض والكتالوج</h2>
             <p class="muted" style="font-size:0.88rem;">اللوحات التي تظهر للزوار في واجهة المتجر الرئيسية.</p>
           </div>
-          <button id="openAddProductBtn" class="btn sm" type="button">➕ إضافة لوحة جديدة</button>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button id="openExcelImportBtn" class="btn sm ghost" type="button" style="border-color:var(--gold);color:var(--gold-text);">📥 رفع بشيت إكسيل</button>
+            <button id="exportProductsExcelBtn" class="btn sm ghost" type="button">📊 تصدير لإكسيل</button>
+            <button id="openAddProductBtn" class="btn sm" type="button">➕ إضافة لوحة جديدة</button>
+          </div>
         </div>
 
         <div id="prodsLoading" style="text-align:center;padding:40px;color:var(--muted)">جاري تحميل المنتجات...</div>
@@ -735,6 +772,25 @@
                 <label for="setFreeShipping">حد الشحن المجاني (ج.م)</label>
                 <input id="setFreeShipping" type="number" dir="ltr" min="0" required>
                 <small class="muted">إذا تجاوز إجمالي طلب العميل هذا المبلغ يصبح الشحن مجاناً تلقائياً.</small>
+              </div>
+            </div>
+
+            <div class="field" style="border-top:1px dashed var(--line);padding-top:16px;margin-top:8px;">
+              <label for="setNotifEmail">📧 بريد إشعارات الطلبات الجديدة (Admin Email)</label>
+              <input id="setNotifEmail" type="email" dir="ltr" placeholder="admin@postera.com">
+              <small class="muted">البريد الذي ستصلك عليه تفاصيل أي طلب جديد يسجله العميل فوراً مع رابط مباشر لفحصه في لوحة الإدارة.</small>
+            </div>
+
+            <div class="row">
+              <div class="field">
+                <label for="setResendKey">🔑 مفتاح Resend API لإرسال الإيميلات فوراً</label>
+                <input id="setResendKey" type="password" dir="ltr" placeholder="re_xxxxxxxxxxxx">
+                <small class="muted">خدمة مجانية (3,000 إيميل شهرياً من resend.com). أو اتركه فارغاً إذا كنت تستخدم Webhook.</small>
+              </div>
+              <div class="field">
+                <label for="setEmailWebhook">🔗 رابط Webhook بديل للإشعارات (اختياري)</label>
+                <input id="setEmailWebhook" type="url" dir="ltr" placeholder="https://formspree.io/f/... أو n8n / Discord">
+                <small class="muted">يمكنك استخدام Formspree أو أي Webhook webhook خارجي.</small>
               </div>
             </div>
 
@@ -924,12 +980,110 @@
     </div>
   </div>
 
+  <!-- ==================== مودال استيراد المنتجات من شيت إكسيل ==================== -->
+  <div id="excelImportModal" class="modal-scrim" role="dialog" aria-modal="true">
+    <div class="modal-card" style="max-width:740px;width:95%;">
+      <div class="modal-header">
+        <div>
+          <h3 style="margin:0;font-family:var(--font-display);color:var(--gold-text)">📥 رفع لوحات المتجر عبر شيت إكسيل (Bulk Upload)</h3>
+          <p class="muted" style="font-size:0.84rem;margin:4px 0 0 0;">ارفع ملف إكسيل (.xlsx / .xls) أو CSV لإضافة لوحات الكتالوج دفعة واحدة للمتجر.</p>
+        </div>
+        <button id="closeExcelModalBtn" class="iconbtn" type="button">✕</button>
+      </div>
+
+      <div class="modal-body" style="display:flex;flex-direction:column;gap:16px;">
+        <!-- إرشادات طريقتي الرفع -->
+        <div style="background:rgba(201,164,92,0.08);border:1px solid rgba(201,164,92,0.3);border-radius:10px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+          <div style="max-width:540px;">
+            <strong style="color:var(--gold-text);font-size:0.92rem;">✨ متاح لك طريقتين للرفع حسب رغبتك:</strong>
+            <p class="muted" style="font-size:0.8rem;margin:3px 0 0 0;line-height:1.45;">
+              <strong>1. الصور مدمجة بالإكسيل:</strong> ضع الصور مباشرة داخل خلايا شيت الإكسيل.<br>
+              <strong>2. أو شيت الإكسيل لوحده وملف الصور لوحده:</strong> ارفع شيت الإكسيل، ثم ارفع ملف الصور (ملف مضغوط ZIP أو حدد الصور كلها معاً) وسيقوم النظام بربطها تلقائياً!
+            </p>
+          </div>
+          <button id="downloadExcelTemplateBtn" class="btn sm" type="button" style="background:var(--gold);color:var(--on-gold);font-size:0.82rem;white-space:nowrap;">
+            📄 تحميل نموذج الإكسيل (.xlsx)
+          </button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;" class="upload-split-boxes">
+          <!-- الصندوق 1: ملف الإكسيل -->
+          <div id="excelDropZone" class="excel-drop-zone" style="margin:0;padding:18px 12px;cursor:pointer;">
+            <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" style="display:none;">
+            <div style="font-size:1.8rem;margin-bottom:4px;">📊</div>
+            <strong style="display:block;font-size:0.92rem;color:var(--fg);margin-bottom:3px;">1️⃣ ملف الإكسيل (البيانات)</strong>
+            <span class="muted" style="font-size:0.75rem;display:block;">اضغط لاختيار .xlsx / .xls / .csv</span>
+            <span id="excelFileBadge" style="display:none;margin-top:6px;font-size:0.75rem;color:var(--gold-text);background:var(--metal);padding:2px 8px;border-radius:4px;border:1px solid var(--gold);"></span>
+          </div>
+
+          <!-- الصندوق 2: ملف الصور المنفصل -->
+          <div id="imagesDropZone" class="excel-drop-zone" style="margin:0;padding:18px 12px;cursor:pointer;border-style:dashed;">
+            <input type="file" id="batchImagesInput" accept="image/*, .zip, application/zip, application/x-zip-compressed" multiple style="display:none;">
+            <div style="font-size:1.8rem;margin-bottom:4px;">🖼️</div>
+            <strong style="display:block;font-size:0.92rem;color:var(--fg);margin-bottom:3px;">2️⃣ ملف الصور (منفصل)</strong>
+            <span class="muted" style="font-size:0.75rem;display:block;">ملف مضغوط ZIP أو حدد عدة صور معاً</span>
+            <span id="batchImagesStatusBadge" style="display:none;margin-top:6px;font-size:0.75rem;color:var(--ok);background:rgba(34,197,94,0.1);padding:2px 8px;border-radius:4px;border:1px solid var(--ok);"></span>
+          </div>
+        </div>
+
+        <input type="file" id="singleRowImgInput" accept="image/*" style="display:none;">
+
+        <!-- معلومات الملف المختار و المعاينة -->
+        <div id="excelPreviewArea" style="display:none;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+            <div>
+              <strong id="excelFileName" style="color:var(--gold-text);font-size:0.95rem;"></strong>
+              <span id="excelRowCount" class="badge" style="margin-right:8px;font-size:0.8rem;background:var(--metal);color:var(--gold-text);padding:3px 8px;border-radius:6px;border:1px solid var(--gold);"></span>
+            </div>
+            <div style="display:flex;align-items:center;gap:14px;">
+              <label style="font-size:0.84rem;color:var(--fg);display:flex;align-items:center;gap:6px;cursor:pointer;">
+                <input type="radio" name="importMode" value="append" checked style="accent-color:var(--gold)">
+                إضافة على المنتجات الحالية
+              </label>
+              <label style="font-size:0.84rem;color:var(--bad);display:flex;align-items:center;gap:6px;cursor:pointer;">
+                <input type="radio" name="importMode" value="replace" style="accent-color:var(--bad)">
+                استبدال الكتالوج بالكامل
+              </label>
+            </div>
+          </div>
+
+          <!-- جدول المعاينة المباشرة قبل الحفظ -->
+          <div style="max-height:280px;overflow-y:auto;border:1px solid var(--line);border-radius:8px;">
+            <table class="admin-table" style="font-size:0.84rem;margin:0;">
+              <thead>
+                <tr>
+                  <th style="width:36px;">#</th>
+                  <th>اسم اللوحة</th>
+                  <th>التصنيف</th>
+                  <th>صورة اللوحة</th>
+                  <th>الترتيب</th>
+                  <th>الحالة</th>
+                </tr>
+              </thead>
+              <tbody id="excelPreviewTbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- أزرار الإجراءات في المودال -->
+        <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:6px;">
+          <button id="cancelExcelBtn" class="btn ghost sm" type="button">إلغاء</button>
+          <button id="confirmExcelImportBtn" class="btn sm" type="button" disabled style="background:var(--gold);color:var(--on-gold);">
+            ✓ تأكيد الرفع والإضافة للمتجر
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- التوست للإشعارات السريعة -->
   <div class="toast" id="adminToast" role="status" aria-live="polite"></div>
 
-  <!-- ملف الإعدادات المشترك ومكتبة Supabase -->
+  <!-- ملف الإعدادات المشترك ومكتبة Supabase ومكتبات SheetJS و JSZip لمعالجة الصور والإكسيل -->
   <script src="config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <script>
     /**
      * ==============================================================================
@@ -975,24 +1129,39 @@
 
     async function checkAuth() {
       initClient();
-      if (!sb) {
-        showLoginError('لم يتم العثور على مفاتيح Supabase. يرجى ملء SUPABASE_CONFIG في config.js');
-        return;
+      if (sb) {
+        try {
+          const { data: { session } } = await sb.auth.getSession();
+          if (session && session.user) {
+            currentUser = session.user;
+            onLoggedIn();
+            return;
+          }
+        } catch (e) {
+          console.warn('Session check:', e);
+        }
       }
-      const { data: { session } } = await sb.auth.getSession();
-      if (session && session.user) {
-        currentUser = session.user;
-        onLoggedIn();
-      } else {
-        onLoggedOut();
+
+      // فحص جلسة الدخول المؤقتة للتجربة
+      const tempUser = sessionStorage.getItem('postera_admin_temp_session');
+      if (tempUser) {
+        try {
+          currentUser = JSON.parse(tempUser);
+          onLoggedIn();
+          return;
+        } catch (_) {}
       }
+
+      onLoggedOut();
     }
 
     function onLoggedIn() {
       document.getElementById('loginSection').style.display = 'none';
       document.getElementById('dashboardSection').style.display = 'block';
       document.getElementById('authNavArea').style.display = 'flex';
-      document.getElementById('adminEmailDisplay').textContent = currentUser.email;
+      document.getElementById('adminEmailDisplay').textContent = currentUser.email + (currentUser.isTemporary ? ' (مؤقت)' : '');
+      const tempNotice = document.getElementById('tempAdminNotice');
+      if (tempNotice) tempNotice.style.display = currentUser.isTemporary ? 'block' : 'none';
       loadOrders();
       loadProducts();
       loadSizes();
@@ -1012,14 +1181,20 @@
       err.style.display = 'block';
     }
 
+    // زر الملء التلقائي للحساب المؤقت
+    const fillBtn = document.getElementById('fillDemoLoginBtn');
+    if (fillBtn) {
+      fillBtn.addEventListener('click', () => {
+        document.getElementById('adminEmail').value = 'admin@postera.com';
+        document.getElementById('adminPass').value = 'postera123';
+        document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+      });
+    }
+
     // تسجيل الدخول
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       initClient();
-      if (!sb) {
-        showLoginError('يرجى ضبط رابط ومفتاح Supabase في config.js أولاً.');
-        return;
-      }
       const email = document.getElementById('adminEmail').value.trim();
       const password = document.getElementById('adminPass').value;
       const btn = document.getElementById('loginSubmitBtn');
@@ -1027,22 +1202,46 @@
       btn.textContent = 'جاري التحقق...';
       document.getElementById('loginErr').style.display = 'none';
 
-      try {
-        const { data, error } = await sb.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        currentUser = data.user;
-        toastAdmin('مرحباً بك! تم تسجيل الدخول بنجاح');
+      // 1. التحقق المشفر الحقيقي عبر Supabase Auth في حال كان مربوطاً
+      if (sb) {
+        try {
+          const { data, error } = await sb.auth.signInWithPassword({ email, password });
+          if (error) throw error;
+          currentUser = data.user;
+          sessionStorage.removeItem('postera_admin_temp_session');
+          toastAdmin('مرحباً بك! تم تسجيل الدخول بنجاح');
+          onLoggedIn();
+          return;
+        } catch (err) {
+          showLoginError(err.message === 'Invalid login credentials' ? 'البريد الإلكتروني أو كلمة المرور غير صحيحة.' : err.message);
+          return;
+        } finally {
+          btn.disabled = false;
+          btn.textContent = 'تسجيل الدخول';
+        }
+      }
+
+      // 2. الدخول بالحساب التجريبي فقط إذا لم يكن Supabase مربوطاً
+      if (email === 'admin@postera.com' && password === 'postera123') {
+        currentUser = { email: 'admin@postera.com', isTemporary: true };
+        sessionStorage.setItem('postera_admin_temp_session', JSON.stringify(currentUser));
+        toastAdmin('مرحباً بك! تم تسجيل الدخول التجريبي بنجاح');
         onLoggedIn();
-      } catch (err) {
-        showLoginError(err.message === 'Invalid login credentials' ? 'البريد الإلكتروني أو كلمة المرور غير صحيحة.' : err.message);
-      } finally {
         btn.disabled = false;
         btn.textContent = 'تسجيل الدخول';
+        return;
       }
+
+      showLoginError('لم يتم ربط Supabase بعد. لتجربة اللوحة الآن استخدم الحساب التجريبي.');
+      btn.disabled = false;
+      btn.textContent = 'تسجيل الدخول';
     });
 
     document.getElementById('logoutBtn').addEventListener('click', async () => {
-      if (sb) await sb.auth.signOut();
+      if (sb) {
+        try { await sb.auth.signOut(); } catch (_) {}
+      }
+      sessionStorage.removeItem('postera_admin_temp_session');
       onLoggedOut();
       toastAdmin('تم تسجيل الخروج');
     });
@@ -1061,11 +1260,77 @@
     /* ==========================================================================
        1. إدارة الطلبات (Orders Controller)
        ========================================================================== */
+    function getMockOrders() {
+      const sampleReceipt = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600"><rect width="400" height="600" fill="%231a1a24"/><text x="50%25" y="40%25" fill="%23c9a45c" font-size="22" font-family="sans-serif" font-weight="bold" text-anchor="middle">إيصال تحويل تجريبي</text><text x="50%25" y="48%25" fill="%23ffffff" font-size="28" font-family="sans-serif" text-anchor="middle">810.00 ج.م</text><text x="50%25" y="55%25" fill="%238a8a9a" font-size="14" font-family="sans-serif" text-anchor="middle">إنستاباي / المحفظة الذكية</text><text x="50%25" y="62%25" fill="%2352b788" font-size="14" font-family="sans-serif" text-anchor="middle">✓ تم التحويل بنجاح</text></svg>';
+      const sampleCustom = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="800" viewBox="0 0 600 800"><rect width="600" height="800" fill="%23141419"/><circle cx="300" cy="400" r="180" fill="%23c9a45c" opacity="0.3"/><text x="50%25" y="50%25" fill="%23c9a45c" font-size="26" font-family="sans-serif" text-anchor="middle">صورة العميل بدقة عالية للطباعة</text></svg>';
+
+      return [
+        {
+          id: 'mock-1',
+          order_number: 'PST-1042',
+          customer_name: 'مصطفى محمود',
+          customer_phone: '01012345678',
+          governorate: 'القاهرة',
+          address: 'مدينة نصر، شارع عباس العقاد، عمارة 14',
+          payment_method: 'instapay',
+          total_amount: 810,
+          transferred_amount: 810,
+          status: 'pending',
+          payment_screenshot_url: sampleReceipt,
+          created_at: new Date(Date.now() - 3600000).toISOString(),
+          order_items: [
+            { id: 'it-1', product_title: 'ليل الأهرامات', size_label: '30×45 سم', quantity: 1, unit_price: 750, total_price: 750, is_custom: false }
+          ]
+        },
+        {
+          id: 'mock-2',
+          order_number: 'PST-1038',
+          customer_name: 'أحمد إبراهيم',
+          customer_phone: '01123456789',
+          governorate: 'الجيزة',
+          address: 'الدقي، شارع مصدق، الدور الثالث',
+          payment_method: 'wallet',
+          total_amount: 1260,
+          transferred_amount: 1200, // تنبيه: أقل من المطلوب لتجربة التنبيه
+          status: 'printing',
+          payment_screenshot_url: sampleReceipt,
+          created_at: new Date(Date.now() - 86400000).toISOString(),
+          order_items: [
+            { id: 'it-2', product_title: 'لوحة خاصة للعميل', size_label: '40×60 سم', quantity: 1, unit_price: 1200, total_price: 1200, is_custom: true, custom_image_url: sampleCustom, finish: 'لامع' }
+          ]
+        },
+        {
+          id: 'mock-3',
+          order_number: 'PST-1025',
+          customer_name: 'سارة عبد الله',
+          customer_phone: '01234567890',
+          governorate: 'الإسكندرية',
+          address: 'سموحة، شارع فوزي معاذ',
+          payment_method: 'instapay',
+          total_amount: 510,
+          transferred_amount: 510,
+          status: 'completed',
+          payment_screenshot_url: sampleReceipt,
+          created_at: new Date(Date.now() - 259200000).toISOString(),
+          order_items: [
+            { id: 'it-3', product_title: 'القمر الذهبي', size_label: '20×30 سم', quantity: 1, unit_price: 450, total_price: 450, is_custom: false }
+          ]
+        }
+      ];
+    }
+
     async function loadOrders() {
-      if (!sb) return;
       document.getElementById('ordersLoading').style.display = 'block';
       document.getElementById('ordersEmpty').style.display = 'none';
       document.getElementById('ordersTable').style.display = 'none';
+
+      if (!sb || (currentUser && currentUser.isTemporary)) {
+        if (!allOrders.length) allOrders = getMockOrders();
+        updateKPIs();
+        renderOrdersTable();
+        document.getElementById('ordersLoading').style.display = 'none';
+        return;
+      }
 
       try {
         const { data, error } = await sb
@@ -1229,6 +1494,14 @@
         loading.textContent = 'لم يتم إرفاق سكرين تحويل مع هذا الطلب.';
         return;
       }
+      if (!sb || (currentUser && currentUser.isTemporary)) {
+        img.src = order.payment_screenshot_url;
+        dlBtn.href = order.payment_screenshot_url;
+        dlBtn.style.display = 'inline-flex';
+        wrap.style.display = 'flex';
+        loading.style.display = 'none';
+        return;
+      }
       try {
         const { data, error } = await sb.storage.from('payment_screenshots').createSignedUrl(order.payment_screenshot_url, 3600);
         if (error) throw error;
@@ -1273,6 +1546,22 @@
           const path = b.dataset.path;
           b.disabled = true;
           b.textContent = 'جاري التحضير...';
+          if (!sb || (currentUser && currentUser.isTemporary)) {
+            setTimeout(() => {
+              b.disabled = false;
+              b.textContent = '📥 تحميل صورة العميل بجودتها الأصلية للطباعة';
+              toastAdmin('✓ (وضع تجريبي) تم بدء تحميل صورة العميل للطباعة');
+              if (path && (path.startsWith('http') || path.startsWith('data:'))) {
+                const a = document.createElement('a');
+                a.href = path;
+                a.download = `postera_custom_${order.order_number}.svg`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+              }
+            }, 300);
+            return;
+          }
           try {
             const { data, error } = await sb.storage.from('custom_designs').createSignedUrl(path, 3600);
             if (error) throw error;
@@ -1295,12 +1584,21 @@
     }
 
     document.getElementById('mSaveStatusBtn').addEventListener('click', async () => {
-      if (!selectedOrder || !sb) return;
+      if (!selectedOrder) return;
       const newStatus = document.getElementById('mStatusSelect').value;
       const btn = document.getElementById('mSaveStatusBtn');
       btn.disabled = true;
       btn.textContent = 'جاري الحفظ...';
       try {
+        if (!sb || (currentUser && currentUser.isTemporary)) {
+          selectedOrder.status = newStatus;
+          const found = allOrders.find(o => o.id === selectedOrder.id);
+          if (found) found.status = newStatus;
+          toastAdmin('تم تحديث حالة الطلب إلى: ' + (STATUS_MAP[newStatus]?.text || newStatus));
+          updateKPIs();
+          renderOrdersTable();
+          return;
+        }
         const { error } = await sb.from('orders').update({ status: newStatus, updated_at: new Date().toISOString() }).eq('id', selectedOrder.id);
         if (error) throw error;
         selectedOrder.status = newStatus;
@@ -1316,9 +1614,17 @@
     });
 
     document.getElementById('mDeleteOrderBtn').addEventListener('click', async () => {
-      if (!selectedOrder || !sb) return;
+      if (!selectedOrder) return;
       if (!confirm(`هل أنت متأكد من حذف الطلب ${selectedOrder.order_number} نهائياً؟`)) return;
       try {
+        if (!sb || (currentUser && currentUser.isTemporary)) {
+          allOrders = allOrders.filter(o => o.id !== selectedOrder.id);
+          closeModal();
+          updateKPIs();
+          renderOrdersTable();
+          toastAdmin('تم حذف الطلب بنجاح');
+          return;
+        }
         const { error } = await sb.from('orders').delete().eq('id', selectedOrder.id);
         if (error) throw error;
         allOrders = allOrders.filter(o => o.id !== selectedOrder.id);
@@ -1343,9 +1649,24 @@
        2. إدارة المنتجات والكتالوج (Products Controller)
        ========================================================================== */
     async function loadProducts() {
-      if (!sb) return;
       document.getElementById('prodsLoading').style.display = 'block';
       document.getElementById('prodsEmpty').style.display = 'none';
+
+      if (!sb || (currentUser && currentUser.isTemporary)) {
+        if (!allProducts.length) {
+          allProducts = [
+            { id: 'p1', title: 'ليل الأهرامات', category: 'مصر', is_visible: true, sort_order: 1 },
+            { id: 'p2', title: 'القمر الذهبي', category: 'فضاء', is_visible: true, sort_order: 2 },
+            { id: 'p3', title: 'جبال الفجر', category: 'طبيعة', is_visible: true, sort_order: 3 },
+            { id: 'p4', title: 'أقواس الآرت ديكو', category: 'تجريدي', is_visible: true, sort_order: 4 },
+            { id: 'p5', title: 'مدينة بعد الغروب', category: 'مدن', is_visible: true, sort_order: 5 }
+          ];
+        }
+        renderProductsGrid();
+        document.getElementById('prodsLoading').style.display = 'none';
+        return;
+      }
+
       try {
         const { data, error } = await sb.from('products').select('*').order('sort_order', { ascending: true });
         if (error) throw error;
@@ -1416,16 +1737,24 @@
     // معاينة الصورة عند اختيار ملف
     document.getElementById('pImgFile').addEventListener('change', e => {
       const f = e.target.files[0];
-      if (f) {
-        document.getElementById('pImgPreview').src = URL.createObjectURL(f);
-        document.getElementById('pImgPreviewWrap').style.display = 'block';
+      if (!f) return;
+      if (!f.type.startsWith('image/') && !/\.(jpe?g|png|webp|svg)$/i.test(f.name)) {
+        toastAdmin('يرجى اختيار ملف صورة صالح (JPG, PNG, WebP, SVG)');
+        e.target.value = '';
+        return;
       }
+      if (f.size > 10 * 1024 * 1024) {
+        toastAdmin('حجم صورة اللوحة كبير جداً (الحد الأقصى 10 ميجابايت)');
+        e.target.value = '';
+        return;
+      }
+      document.getElementById('pImgPreview').src = URL.createObjectURL(f);
+      document.getElementById('pImgPreviewWrap').style.display = 'block';
     });
 
     // حفظ / تعديل منتج
     document.getElementById('prodForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (!sb) return;
       const btn = document.getElementById('saveProdBtn');
       btn.disabled = true;
       btn.textContent = 'جاري الحفظ والرفع...';
@@ -1438,10 +1767,43 @@
       const isVisible = document.getElementById('pVisible').checked;
       const file = document.getElementById('pImgFile').files[0];
 
+      if (!sb || (currentUser && currentUser.isTemporary)) {
+        if (file) {
+          imageUrl = URL.createObjectURL(file);
+        }
+        if (id) {
+          const p = allProducts.find(x => x.id === id);
+          if (p) {
+            p.title = title;
+            p.category = category;
+            if (imageUrl) p.image_url = imageUrl;
+            p.sort_order = sortOrder;
+            p.is_visible = isVisible;
+          }
+          toastAdmin('✓ تم تحديث اللوحة بنجاح');
+        } else {
+          allProducts.push({
+            id: 'p_' + Date.now(),
+            title,
+            category,
+            image_url: imageUrl || '',
+            sort_order: sortOrder,
+            is_visible: isVisible
+          });
+          toastAdmin('✓ تمت إضافة اللوحة بنجاح للمتجر');
+        }
+        btn.disabled = false;
+        btn.textContent = 'حفظ اللوحة';
+        document.getElementById('productModal').classList.remove('open');
+        renderProductsGrid();
+        return;
+      }
+
       try {
         // إذا قام المدير برفع ملف صورة، نقوم برفعها لحاوية product_images العامة
         if (file) {
-          const fileExt = file.name.split('.').pop() || 'jpg';
+          const extMatch = file.name.match(/\.(jpe?g|png|webp|svg)$/i);
+          const fileExt = extMatch ? extMatch[1].toLowerCase() : 'jpg';
           const fileName = `prod_${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
           const { error: upErr } = await sb.storage.from('product_images').upload(fileName, file);
           if (upErr) throw upErr;
@@ -1485,6 +1847,13 @@
       if (toggleBtn) {
         const id = toggleBtn.dataset.id;
         const currentVis = toggleBtn.dataset.vis === 'true';
+        if (!sb || (currentUser && currentUser.isTemporary)) {
+          const p = allProducts.find(x => x.id === id);
+          if (p) p.is_visible = !currentVis;
+          toastAdmin(!currentVis ? 'تم إظهار اللوحة في المتجر' : 'تم إخفاء اللوحة');
+          renderProductsGrid();
+          return;
+        }
         try {
           const { error } = await sb.from('products').update({ is_visible: !currentVis }).eq('id', id);
           if (error) throw error;
@@ -1522,6 +1891,12 @@
         const id = delBtn.dataset.id;
         const prod = allProducts.find(p => p.id === id);
         if (!confirm(`هل أنت متأكد من حذف لوحة "${prod?.title}" من المتجر؟`)) return;
+        if (!sb || (currentUser && currentUser.isTemporary)) {
+          allProducts = allProducts.filter(p => p.id !== id);
+          toastAdmin('تم حذف اللوحة بنجاح');
+          renderProductsGrid();
+          return;
+        }
         try {
           const { error } = await sb.from('products').delete().eq('id', id);
           if (error) throw error;
@@ -1534,11 +1909,736 @@
     });
 
     /* ==========================================================================
+       2.1. استيراد وتصدير إكسيل (Excel Bulk Import & Export Controller)
+       ========================================================================== */
+    let parsedExcelProducts = [];
+
+    // تنزيل نموذج الإكسيل الجاهز
+    function downloadExcelTemplate() {
+      if (typeof XLSX === 'undefined') {
+        toastAdmin('جاري تحميل مكتبة الإكسيل، يرجى المحاولة بعد قليل...');
+        return;
+      }
+      const templateRows = [
+        {
+          "اسم اللوحة": "لوحة المعبد الفرعوني العتيق",
+          "التصنيف": "حضارات",
+          "صورة اللوحة (مدمجة أو اسم ملف أو رابط)": "temple.jpg",
+          "الترتيب": 1,
+          "ظاهر في المتجر": "نعم"
+        },
+        {
+          "اسم اللوحة": "سديم كارينا الكوني المضيء",
+          "التصنيف": "فضاء",
+          "صورة اللوحة (مدمجة أو اسم ملف أو رابط)": "galaxy.png",
+          "الترتيب": 2,
+          "ظاهر في المتجر": "نعم"
+        },
+        {
+          "اسم اللوحة": "شروق جبال الفجر",
+          "التصنيف": "طبيعة",
+          "صورة اللوحة (مدمجة أو اسم ملف أو رابط)": "",
+          "الترتيب": 3,
+          "ظاهر في المتجر": "نعم"
+        },
+        {
+          "اسم اللوحة": "أقواس الآرت ديكو الهندسية",
+          "التصنيف": "تجريدي",
+          "صورة اللوحة (مدمجة أو اسم ملف أو رابط)": "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?w=800",
+          "الترتيب": 4,
+          "ظاهر في المتجر": "نعم"
+        }
+      ];
+
+      const ws = XLSX.utils.json_to_sheet(templateRows);
+      ws['!cols'] = [
+        { wch: 28 },
+        { wch: 16 },
+        { wch: 45 },
+        { wch: 10 },
+        { wch: 16 }
+      ];
+
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "اللوحات");
+      XLSX.writeFile(wb, "postera_products_template.xlsx");
+      toastAdmin('✓ تم تنزيل نموذج الإكسيل');
+    }
+
+    // تصدير الكتالوج الحالي إلى ملف إكسيل
+    function exportProductsToExcel() {
+      if (typeof XLSX === 'undefined') {
+        toastAdmin('مكتبة الإكسيل غير جاهزة حالياً');
+        return;
+      }
+      if (!allProducts || !allProducts.length) {
+        toastAdmin('لا توجد لوحات لتصديرها');
+        return;
+      }
+      const data = allProducts.map((p, idx) => ({
+        "م": idx + 1,
+        "اسم اللوحة": p.title || '',
+        "التصنيف": p.category || '',
+        "رابط الصورة": p.image_url || '',
+        "الترتيب": p.sort_order || (idx + 1),
+        "ظاهر في المتجر": p.is_visible ? "نعم" : "لا"
+      }));
+
+      const ws = XLSX.utils.json_to_sheet(data);
+      ws['!cols'] = [
+        { wch: 6 },
+        { wch: 28 },
+        { wch: 16 },
+        { wch: 55 },
+        { wch: 10 },
+        { wch: 16 }
+      ];
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "كتالوج بوستيرا");
+      XLSX.writeFile(wb, `postera_products_${new Date().toISOString().slice(0, 10)}.xlsx`);
+      toastAdmin('✓ تم تصدير كتالوج اللوحات إلى إكسيل');
+    }
+
+    // تصدير الطلبات إلى ملف إكسيل
+    function exportOrdersToExcel() {
+      if (typeof XLSX === 'undefined') {
+        toastAdmin('مكتبة الإكسيل غير جاهزة حالياً');
+        return;
+      }
+      if (!allOrders || !allOrders.length) {
+        toastAdmin('لا توجد طلبات لتصديرها');
+        return;
+      }
+      const data = allOrders.map((o, idx) => {
+        const itemsStr = (o.order_items || []).map(i => `${i.product_title} (${i.size_label}) × ${i.quantity}`).join(' | ');
+        return {
+          "م": idx + 1,
+          "رقم الطلب": o.order_number,
+          "اسم العميل": o.customer_name,
+          "الموبايل": o.customer_phone,
+          "المحافظة": o.governorate,
+          "العنوان": o.address,
+          "طريقة الدفع": o.payment_method === 'instapay' ? 'إنستاباي' : 'محفظة كاش',
+          "المبلغ المطلوب (ج.م)": Number(o.total_amount),
+          "المبلغ المحول (ج.م)": Number(o.transferred_amount),
+          "الحالة": STATUS_MAP[o.status]?.text || o.status,
+          "تاريخ الطلب": new Date(o.created_at).toLocaleString('ar-EG'),
+          "تفاصيل البنود": itemsStr
+        };
+      });
+
+      const ws = XLSX.utils.json_to_sheet(data);
+      ws['!cols'] = [
+        { wch: 6 },
+        { wch: 14 },
+        { wch: 22 },
+        { wch: 14 },
+        { wch: 14 },
+        { wch: 35 },
+        { wch: 14 },
+        { wch: 18 },
+        { wch: 18 },
+        { wch: 18 },
+        { wch: 22 },
+        { wch: 45 }
+      ];
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "الطلبات");
+      XLSX.writeFile(wb, `postera_orders_${new Date().toISOString().slice(0, 10)}.xlsx`);
+      toastAdmin('✓ تم تصدير الطلبات إلى إكسيل بنجاح');
+    }
+
+    // استخراج الصور المدمجة من داخل ملف الإكسيل (.xlsx) بواسطة JSZip
+    async function extractEmbeddedImagesFromXlsx(file) {
+      if (typeof JSZip === 'undefined') {
+        console.warn('JSZip not loaded');
+        return {};
+      }
+      try {
+        const zip = await JSZip.loadAsync(file);
+        const imagesByRow = {};
+        const allMediaBlobs = [];
+
+        // 1. جمع ملفات الصور من xl/media/
+        const mediaEntries = [];
+        zip.forEach((relPath, entry) => {
+          if (/^xl\/media\//i.test(relPath) && !entry.dir) {
+            mediaEntries.push({ path: relPath, entry });
+          }
+        });
+
+        mediaEntries.sort((a, b) => {
+          const numA = parseInt(a.path.match(/\d+/) || 0);
+          const numB = parseInt(b.path.match(/\d+/) || 0);
+          return numA - numB;
+        });
+
+        for (const item of mediaEntries) {
+          const extMatch = item.path.match(/\.(png|jpe?g|webp|gif|svg)$/i);
+          const ext = extMatch ? extMatch[1].toLowerCase() : 'png';
+          const mime = ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : (ext === 'webp' ? 'image/webp' : (ext === 'svg' ? 'image/svg+xml' : 'image/png'));
+          const base64 = await item.entry.async('base64');
+          const blob = await item.entry.async('blob');
+          const dataUrl = `data:${mime};base64,${base64}`;
+          const filename = item.path.split('/').pop();
+          allMediaBlobs.push({ path: item.path, filename, dataUrl, blob, mime, ext });
+        }
+
+        if (!allMediaBlobs.length) return {};
+
+        // 2. فحص رسومات الإكسيل في xl/drawings/
+        const drawingPaths = [];
+        zip.forEach((relPath, entry) => {
+          if (/^xl\/drawings\/drawing\d+\.xml$/i.test(relPath) && !entry.dir) {
+            drawingPaths.push(relPath);
+          }
+        });
+
+        const parser = new DOMParser();
+
+        for (const drawPath of drawingPaths) {
+          const drawXml = await zip.file(drawPath).async('text');
+          const relPath = drawPath.replace(/^xl\/drawings\//i, 'xl/drawings/_rels/') + '.rels';
+          const relMap = {};
+
+          if (zip.file(relPath)) {
+            const relXml = await zip.file(relPath).async('text');
+            const relDoc = parser.parseFromString(relXml, 'application/xml');
+            relDoc.querySelectorAll('Relationship').forEach(r => {
+              const id = r.getAttribute('Id');
+              let target = r.getAttribute('Target') || '';
+              target = target.replace(/^\.\.\//, 'xl/');
+              if (!target.startsWith('xl/')) target = 'xl/' + target;
+              relMap[id] = target;
+            });
+          }
+
+          const drawDoc = parser.parseFromString(drawXml, 'application/xml');
+          const anchors = drawDoc.querySelectorAll('twoCellAnchor, oneCellAnchor');
+          anchors.forEach(anc => {
+            const fromRowEl = anc.querySelector('from > row');
+            const blipEl = anc.querySelector('blip');
+            if (!fromRowEl || !blipEl) return;
+            const excelRow0 = parseInt(fromRowEl.textContent.trim());
+            const embedId = blipEl.getAttribute('r:embed') || blipEl.getAttribute('embed') || blipEl.getAttribute('id');
+            const targetPath = relMap[embedId];
+            const mediaObj = allMediaBlobs.find(m => m.path.toLowerCase() === (targetPath || '').toLowerCase());
+            if (mediaObj && excelRow0 >= 1) {
+              const dataRowIdx = excelRow0 - 1;
+              imagesByRow[dataRowIdx] = mediaObj;
+            }
+          });
+        }
+
+        // 3. فحص ميزة Place in Cell (xl/cellimages.xml)
+        if (zip.file('xl/cellimages.xml')) {
+          try {
+            const cellImgXml = await zip.file('xl/cellimages.xml').async('text');
+            const relPath = 'xl/_rels/cellimages.xml.rels';
+            const relMap = {};
+            if (zip.file(relPath)) {
+              const relXml = await zip.file(relPath).async('text');
+              const relDoc = parser.parseFromString(relXml, 'application/xml');
+              relDoc.querySelectorAll('Relationship').forEach(r => {
+                let target = r.getAttribute('Target') || '';
+                target = target.replace(/^\.\.\//, 'xl/');
+                if (!target.startsWith('xl/')) target = 'xl/' + target;
+                relMap[r.getAttribute('Id')] = target;
+              });
+            }
+            const cellDoc = parser.parseFromString(cellImgXml, 'application/xml');
+            const cellImgs = cellDoc.querySelectorAll('cellImage');
+            cellImgs.forEach((ci, idx) => {
+              const blip = ci.querySelector('blip');
+              if (blip) {
+                const embedId = blip.getAttribute('r:embed') || blip.getAttribute('embed');
+                const targetPath = relMap[embedId];
+                const mediaObj = allMediaBlobs.find(m => m.path.toLowerCase() === (targetPath || '').toLowerCase());
+                if (mediaObj && !imagesByRow[idx]) {
+                  imagesByRow[idx] = mediaObj;
+                }
+              }
+            });
+          } catch (_) {}
+        }
+
+        // 4. مطابقة احتياطية إذا لم يتوفر Anchor محدد
+        if (Object.keys(imagesByRow).length === 0 && allMediaBlobs.length > 0) {
+          allMediaBlobs.forEach((m, idx) => {
+            imagesByRow[idx] = m;
+          });
+        }
+
+        return imagesByRow;
+      } catch (err) {
+        console.warn('Excel image extraction:', err);
+        return {};
+      }
+    }
+
+    // عرض جدول المعاينة لملف الإكسيل
+    function renderExcelPreviewTable() {
+      const tbody = document.getElementById('excelPreviewTbody');
+      tbody.innerHTML = parsedExcelProducts.map((p, idx) => {
+        let imgHtml = '';
+        if (p.image_url) {
+          const badgeText = p.image_source === 'excel_embedded' ? '🖼️ مدمجة في الإكسيل' : '📷 صورة مرفقة';
+          imgHtml = `
+            <div style="display:flex;align-items:center;gap:8px;">
+              <img src="${p.image_url}" alt="" style="width:36px;height:36px;object-fit:cover;border-radius:4px;border:1px solid var(--gold);" onerror="this.outerHTML='🖼️'">
+              <div>
+                <span style="font-size:0.7rem;color:var(--gold-text);display:block;white-space:nowrap;">${badgeText}</span>
+                <button type="button" class="btn ghost sm change-single-img-btn" data-idx="${idx}" style="font-size:0.7rem;padding:1px 6px;">تغيير 🔄</button>
+              </div>
+            </div>
+          `;
+        } else {
+          imgHtml = `
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span class="muted" style="font-size:0.78rem;">لا توجد</span>
+              <button type="button" class="btn ghost sm change-single-img-btn" data-idx="${idx}" style="font-size:0.72rem;padding:2px 7px;border-color:var(--gold);color:var(--gold-text);">➕ اختيار صورة</button>
+            </div>
+          `;
+        }
+
+        return `
+          <tr>
+            <td><strong class="num">${idx + 1}</strong></td>
+            <td><strong>${escapeHtml(p.title)}</strong></td>
+            <td><span class="muted">${escapeHtml(p.category)}</span></td>
+            <td>${imgHtml}</td>
+            <td class="num">${p.sort_order}</td>
+            <td>
+              <span class="st-badge ${p.is_visible ? 'vis-badge-on' : 'vis-badge-off'}" style="font-size:0.75rem;padding:2px 6px;">
+                ${p.is_visible ? 'ظاهر' : 'مخفي'}
+              </span>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // معالجة وقراءة ملف الإكسيل
+    async function parseExcelFile(file) {
+      if (typeof XLSX === 'undefined') {
+        toastAdmin('مكتبة الإكسيل غير جاهزة، تأكد من الاتصال بالإنترنت');
+        return;
+      }
+      toastAdmin('جاري قراءة الشيت واستخراج الصور المدمجة...');
+
+      // 1. استخراج الصور المدمجة بواسطة JSZip (إذا كان ملف xlsx)
+      let embeddedImages = {};
+      if (/\.xlsx$/i.test(file.name)) {
+        embeddedImages = await extractEmbeddedImagesFromXlsx(file);
+      }
+
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: 'array', codepage: 65001 });
+          const firstSheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[firstSheetName];
+          const rawRows = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+
+          if (!rawRows.length) {
+            toastAdmin('الملف فارغ، لم يتم العثور على أي صفوف!');
+            return;
+          }
+
+          // مطابقة الأعمدة بمرونة عالية
+          const normalizeRow = (row, idx) => {
+            const findVal = (aliases) => {
+              for (const k of Object.keys(row)) {
+                const clean = k.trim().toLowerCase().replace(/[\s_\-#]+/g, '');
+                for (const a of aliases) {
+                  if (clean === a.toLowerCase().replace(/[\s_\-#]+/g, '')) {
+                    return row[k];
+                  }
+                }
+              }
+              return null;
+            };
+
+            const title = findVal(['اسماللوحة', 'اسم', 'الاسم', 'عنوان', 'العنوان', 'title', 'name', 'product', 'item']);
+            if (!title || String(title).trim() === '') return null;
+
+            const category = findVal(['التصنيف', 'تصنيف', 'القسم', 'قسم', 'category', 'cat', 'type', 'section']) || 'عام';
+            const imageUrlRaw = findVal(['رابطالصورة', 'الصورة', 'صورة', 'صورةاللوحة', 'صورة_اللوحة', 'اسمملفالصورة', 'ملفالصورة', 'لينك', 'رابط', 'image', 'imageurl', 'img', 'url', 'photo', 'filename', 'file']);
+            const sortOrderRaw = findVal(['الترتيب', 'ترتيب', 'order', 'sort', 'sortorder', 'index', 'rank']);
+            const visibleRaw = findVal(['ظاهر', 'ظاهرفيالمتجر', 'ظاهر_في_المتجر', 'الحالة', 'نشط', 'مفعل', 'visible', 'isvisible', 'active', 'status']);
+
+            let isVisible = true;
+            if (visibleRaw !== null && visibleRaw !== undefined && visibleRaw !== '') {
+              const vStr = String(visibleRaw).trim().toLowerCase();
+              if (vStr === 'لا' || vStr === '0' || vStr === 'false' || vStr === 'مخفي' || vStr === 'no') {
+                isVisible = false;
+              }
+            }
+
+            // فحص إذا كانت هناك صورة مدمجة في هذا الصف داخل الإكسيل
+            const rawRef = imageUrlRaw ? String(imageUrlRaw).trim() : '';
+            let imageUrl = null;
+            let imageBlob = null;
+            let imageSource = 'none';
+
+            if (embeddedImages[idx]) {
+              imageUrl = embeddedImages[idx].dataUrl;
+              imageBlob = embeddedImages[idx].blob;
+              imageSource = 'excel_embedded';
+            } else if (rawRef && /^https?:\/\//i.test(rawRef)) {
+              imageUrl = rawRef;
+              imageSource = 'link';
+            }
+
+            return {
+              title: String(title).trim(),
+              category: String(category).trim(),
+              image_ref: rawRef,
+              image_url: imageUrl,
+              image_blob: imageBlob,
+              image_source: imageSource,
+              sort_order: parseInt(sortOrderRaw) || (idx + 1),
+              is_visible: isVisible
+            };
+          };
+
+          parsedExcelProducts = rawRows.map((r, i) => normalizeRow(r, i)).filter(Boolean);
+
+          if (!parsedExcelProducts.length) {
+            toastAdmin('تعذر قراءة بيانات المنتجات. تأكد من وجود عمود باسم "اسم اللوحة".');
+            return;
+          }
+
+          const fileBadge = document.getElementById('excelFileBadge');
+          if (fileBadge) {
+            fileBadge.textContent = `✓ ${file.name}`;
+            fileBadge.style.display = 'inline-block';
+          }
+
+          // إذا تم اختيار صور مسبقاً (قبل ملف الإكسيل)، نربطها فوراً
+          if (stagedBatchFiles.length > 0) {
+            await matchAndApplyBatchFiles(stagedBatchFiles, false);
+          }
+
+          const embeddedCount = parsedExcelProducts.filter(p => p.image_source === 'excel_embedded').length;
+          const assignedCount = parsedExcelProducts.filter(p => p.image_url).length;
+
+          // عرض المعاينة
+          document.getElementById('excelFileName').textContent = file.name;
+          document.getElementById('excelRowCount').textContent = `وجدنا ${parsedExcelProducts.length} لوحة (${assignedCount} جاهزة بصورها ✓)`;
+          document.getElementById('excelPreviewArea').style.display = 'block';
+          document.getElementById('confirmExcelImportBtn').disabled = false;
+
+          renderExcelPreviewTable();
+
+          toastAdmin(`✓ تم استيراد ${parsedExcelProducts.length} لوحة بنجاح`);
+        } catch (err) {
+          toastAdmin('خطأ في قراءة ملف الإكسيل: ' + err.message);
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    // ملفات الصور المؤقتة إذا تم رفعها قبل أو بعد الإكسيل
+    let stagedBatchFiles = [];
+
+    // معالجة وفك ملفات الصور (سواء ملفات فردية أو ملف مضغوط ZIP) ومطابقتها باللوحات
+    async function matchAndApplyBatchFiles(incomingFiles, showToast = true) {
+      const filesArr = Array.from(incomingFiles);
+      if (!filesArr.length) return;
+
+      toastAdmin('جاري قراءة وفحص ملفات الصور...');
+      const flatImages = [];
+
+      for (const f of filesArr) {
+        if (/\.zip$/i.test(f.name)) {
+          if (typeof JSZip !== 'undefined') {
+            try {
+              const zip = await JSZip.loadAsync(f);
+              for (const [relPath, zipEntry] of Object.entries(zip.files)) {
+                if (!zipEntry.dir && /\.(jpe?g|png|webp|gif|svg)$/i.test(relPath)) {
+                  const blob = await zipEntry.async('blob');
+                  const fname = relPath.split('/').pop();
+                  const extMatch = fname.match(/\.(jpe?g|png|webp|gif|svg)$/i);
+                  const ext = extMatch ? extMatch[1].toLowerCase() : 'jpg';
+                  const mime = ext === 'png' ? 'image/png' : (ext === 'webp' ? 'image/webp' : 'image/jpeg');
+                  flatImages.push(new File([blob], fname, { type: mime }));
+                }
+              }
+            } catch (zErr) {
+              console.warn('ZIP extraction error:', zErr);
+              toastAdmin('خطأ أثناء فك ملف الـ ZIP: ' + zErr.message);
+            }
+          }
+        } else if (/\.(jpe?g|png|webp|gif|svg)$/i.test(f.name) || (f.type && f.type.startsWith('image/'))) {
+          flatImages.push(f);
+        }
+      }
+
+      stagedBatchFiles = flatImages;
+
+      const badge = document.getElementById('batchImagesStatusBadge');
+      if (badge) {
+        badge.textContent = `✓ تم استلام ${flatImages.length} صورة`;
+        badge.style.display = 'inline-block';
+      }
+
+      if (!parsedExcelProducts || !parsedExcelProducts.length) {
+        if (showToast) {
+          toastAdmin(`✓ تم استلام ${flatImages.length} صورة بنجاح! الآن ارفع شيت الإكسيل لربطها تلقائياً.`);
+        }
+        return;
+      }
+
+      let matchedCount = 0;
+      flatImages.forEach((imgFile, fIdx) => {
+        const fullName = imgFile.name.toLowerCase().trim();
+        const nameNoExt = fullName.replace(/\.[^/.]+$/, '').trim();
+
+        // 1. المطابقة بعمود "اسم ملف الصورة" المكتوب في الإكسيل
+        let targetIdx = parsedExcelProducts.findIndex(p => {
+          if (!p.image_ref) return false;
+          const refFull = p.image_ref.toLowerCase().trim();
+          const refNoExt = refFull.replace(/\.[^/.]+$/, '').trim();
+          return refFull === fullName || refNoExt === nameNoExt;
+        });
+
+        // 2. المطابقة باسم اللوحة نفسه
+        if (targetIdx === -1) {
+          targetIdx = parsedExcelProducts.findIndex(p => {
+            const title = p.title.toLowerCase().trim();
+            return title === nameNoExt || nameNoExt.includes(title) || title.includes(nameNoExt);
+          });
+        }
+
+        // 3. مطابقة تسلسلية للصفوف التي ليس لها صورة بعد
+        if (targetIdx === -1 && fIdx < parsedExcelProducts.length) {
+          if (!parsedExcelProducts[fIdx].image_blob && parsedExcelProducts[fIdx].image_source !== 'excel_embedded') {
+            targetIdx = fIdx;
+          }
+        }
+
+        if (targetIdx !== -1) {
+          const url = URL.createObjectURL(imgFile);
+          parsedExcelProducts[targetIdx].image_url = url;
+          parsedExcelProducts[targetIdx].image_blob = imgFile;
+          parsedExcelProducts[targetIdx].image_source = 'local_file';
+          matchedCount++;
+        }
+      });
+
+      const assignedTotal = parsedExcelProducts.filter(p => p.image_url).length;
+      document.getElementById('excelRowCount').textContent = `وجدنا ${parsedExcelProducts.length} لوحة (${assignedTotal} جاهزة بصورها ✓)`;
+      renderExcelPreviewTable();
+
+      if (showToast) {
+        toastAdmin(`✓ تم ربط ${matchedCount} صورة بصفوف اللوحات بنجاح`);
+      }
+    }
+
+    // فتح وإغلاق مودال الإكسيل
+    document.getElementById('openExcelImportBtn').addEventListener('click', () => {
+      parsedExcelProducts = [];
+      stagedBatchFiles = [];
+      document.getElementById('excelFileInput').value = '';
+      document.getElementById('batchImagesInput').value = '';
+      document.getElementById('excelFileBadge').style.display = 'none';
+      document.getElementById('batchImagesStatusBadge').style.display = 'none';
+      document.getElementById('excelPreviewArea').style.display = 'none';
+      document.getElementById('confirmExcelImportBtn').disabled = true;
+      document.getElementById('excelImportModal').classList.add('open');
+    });
+
+    const closeExcelModal = () => {
+      document.getElementById('excelImportModal').classList.remove('open');
+    };
+    document.getElementById('closeExcelModalBtn').addEventListener('click', closeExcelModal);
+    document.getElementById('cancelExcelBtn').addEventListener('click', closeExcelModal);
+
+    // تنزيل وتصدير
+    document.getElementById('downloadExcelTemplateBtn').addEventListener('click', downloadExcelTemplate);
+    document.getElementById('exportProductsExcelBtn').addEventListener('click', exportProductsToExcel);
+    document.getElementById('exportOrdersExcelBtn').addEventListener('click', exportOrdersToExcel);
+
+    // سحب وإفلات واختيار ملف الإكسيل
+    const dropZone = document.getElementById('excelDropZone');
+    const fileInput = document.getElementById('excelFileInput');
+
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('dragover');
+    });
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('dragover');
+    });
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      const file = e.dataTransfer.files[0];
+      if (file) parseExcelFile(file);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) parseExcelFile(file);
+    });
+
+    // سحب وإفلات واختيار ملفات الصور أو ملف ZIP
+    const imagesDropZone = document.getElementById('imagesDropZone');
+    const batchImagesInput = document.getElementById('batchImagesInput');
+
+    imagesDropZone.addEventListener('click', () => batchImagesInput.click());
+
+    imagesDropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      imagesDropZone.classList.add('dragover');
+    });
+    imagesDropZone.addEventListener('dragleave', () => {
+      imagesDropZone.classList.remove('dragover');
+    });
+    imagesDropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      imagesDropZone.classList.remove('dragover');
+      if (e.dataTransfer.files && e.dataTransfer.files.length) {
+        matchAndApplyBatchFiles(e.dataTransfer.files, true);
+      }
+    });
+
+    batchImagesInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files.length) {
+        matchAndApplyBatchFiles(e.target.files, true);
+      }
+    });
+
+    // تغيير صورة لصف محدد
+    let currentEditingRowIdx = null;
+    document.getElementById('excelPreviewTbody').addEventListener('click', (e) => {
+      const btn = e.target.closest('.change-single-img-btn');
+      if (btn) {
+        currentEditingRowIdx = parseInt(btn.dataset.idx);
+        document.getElementById('singleRowImgInput').click();
+      }
+    });
+
+    document.getElementById('singleRowImgInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file && currentEditingRowIdx !== null && parsedExcelProducts[currentEditingRowIdx]) {
+        const url = URL.createObjectURL(file);
+        parsedExcelProducts[currentEditingRowIdx].image_url = url;
+        parsedExcelProducts[currentEditingRowIdx].image_blob = file;
+        parsedExcelProducts[currentEditingRowIdx].image_source = 'local_file';
+        renderExcelPreviewTable();
+        toastAdmin(`✓ تم تحديث صورة اللوحة: ${parsedExcelProducts[currentEditingRowIdx].title}`);
+      }
+      e.target.value = '';
+    });
+
+    // تأكيد الرفع النهائي للمتجر
+    document.getElementById('confirmExcelImportBtn').addEventListener('click', async () => {
+      if (!parsedExcelProducts || !parsedExcelProducts.length) return;
+      const btn = document.getElementById('confirmExcelImportBtn');
+      const isReplace = document.querySelector('input[name="importMode"]:checked')?.value === 'replace';
+      btn.disabled = true;
+      btn.textContent = 'جاري الرفع والحفظ...';
+
+      try {
+        if (!sb || (currentUser && currentUser.isTemporary)) {
+          if (isReplace) {
+            allProducts = parsedExcelProducts.map((p, idx) => ({
+              id: 'p_xl_' + Date.now() + '_' + idx,
+              title: p.title,
+              category: p.category,
+              image_url: p.image_url,
+              sort_order: p.sort_order,
+              is_visible: p.is_visible
+            }));
+          } else {
+            parsedExcelProducts.forEach((p, idx) => {
+              allProducts.push({
+                id: 'p_xl_' + Date.now() + '_' + idx,
+                title: p.title,
+                category: p.category,
+                image_url: p.image_url,
+                sort_order: p.sort_order,
+                is_visible: p.is_visible
+              });
+            });
+          }
+          toastAdmin(`✓ تم رفع وإضافة ${parsedExcelProducts.length} لوحة مع صورها بنجاح إلى المتجر!`);
+          closeExcelModal();
+          renderProductsGrid();
+          return;
+        }
+
+        // في حالة وجود Supabase
+        btn.textContent = 'جاري رفع الصور للسحابة...';
+        for (let i = 0; i < parsedExcelProducts.length; i++) {
+          const p = parsedExcelProducts[i];
+          if (p.image_blob) {
+            const ext = (p.image_blob.type && p.image_blob.type.includes('png')) ? 'png' : 'jpg';
+            const fileName = `excel_${Date.now()}_${i}_${Math.random().toString(36).substring(7)}.${ext}`;
+            try {
+              const { error: upErr } = await sb.storage.from('product_images').upload(fileName, p.image_blob);
+              if (!upErr) {
+                const { data: { publicUrl } } = sb.storage.from('product_images').getPublicUrl(fileName);
+                p.image_url = publicUrl;
+              }
+            } catch (err) {
+              console.warn('Storage upload error:', err);
+            }
+          }
+        }
+
+        btn.textContent = 'جاري حفظ اللوحات بالكتالوج...';
+        if (isReplace) {
+          await sb.from('products').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+        }
+
+        const insertPayload = parsedExcelProducts.map(p => ({
+          title: p.title,
+          category: p.category,
+          image_url: (p.image_url && !p.image_url.startsWith('data:') && !p.image_url.startsWith('blob:')) ? p.image_url : null,
+          sort_order: p.sort_order,
+          is_visible: p.is_visible
+        }));
+
+        const { error } = await sb.from('products').insert(insertPayload);
+        if (error) throw error;
+
+        toastAdmin(`✓ تم رفع وإضافة ${parsedExcelProducts.length} لوحة بنجاح إلى المتجر!`);
+        closeExcelModal();
+        loadProducts();
+      } catch (err) {
+        toastAdmin('حدث خطأ أثناء الرفع: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '✓ تأكيد الرفع والإضافة للمتجر';
+      }
+    });
+
+    /* ==========================================================================
        3. إدارة المقاسات والأسعار (Sizes & Pricing Controller)
        ========================================================================== */
     async function loadSizes() {
-      if (!sb) return;
       document.getElementById('sizesLoading').style.display = 'block';
+
+      if (!sb || (currentUser && currentUser.isTemporary)) {
+        if (!allSizes.length) {
+          allSizes = [
+            { id: 's', label: '20×30', width_cm: 20, height_cm: 30, price: 450, is_active: true },
+            { id: 'm', label: '30×45', width_cm: 30, height_cm: 45, price: 750, is_active: true },
+            { id: 'l', label: '40×60', width_cm: 40, height_cm: 60, price: 1200, is_active: true },
+            { id: 'xl', label: '50×75', width_cm: 50, height_cm: 75, price: 1800, is_active: true }
+          ];
+        }
+        renderSizesTable();
+        document.getElementById('sizesLoading').style.display = 'none';
+        return;
+      }
+
       try {
         const { data, error } = await sb.from('sizes').select('*').order('sort_order', { ascending: true });
         if (error) throw error;
@@ -1593,7 +2693,6 @@
 
     document.getElementById('sizeForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (!sb) return;
       const btn = document.getElementById('saveSizeBtn');
       btn.disabled = true;
       btn.textContent = 'جاري الحفظ...';
@@ -1614,6 +2713,21 @@
         price,
         is_active: isActive
       };
+
+      if (!sb || (currentUser && currentUser.isTemporary)) {
+        const existingIdx = allSizes.findIndex(x => x.id === id);
+        if (existingIdx >= 0) {
+          allSizes[existingIdx] = { ...allSizes[existingIdx], ...payload };
+        } else {
+          allSizes.push(payload);
+        }
+        btn.disabled = false;
+        btn.textContent = 'حفظ المقاس';
+        document.getElementById('sizeModal').classList.remove('open');
+        renderSizesTable();
+        toastAdmin('تم حفظ وتحديث المقاس بنجاح');
+        return;
+      }
 
       try {
         const { error } = await sb.from('sizes').upsert([payload]);
@@ -1651,6 +2765,13 @@
       if (toggleBtn) {
         const id = toggleBtn.dataset.id;
         const currentActive = toggleBtn.dataset.act === 'true';
+        if (!sb || (currentUser && currentUser.isTemporary)) {
+          const s = allSizes.find(x => x.id === id);
+          if (s) s.is_active = !currentActive;
+          toastAdmin(!currentActive ? 'تم تفعيل المقاس' : 'تم تعطيل المقاس');
+          renderSizesTable();
+          return;
+        }
         try {
           const { error } = await sb.from('sizes').update({ is_active: !currentActive }).eq('id', id);
           if (error) throw error;
@@ -1666,17 +2787,41 @@
        4. إعدادات المتجر (Store Settings Controller)
        ========================================================================== */
     async function loadSettings() {
-      if (!sb) return;
+      if (!sb || (currentUser && currentUser.isTemporary)) {
+        const cfg = window.ADMIN_CONFIG || {};
+        document.getElementById('setStoreName').value = 'بوستيرا | POSTERA';
+        document.getElementById('setInstapay').value = 'postera@instapay';
+        document.getElementById('setWallet').value = '01012345678';
+        document.getElementById('setWhatsapp').value = '201012345678';
+        document.getElementById('setShipping').value = 60;
+        document.getElementById('setFreeShipping').value = 2500;
+        document.getElementById('setNotifEmail').value = cfg.notificationEmail || 'admin@postera.com';
+        document.getElementById('setResendKey').value = cfg.resendApiKey || '';
+        document.getElementById('setEmailWebhook').value = cfg.emailWebhookUrl || '';
+        return;
+      }
       try {
-        const { data, error } = await sb.from('settings').select('*').single();
-        if (error) throw error;
-        if (data) {
-          document.getElementById('setStoreName').value = data.store_name || 'بوستيرا | POSTERA';
-          document.getElementById('setInstapay').value = data.instapay_handle || '';
-          document.getElementById('setWallet').value = data.wallet_number || '';
-          document.getElementById('setWhatsapp').value = data.whatsapp_number || '';
-          document.getElementById('setShipping').value = data.shipping_fee || 60;
-          document.getElementById('setFreeShipping').value = data.free_shipping_threshold || 2500;
+        // 1. تحميل الإعدادات العامة للمتجر
+        const { data: pData, error: pErr } = await sb.from('settings').select('*').single();
+        if (pData) {
+          document.getElementById('setStoreName').value = pData.store_name || 'بوستيرا | POSTERA';
+          document.getElementById('setInstapay').value = pData.instapay_handle || '';
+          document.getElementById('setWallet').value = pData.wallet_number || '';
+          document.getElementById('setWhatsapp').value = pData.whatsapp_number || '';
+          document.getElementById('setShipping').value = pData.shipping_fee || 60;
+          document.getElementById('setFreeShipping').value = pData.free_shipping_threshold || 2500;
+        }
+
+        // 2. تحميل إعدادات الإدارة المحمية (البريد والمفاتيح)
+        const { data: aData } = await sb.from('admin_settings').select('*').single();
+        if (aData) {
+          document.getElementById('setNotifEmail').value = aData.notification_email || '';
+          document.getElementById('setResendKey').value = aData.resend_api_key || '';
+          document.getElementById('setEmailWebhook').value = aData.email_webhook_url || '';
+        } else {
+          document.getElementById('setNotifEmail').value = pData?.notification_email || (window.ADMIN_CONFIG?.notificationEmail || '');
+          document.getElementById('setResendKey').value = pData?.resend_api_key || (window.ADMIN_CONFIG?.resendApiKey || '');
+          document.getElementById('setEmailWebhook').value = pData?.email_webhook_url || (window.ADMIN_CONFIG?.emailWebhookUrl || '');
         }
       } catch (err) {
         console.warn('Settings load:', err);
@@ -1685,12 +2830,20 @@
 
     document.getElementById('settingsForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (!sb) return;
       const btn = document.getElementById('saveSettingsBtn');
       btn.disabled = true;
       btn.textContent = 'جاري الحفظ والنشر...';
 
-      const payload = {
+      if (!sb || (currentUser && currentUser.isTemporary)) {
+        setTimeout(() => {
+          btn.disabled = false;
+          btn.textContent = 'حفظ الإعدادات بالكامل';
+          toastAdmin('✓ تم حفظ إعدادات المتجر بنجاح وستظهر للعملاء فوراً!');
+        }, 300);
+        return;
+      }
+
+      const publicPayload = {
         id: 1,
         store_name: document.getElementById('setStoreName').value.trim(),
         instapay_handle: document.getElementById('setInstapay').value.trim(),
@@ -1701,9 +2854,24 @@
         updated_at: new Date().toISOString()
       };
 
+      const adminPayload = {
+        id: 1,
+        notification_email: document.getElementById('setNotifEmail').value.trim(),
+        resend_api_key: document.getElementById('setResendKey').value.trim(),
+        email_webhook_url: document.getElementById('setEmailWebhook').value.trim(),
+        updated_at: new Date().toISOString()
+      };
+
       try {
-        const { error } = await sb.from('settings').upsert([payload]);
-        if (error) throw error;
+        // حفظ الإعدادات العامة (المتجر والزوار)
+        const { error: pErr } = await sb.from('settings').upsert([publicPayload]);
+        if (pErr) throw pErr;
+
+        // حفظ إعدادات الإدارة السرية (محمية للأدمن فقط)
+        try {
+          await sb.from('admin_settings').upsert([adminPayload]);
+        } catch (_) {}
+
         toastAdmin('✓ تم حفظ إعدادات المتجر بنجاح وستظهر للعملاء فوراً!');
       } catch (err) {
         toastAdmin('حدث خطأ أثناء حفظ الإعدادات: ' + err.message);

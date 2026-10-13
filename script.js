@@ -298,8 +298,18 @@ bindSeg('#cFit', 'fit');
 bindSeg('#cFinish', 'finish');
 
 function loadCustom(file) {
-  if (!file || !file.type.startsWith('image/')) {
-    toast('اختار ملف صورة');
+  if (!file) return;
+  // التحقق من نوع الملف (صور فقط)
+  const allowedMime = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/tiff'];
+  const isImage = file.type.startsWith('image/') || /\.(jpe?g|png|webp|heic|tiff?)$/i.test(file.name);
+  if (!isImage) {
+    toast('نوع الملف غير مدعوم، اختار ملف صورة (JPG, PNG, WebP, TIFF)');
+    return;
+  }
+  // التحقق من الحجم الأقصى (50 ميجابايت كحد أقصى لدقة الطباعة)
+  const MAX_CUSTOM_SIZE = 50 * 1024 * 1024;
+  if (file.size > MAX_CUSTOM_SIZE) {
+    toast('حجم الصورة كبير جداً (الحد الأقصى 50 ميجابايت)');
     return;
   }
   if (C.url) {
@@ -546,8 +556,18 @@ let shotFile = null;
 $('#fShot').addEventListener('change', e => {
   const f = e.target.files[0];
   if (!f) return;
-  if (!f.type.startsWith('image/')) {
-    toast('اختار صورة السكرين');
+  // التحقق من نوع الصورة
+  const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/heic'];
+  const isImg = f.type.startsWith('image/') || /\.(jpe?g|png|webp|heic)$/i.test(f.name);
+  if (!isImg) {
+    toast('نوع الملف غير مدعوم، اختار صورة إيصال صحيحة (JPG, PNG, WebP)');
+    e.target.value = '';
+    return;
+  }
+  // التحقق من أقصى حجم (10 ميجابايت كحد أقصى)
+  const MAX_RECEIPT_SIZE = 10 * 1024 * 1024;
+  if (f.size > MAX_RECEIPT_SIZE) {
+    toast('حجم سكرين التحويل كبير جداً (الحد الأقصى 10 ميجابايت)');
     e.target.value = '';
     return;
   }
@@ -562,6 +582,21 @@ $('#fShot').addEventListener('change', e => {
 });
 
 async function submitOrder() {
+  // 1. حماية البوتات الصامتة (Honeypot)
+  const honey = $('#fHoney') ? $('#fHoney').value.trim() : '';
+  if (honey) {
+    console.warn('Bot detected via honeypot.');
+    setStep('done');
+    return;
+  }
+
+  // 2. حماية تكرار الطلبات السريع (Rate limit / Cooldown)
+  const lastSubmit = sessionStorage.getItem('postera_last_order');
+  if (lastSubmit && (Date.now() - Number(lastSubmit)) < 45000) {
+    toast('تم إرسال طلبك بالفعل! برجاء الانتظار دقيقة قبل إرسال طلب آخر.');
+    return;
+  }
+
   const errs = [];
   const name = $('#fName').value.trim();
   const phone = toLatin($('#fPhone').value).replace(/[\s-]/g, '');
@@ -570,10 +605,10 @@ async function submitOrder() {
   const amt = parseFloat(toLatin($('#fAmount').value).replace(/[,،]/g, ''));
 
   if (!cart.length) errs.push(['fName', 'السلة فاضية.']);
-  if (name.length < 3) errs.push(['fName', 'اكتب الاسم بالكامل.']);
-  if (!/^01[0125]\d{8}$/.test(phone)) errs.push(['fPhone', 'رقم الموبايل لازم يكون 11 رقم ويبدأ بـ 01.']);
+  if (name.length < 3) errs.push(['fName', 'اكتب الاسم بالكامل (3 حروف على الأقل).']);
+  if (!/^01[0125]\d{8}$/.test(phone)) errs.push(['fPhone', 'رقم الموبايل لازم يكون 11 رقم مصري صحيح ويبدأ بـ 01.']);
   if (!gov) errs.push(['fGov', 'اختار المحافظة.']);
-  if (addr.length < 8) errs.push(['fAddr', 'اكتب العنوان بالتفصيل (الشارع والمنطقة).']);
+  if (addr.length < 6) errs.push(['fAddr', 'اكتب العنوان بالتفصيل (الشارع والمنطقة).']);
   if (!(amt > 0)) errs.push(['fAmount', 'اكتب المبلغ اللي حوّلته.']);
   else if (amt < total()) errs.push(['fAmount', `المبلغ أقل من الإجمالي (${egp(total())}).`]);
   if (!shotFile) errs.push(['fShot', 'ارفع سكرين التحويل.']);
@@ -625,7 +660,8 @@ async function submitOrder() {
       // 1. رفع سكرين التحويل للحاوية الخاصة (Private Storage)
       let screenshotPath = null;
       if (shotFile) {
-        const fileExt = shotFile.name.split('.').pop() || 'jpg';
+        const extMatch = shotFile.name.match(/\.(jpe?g|png|webp|heic)$/i);
+        const fileExt = extMatch ? extMatch[1].toLowerCase() : 'jpg';
         const fileName = `${order.no}_receipt_${Date.now()}.${fileExt}`;
         const { error: shotErr } = await supabaseClient.storage
           .from('payment_screenshots')
@@ -636,7 +672,8 @@ async function submitOrder() {
       // 2. رفع صور الطباعة الخاصة للحاوية الخاصة (Private Storage)
       for (const it of order.items) {
         if (it.custom && it.file) {
-          const ext = it.file.name.split('.').pop() || 'jpg';
+          const extMatch = it.file.name.match(/\.(jpe?g|png|webp|heic|tiff?)$/i);
+          const ext = extMatch ? extMatch[1].toLowerCase() : 'jpg';
           const customName = `${order.no}_custom_${Date.now()}_${Math.random().toString(36).substring(7)}.${ext}`;
           const { error: cErr } = await supabaseClient.storage
             .from('custom_designs')
@@ -645,10 +682,15 @@ async function submitOrder() {
         }
       }
 
+      const orderDbId = (window.crypto && window.crypto.randomUUID) 
+        ? window.crypto.randomUUID() 
+        : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16); });
+
       // 3. إدخال الطلب في جدول orders (INSERT فقط مسموح للزائر)
-      const { data: orderData, error: orderErr } = await supabaseClient
+      const { error: orderErr } = await supabaseClient
         .from('orders')
         .insert([{
+          id: orderDbId,
           order_number: order.no,
           customer_name: order.name,
           customer_phone: order.phone,
@@ -659,14 +701,12 @@ async function submitOrder() {
           transferred_amount: order.amount,
           payment_screenshot_url: screenshotPath,
           status: 'pending'
-        }])
-        .select('id')
-        .single();
+        }]);
 
       // 4. إدخال عناصر الطلب في جدول order_items
-      if (orderData && orderData.id) {
+      if (!orderErr) {
         const dbItems = order.items.map(i => ({
-          order_id: orderData.id,
+          order_id: orderDbId,
           product_title: i.title,
           size_label: i.sub,
           quantity: i.qty,
@@ -679,6 +719,8 @@ async function submitOrder() {
           finish: i.finish || null
         }));
         await supabaseClient.from('order_items').insert(dbItems);
+      } else {
+        console.warn('تنبيه إضافة الطلب في Supabase:', orderErr);
       }
     } catch (err) {
       console.warn('تنبيه حفظ Supabase (سيتم الاستمرار محلياً):', err);
@@ -690,11 +732,14 @@ async function submitOrder() {
     submitBtn.textContent = 'تأكيد الطلب';
   }
 
-  // تفعيل رابط وتفاصيل الطلب عبر واتساب
+  // 1. إرسال تنبيه بالبريد الإلكتروني للإدارة
+  sendAdminNotification(order);
+
+  // 2. تفعيل زر كلّم خدمة العملاء على واتساب
   const waBtn = $('#waOrderBtn');
   if (waBtn) {
     const waMsg = encodeURIComponent(
-      `مرحباً بوستيرا، قمت بطلب جديد عبر المتجر:\n` +
+      `مرحباً بوستيرا، قمت بطلب جديد عبر المتجر:\n\n` +
       `📌 رقم الطلب: ${order.no}\n` +
       `👤 الاسم: ${order.name}\n` +
       `📱 الموبايل: ${order.phone}\n` +
@@ -702,14 +747,113 @@ async function submitOrder() {
       `🏠 العنوان: ${order.addr}\n` +
       `💳 طريقة الدفع: ${order.pay === 'instapay' ? 'إنستا باي' : 'محفظة كاش'}\n` +
       `💵 المبلغ المحوّل: ${egp(order.amount)}\n` +
-      `💰 إجمالي الطلب: ${egp(order.total)}`
+      `💰 إجمالي الطلب: ${egp(order.total)}\n\n` +
+      `🖼️ البنود:\n${order.items.map(it => `• ${it.title} (${it.sub}) × ${it.qty}`).join('\n')}\n\n` +
+      `✅ تم رفع إيصال التحويل بنجاح في الموقع للمراجعة.`
     );
     waBtn.href = `https://wa.me/20${SHOP.whatsapp.replace(/^0/, '')}?text=${waMsg}`;
+    waBtn.textContent = 'كلّم خدمة العملاء على واتساب 💬';
     waBtn.style.display = 'inline-flex';
   }
 
+  try {
+    sessionStorage.setItem('postera_last_order', String(Date.now()));
+  } catch (e) {}
+  cart = [];
+  renderCart();
   $('#ordNo').textContent = order.no;
   setStep('done');
+}
+
+/* ---------- إرسال تنبيه بريد إلكتروني للإدارة عند طلب جديد ---------- */
+async function sendAdminNotification(order) {
+  const adminUrl = window.location.origin + window.location.pathname.replace(/[^/]*$/, '') + 'admin.html';
+  const targetEmail = SHOP.notification_email || (window.ADMIN_CONFIG && window.ADMIN_CONFIG.notificationEmail) || 'admin@postera.com';
+  const apiKey = SHOP.resend_api_key || (window.ADMIN_CONFIG && window.ADMIN_CONFIG.resendApiKey);
+  const webhookUrl = SHOP.email_webhook_url || (window.ADMIN_CONFIG && window.ADMIN_CONFIG.emailWebhookUrl);
+
+  const subject = `🔔 طلب جديد في بوستيرا: [${order.no}] - ${order.name} (${egp(order.total)})`;
+  const htmlBody = `
+    <div dir="rtl" style="font-family:'Segoe UI',Tahoma,Arial,sans-serif;color:#1c1a17;max-width:620px;margin:20px auto;padding:26px;border:1px solid #e2ddd1;border-radius:14px;background:#faf8f5;">
+      <div style="border-bottom:2px solid #c9a45c;padding-bottom:12px;margin-bottom:18px;">
+        <h2 style="color:#a47e32;margin:0 0 6px 0;font-size:22px;">وصلك طلب جديد في بوستيرا! 🎉</h2>
+        <span style="color:#5f5a52;font-size:14px;">تم تسجيل الطلب في المتجر وهو بانتظار مراجعتك وتأكيده للطباعة.</span>
+      </div>
+
+      <table style="width:100%;border-collapse:collapse;margin:18px 0;font-size:15px;">
+        <tr style="border-bottom:1px solid #e2ddd1;"><td style="padding:10px 0;color:#5f5a52;width:140px;">رقم الطلب:</td><td style="padding:10px 0;font-weight:bold;color:#a47e32;font-size:17px;">${order.no}</td></tr>
+        <tr style="border-bottom:1px solid #e2ddd1;"><td style="padding:10px 0;color:#5f5a52;">اسم العميل:</td><td style="padding:10px 0;font-weight:bold;">${order.name}</td></tr>
+        <tr style="border-bottom:1px solid #e2ddd1;"><td style="padding:10px 0;color:#5f5a52;">رقم الموبايل:</td><td style="padding:10px 0;"><a href="tel:${order.phone}" style="color:#a47e32;text-decoration:none;font-weight:bold;">${order.phone}</a></td></tr>
+        <tr style="border-bottom:1px solid #e2ddd1;"><td style="padding:10px 0;color:#5f5a52;">المحافظة:</td><td style="padding:10px 0;">${order.gov}</td></tr>
+        <tr style="border-bottom:1px solid #e2ddd1;"><td style="padding:10px 0;color:#5f5a52;">العنوان:</td><td style="padding:10px 0;">${order.addr}</td></tr>
+        <tr style="border-bottom:1px solid #e2ddd1;"><td style="padding:10px 0;color:#5f5a52;">طريقة الدفع:</td><td style="padding:10px 0;">${order.pay === 'instapay' ? 'إنستا باي (InstaPay)' : 'محفظة كاش إلكترونية'}</td></tr>
+        <tr style="border-bottom:1px solid #e2ddd1;"><td style="padding:10px 0;color:#5f5a52;">المبلغ المحوّل:</td><td style="padding:10px 0;font-weight:bold;">${egp(order.amount)}</td></tr>
+        <tr style="border-bottom:1px solid #e2ddd1;"><td style="padding:10px 0;color:#5f5a52;">الإجمالي المطلوب:</td><td style="padding:10px 0;font-weight:bold;color:#1f7a48;font-size:18px;">${egp(order.total)}</td></tr>
+      </table>
+
+      <div style="background:#f1ece1;border-radius:10px;padding:14px;margin:18px 0;">
+        <strong style="display:block;margin-bottom:6px;color:#7a5a1a;">📦 بنود الطلب:</strong>
+        <ul style="margin:0;padding-inline-start:20px;font-size:14px;color:#333;">
+          ${order.items.map(it => `<li><strong>${it.title}</strong> (${it.sub}) × ${it.qty} = ${egp(it.price * it.qty)}</li>`).join('')}
+        </ul>
+      </div>
+
+      <div style="margin:26px 0;text-align:center;">
+        <a href="${adminUrl}" style="background:linear-gradient(135deg,#e2c88a,#c9a45c);color:#1a1408;padding:12px 32px;text-decoration:none;border-radius:999px;font-weight:bold;font-size:16px;display:inline-block;box-shadow:0 4px 12px rgba(0,0,0,0.15);">
+          🔍 فتح وفحص الطلب في لوحة الإدارة
+        </a>
+      </div>
+
+      <p style="font-size:12px;color:#888;text-align:center;margin-top:20px;">
+        تم إرسال هذا التنبيه التلقائي فور تسجيل الطلب في متجر بوستيرا POSTERA.
+      </p>
+    </div>
+  `;
+
+  if (apiKey) {
+    try {
+      await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          from: 'بوستيرا POSTERA <onboarding@resend.dev>',
+          to: [targetEmail],
+          subject: subject,
+          html: htmlBody
+        })
+      });
+      return;
+    } catch (e) {
+      console.warn('Resend email error:', e);
+    }
+  }
+
+  if (webhookUrl) {
+    try {
+      await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to: targetEmail,
+          subject: subject,
+          order_no: order.no,
+          customer_name: order.name,
+          customer_phone: order.phone,
+          governorate: order.gov,
+          address: order.addr,
+          total_amount: order.total,
+          transferred_amount: order.amount,
+          admin_url: adminUrl,
+          message: htmlBody
+        })
+      });
+    } catch (e) {
+      console.warn('Webhook email error:', e);
+    }
+  }
 }
 
 /* ---------- مزامنة المتجر الحية مع Supabase ---------- */
@@ -722,9 +866,16 @@ async function syncWithSupabase() {
       if (sData.instapay_handle) SHOP.instapay = sData.instapay_handle;
       if (sData.wallet_number) SHOP.wallet = sData.wallet_number;
       if (sData.whatsapp_number) SHOP.whatsapp = sData.whatsapp_number;
+      if (sData.notification_email) SHOP.notification_email = sData.notification_email;
+      if (sData.resend_api_key) SHOP.resend_api_key = sData.resend_api_key;
+      if (sData.email_webhook_url) SHOP.email_webhook_url = sData.email_webhook_url;
       if (sData.shipping_fee !== null && sData.shipping_fee !== undefined) SHOP.shipping = Number(sData.shipping_fee);
       if (sData.free_shipping_threshold !== null && sData.free_shipping_threshold !== undefined) SHOP.freeShippingOver = Number(sData.free_shipping_threshold);
-      $('#footWa').textContent = SHOP.whatsapp;
+      if ($('#footWa')) $('#footWa').textContent = SHOP.whatsapp;
+      const revBtn = $('#reviewShareWa');
+      if (revBtn && SHOP.whatsapp) {
+        revBtn.href = `https://wa.me/20${SHOP.whatsapp.replace(/^0/, '')}?text=${encodeURIComponent('مرحباً بوستيرا، حابب أشارك رأيي وصورة اللوحة بعد التركيب 🖼️')}`;
+      }
       renderPay();
       renderCart();
     }
@@ -776,6 +927,11 @@ async function syncWithSupabase() {
 }
 
 /* ---------- بدء التشغيل (Init) ---------- */
+if ($('#footWa')) $('#footWa').textContent = SHOP.whatsapp;
+const initRevBtn = $('#reviewShareWa');
+if (initRevBtn && SHOP.whatsapp) {
+  initRevBtn.href = `https://wa.me/20${SHOP.whatsapp.replace(/^0/, '')}?text=${encodeURIComponent('مرحباً بوستيرا، حابب أشارك رأيي وصورة اللوحة بعد التركيب 🖼️')}`;
+}
 renderFilters();
 renderGrid();
 renderCustom();

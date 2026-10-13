@@ -1116,3 +1116,278 @@ footer .wrap {
   opacity: 1;
   transform: translate(-50%, 0);
 }
+
+/* ==========================================================================
+   أقسام المتجر الإضافية: التعليق، الآراء، الأسئلة الشائعة، والسياسات
+   ========================================================================== */
+
+/* قسم طريقة التعليق والتركيب (Mounting Guide) */
+.mount-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.mount-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 26px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.mount-card:hover {
+  border-color: var(--gold);
+  transform: translateY(-2px);
+}
+
+.mount-badge {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  color: var(--gold-text);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.mount-icon {
+  font-size: 2rem;
+  margin-bottom: 4px;
+}
+
+.mount-card h3 {
+  font-size: 1.25rem;
+  color: var(--fg);
+}
+
+.mount-card p {
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.mount-tip {
+  margin-top: 28px;
+  padding: 18px 22px;
+  background: var(--surface-2);
+  border-right: 3px solid var(--gold);
+  border-radius: 10px;
+  color: var(--fg);
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* قسم آراء العملاء وتجاربهم (Reviews Container) */
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 24px;
+}
+
+.review-card-slot {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.review-stars {
+  color: var(--gold-text);
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+}
+
+.review-quote {
+  color: var(--fg);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  font-style: italic;
+  margin: 0;
+}
+
+.review-author {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.review-badge-verified {
+  color: var(--ok);
+  font-size: 0.78rem;
+  background: rgba(109, 187, 142, 0.12);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.reviews-cta-box {
+  margin-top: 28px;
+  padding: 28px 20px;
+  background: linear-gradient(135deg, rgba(201, 164, 92, 0.08), rgba(22, 20, 18, 0.6));
+  border: 1px dashed var(--gold);
+  border-radius: 16px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.reviews-cta-box h3 {
+  font-size: 1.3rem;
+  color: var(--gold-text);
+}
+
+.reviews-cta-box p {
+  color: var(--muted);
+  font-size: 0.95rem;
+  max-width: 540px;
+  margin: 0;
+}
+
+/* قسم الأسئلة الشائعة (FAQ Accordion) */
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 24px;
+  max-width: 840px;
+  margin-inline: auto;
+}
+
+.faq-item {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.faq-item:hover,
+.faq-item[open] {
+  border-color: var(--gold);
+}
+
+.faq-item[open] {
+  background: var(--surface-2);
+}
+
+.faq-q {
+  padding: 18px 22px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--fg);
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+}
+
+.faq-q::-webkit-details-marker {
+  display: none;
+}
+
+.faq-q::after {
+  content: "＋";
+  font-size: 1.3rem;
+  color: var(--gold-text);
+  font-weight: 700;
+  transition: transform 0.2s;
+}
+
+.faq-item[open] .faq-q::after {
+  content: "−";
+  transform: rotate(180deg);
+}
+
+.faq-a {
+  padding: 0 22px 20px 22px;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  border-top: 1px solid var(--line);
+  margin-top: 4px;
+  padding-top: 14px;
+}
+
+/* قسم سياسة الشحن والاسترجاع (Policy Cards) */
+.policy-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 28px;
+  margin-top: 24px;
+}
+
+.policy-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 30px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.policy-card .policy-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 14px;
+}
+
+.policy-card .policy-icon {
+  font-size: 2rem;
+}
+
+.policy-card h3 {
+  font-size: 1.35rem;
+  color: var(--gold-text);
+}
+
+.policy-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.policy-list li {
+  position: relative;
+  padding-inline-start: 24px;
+  color: var(--fg);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.policy-list li::before {
+  content: "✓";
+  position: absolute;
+  right: 0;
+  color: var(--gold-text);
+  font-weight: bold;
+}
+
+@media (max-width: 760px) {
+  .mount-grid,
+  .policy-grid {
+    grid-template-columns: 1fr;
+  }
+}
