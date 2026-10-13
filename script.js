@@ -199,7 +199,7 @@ function renderGrid() {
         <div class="seg" role="group" aria-label="المقاس">${segHTML(SHOP.sizes.map(s => ({ id: s.id, html: `<bdi>${s.label}</bdi>` })), cur, 'data-size')}</div>
         <div class="buy">
           <div class="price num"><span data-p>${egp(szObj.price)}</span></div>
-          <button class="btn sm" type="button" data-add style="background:linear-gradient(135deg, #f5e2b3 0%, #c9a45c 50%, #9e7b37 100%);color:#120e06;font-weight:700;border-radius:999px;">أضف للسلة 🛒</button>
+          <button class="btn sm" type="button" data-add style="background:linear-gradient(135deg, #f5e2b3 0%, #c9a45c 50%, #9e7b37 100%);color:#120e06;font-weight:700;border-radius:999px;">أضف للسلة</button>
         </div>
       </div>
     </article>`;
@@ -793,19 +793,19 @@ async function submitOrder() {
   if (waBtn) {
     const waMsg = encodeURIComponent(
       `مرحباً بوستيرا، قمت بطلب جديد عبر المتجر:\n\n` +
-      `📌 رقم الطلب: ${order.no}\n` +
-      `👤 الاسم: ${order.name}\n` +
-      `📱 الموبايل: ${order.phone}\n` +
-      `📍 المحافظة: ${order.gov}\n` +
-      `🏠 العنوان: ${order.addr}\n` +
-      `💳 طريقة الدفع: ${order.pay === 'instapay' ? 'إنستا باي' : 'محفظة كاش'}\n` +
-      `💵 المبلغ المحوّل: ${egp(order.amount)}\n` +
-      `💰 إجمالي الطلب: ${egp(order.total)}\n\n` +
-      `🖼️ البنود:\n${order.items.map(it => `• ${it.title} (${it.sub}) × ${it.qty}`).join('\n')}\n\n` +
-      `✅ تم رفع إيصال التحويل بنجاح في الموقع للمراجعة.`
+      `رقم الطلب: ${order.no}\n` +
+      `الاسم: ${order.name}\n` +
+      `الموبايل: ${order.phone}\n` +
+      `المحافظة: ${order.gov}\n` +
+      `العنوان: ${order.addr}\n` +
+      `طريقة الدفع: ${order.pay === 'instapay' ? 'إنستا باي' : 'محفظة كاش'}\n` +
+      `المبلغ المحوّل: ${egp(order.amount)}\n` +
+      `إجمالي الطلب: ${egp(order.total)}\n\n` +
+      `البنود:\n${order.items.map(it => `• ${it.title} (${it.sub}) × ${it.qty}`).join('\n')}\n\n` +
+      `تم رفع إيصال التحويل بنجاح في الموقع للمراجعة.`
     );
     waBtn.href = `https://wa.me/20${SHOP.whatsapp.replace(/^0/, '')}?text=${waMsg}`;
-    waBtn.textContent = 'كلّم خدمة العملاء على واتساب 💬';
+    waBtn.textContent = 'كلّم خدمة العملاء على واتساب';
     waBtn.style.display = 'inline-flex';
   }
 
@@ -825,11 +825,11 @@ async function sendAdminNotification(order) {
   const apiKey = SHOP.resend_api_key || (window.ADMIN_CONFIG && window.ADMIN_CONFIG.resendApiKey);
   const webhookUrl = SHOP.email_webhook_url || (window.ADMIN_CONFIG && window.ADMIN_CONFIG.emailWebhookUrl);
 
-  const subject = `🔔 طلب جديد في بوستيرا: [${order.no}] - ${order.name} (${egp(order.total)})`;
+  const subject = `طلب جديد في بوستيرا: [${order.no}] - ${order.name} (${egp(order.total)})`;
   const htmlBody = `
     <div dir="rtl" style="font-family:'Segoe UI',Tahoma,Arial,sans-serif;color:#1c1a17;max-width:620px;margin:20px auto;padding:26px;border:1px solid #e2ddd1;border-radius:14px;background:#faf8f5;">
       <div style="border-bottom:2px solid #c9a45c;padding-bottom:12px;margin-bottom:18px;">
-        <h2 style="color:#a47e32;margin:0 0 6px 0;font-size:22px;">وصلك طلب جديد في بوستيرا! 🎉</h2>
+        <h2 style="color:#a47e32;margin:0 0 6px 0;font-size:22px;">وصلك طلب جديد في بوستيرا</h2>
         <span style="color:#5f5a52;font-size:14px;">تم تسجيل الطلب في المتجر وهو بانتظار مراجعتك وتأكيده للطباعة.</span>
       </div>
 
@@ -845,7 +845,7 @@ async function sendAdminNotification(order) {
       </table>
 
       <div style="background:#f1ece1;border-radius:10px;padding:14px;margin:18px 0;">
-        <strong style="display:block;margin-bottom:6px;color:#7a5a1a;">📦 بنود الطلب:</strong>
+        <strong style="display:block;margin-bottom:6px;color:#7a5a1a;">بنود الطلب:</strong>
         <ul style="margin:0;padding-inline-start:20px;font-size:14px;color:#333;">
           ${order.items.map(it => `<li><strong>${it.title}</strong> (${it.sub}) × ${it.qty} = ${egp(it.price * it.qty)}</li>`).join('')}
         </ul>
@@ -853,7 +853,7 @@ async function sendAdminNotification(order) {
 
       <div style="margin:26px 0;text-align:center;">
         <a href="${adminUrl}" style="background:linear-gradient(135deg,#e2c88a,#c9a45c);color:#1a1408;padding:12px 32px;text-decoration:none;border-radius:999px;font-weight:bold;font-size:16px;display:inline-block;box-shadow:0 4px 12px rgba(0,0,0,0.15);">
-          🔍 فتح وفحص الطلب في لوحة الإدارة
+          فتح وفحص الطلب في لوحة الإدارة
         </a>
       </div>
 
@@ -927,7 +927,7 @@ async function syncWithSupabase() {
       if ($('#footWa')) $('#footWa').textContent = SHOP.whatsapp;
       const revBtn = $('#reviewShareWa');
       if (revBtn && SHOP.whatsapp) {
-        revBtn.href = `https://wa.me/20${SHOP.whatsapp.replace(/^0/, '')}?text=${encodeURIComponent('مرحباً بوستيرا، حابب أشارك رأيي وصورة اللوحة بعد التركيب 🖼️')}`;
+        revBtn.href = `https://wa.me/20${SHOP.whatsapp.replace(/^0/, '')}?text=${encodeURIComponent('مرحباً بوستيرا، حابب أشارك رأيي وصورة اللوحة بعد التركيب')}`;
       }
       const navWa = $('#navWhatsappLink');
       if (navWa && SHOP.whatsapp) {
@@ -987,7 +987,7 @@ async function syncWithSupabase() {
 if ($('#footWa')) $('#footWa').textContent = SHOP.whatsapp;
 const initRevBtn = $('#reviewShareWa');
 if (initRevBtn && SHOP.whatsapp) {
-  initRevBtn.href = `https://wa.me/20${SHOP.whatsapp.replace(/^0/, '')}?text=${encodeURIComponent('مرحباً بوستيرا، حابب أشارك رأيي وصورة اللوحة بعد التركيب 🖼️')}`;
+  initRevBtn.href = `https://wa.me/20${SHOP.whatsapp.replace(/^0/, '')}?text=${encodeURIComponent('مرحباً بوستيرا، حابب أشارك رأيي وصورة اللوحة بعد التركيب')}`;
 }
 const initNavWa = $('#navWhatsappLink');
 if (initNavWa && SHOP.whatsapp) {
