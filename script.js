@@ -192,11 +192,14 @@ function renderGrid() {
     return `<article class="card" data-id="${p.id}">
       <div class="plate"><div class="art">${artContent}</div></div>
       <div class="meta">
-        <div><h3>${esc(p.title)}</h3><span class="cat">${esc(p.cat)}</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <h3 style="margin:0;">${esc(p.title)}</h3>
+          <span class="cat">${esc(p.cat)}</span>
+        </div>
         <div class="seg" role="group" aria-label="المقاس">${segHTML(SHOP.sizes.map(s => ({ id: s.id, html: `<bdi>${s.label}</bdi>` })), cur, 'data-size')}</div>
         <div class="buy">
           <div class="price num"><span data-p>${egp(szObj.price)}</span></div>
-          <button class="btn sm" type="button" data-add>ضيف للسلة</button>
+          <button class="btn sm" type="button" data-add style="background:linear-gradient(135deg, #f5e2b3 0%, #c9a45c 50%, #9e7b37 100%);color:#120e06;font-weight:700;border-radius:999px;">أضف للسلة 🛒</button>
         </div>
       </div>
     </article>`;

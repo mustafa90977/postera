@@ -6,7 +6,7 @@
   <title>بوستيرا | POSTERA — متجر بوسترات معدنية</title>
   <meta name="description" content="بوستيرا (POSTERA) - متجر متخصص في طباعة البوسترات واللوحات الفنية على ألواح ألومنيوم معدنية مصقولة بأعلى دقة ومقاومة للخدش والرطوبة.">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=20261013-3">
 </head>
 <body>
 <div id="app" dir="rtl" lang="ar">
@@ -29,36 +29,40 @@
   </header>
 
   <main>
-    <!-- قسم الهيرو الرئيسي -->
-    <section class="hero" id="hero">
+    <!-- قسم الهيرو الرئيسي - تصميم فاخر ثلاثي الأبعاد -->
+    <section class="hero hero-luxury" id="hero">
       <div class="wrap">
-        <div>
+        <div class="hero-center-content">
           <div class="eyebrow-pill">
             <span class="pulse-dot"></span>
-            <span>لوحات فنية فاخرة مطبوعة على ألواح ألومنيوم</span>
+            <span>لوحات فنية فاخرة مطبوعة على ألواح ألومنيوم مصقولة</span>
           </div>
-          <h1>حيطتك تستاهل <em>معدن</em>.</h1>
-          <p class="lead">الصورة بتتطبع على لوح ألومنيوم مصقول، ألوانها بتطلع عميقة بلمعان معدني فاخر، ومقاومة للخدش والرطوبة. اختار من تشكيلتنا الحصرية أو اطبع صورتك الخاصة.</p>
-          <div class="cta">
-            <a class="btn" href="#gallery" data-scroll="gallery">
-              <span>شوف التشكيلة</span>
-              <span>🖼️</span>
+          <h1 class="hero-headline">حيطتك تستاهل <em>معدن</em>.</h1>
+          <p class="lead hero-lead">ألوان عميقة بلمعان معدني فريد، مقاومة للخدش والرطوبة. اختار من تشكيلتنا الحصرية أو اطبع تصميمك الخاص بدقة فائقة.</p>
+          <div class="cta hero-cta-center">
+            <a class="btn hero-gold-btn" href="#gallery" data-scroll="gallery">
+              <span>تسوق التشكيلة الآن</span>
+              <span>🛍️</span>
             </a>
-            <a class="btn ghost" href="#custom" data-scroll="custom">
-              <span>اطبع صورتك</span>
+            <a class="btn ghost hero-ghost-btn" href="#custom" data-scroll="custom">
+              <span>اطبع صورتك على معدن</span>
               <span>✨</span>
             </a>
           </div>
-          <dl class="specs">
-            <div><dt class="num">1.1 مم</dt><dd>سُمك لوح الألومنيوم</dd></div>
-            <div><dt class="num">4 مقاسات</dt><dd>من 20×30 حتى 50×75 سم</dd></div>
-            <div><dt class="num">3–5 أيام</dt><dd>طباعة وتجهيز فاخر</dd></div>
-          </dl>
         </div>
-        <div class="hero-art">
+
+        <div class="hero-art hero-3d-showcase">
           <div class="plate-aura" aria-hidden="true"></div>
-          <div class="plate" aria-hidden="false"><div class="art" id="heroArt"></div></div>
+          <div class="plate hero-isometric-plate" aria-hidden="false">
+            <div class="art" id="heroArt"></div>
+          </div>
         </div>
+
+        <dl class="specs hero-specs-row">
+          <div><dt class="num">1.1 مم</dt><dd>سُمك لوح الألومنيوم</dd></div>
+          <div><dt class="num">4 مقاسات</dt><dd>من 20×30 حتى 50×75 سم</dd></div>
+          <div><dt class="num">3–5 أيام</dt><dd>طباعة وتجهيز فاخر</dd></div>
+        </dl>
       </div>
     </section>
 
@@ -460,8 +464,8 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <!-- ملف الإعدادات المشترك ومكتبة Supabase وملف السكريبت -->
-<script src="config.js"></script>
+<script src="config.js?v=20261013-3"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="script.js"></script>
+<script src="script.js?v=20261013-3"></script>
 </body>
 </html>
