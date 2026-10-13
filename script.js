@@ -224,7 +224,7 @@ function renderGrid() {
           <h3 class="card-editorial-title">${esc(p.title)}</h3>
           <span class="card-editorial-fav" title="حفظ في المفضلة" aria-label="حفظ"></span>
         </div>
-        <div class="card-editorial-price num">${egp(szObj.price)}</div>
+        <div class="card-editorial-price num"><span data-p>${egp(szObj.price)}</span></div>
         <div class="seg card-size-pick" role="group" aria-label="المقاس">${segHTML(SHOP.sizes.map(s => ({ id: s.id, html: `<bdi>${s.label}</bdi>` })), cur, 'data-size')}</div>
         <button class="btn block hero-cart-btn" type="button" data-add>
           <span>أضف إلى السلة</span>
