@@ -6,106 +6,142 @@
   <title>بوستيرا | POSTERA — متجر بوسترات معدنية</title>
   <meta name="description" content="بوستيرا (POSTERA) - متجر متخصص في طباعة البوسترات واللوحات الفنية على ألواح ألومنيوم معدنية مصقولة بأعلى دقة ومقاومة للخدش والرطوبة.">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap">
-  <link rel="stylesheet" href="style.css?v=20261013-5">
+  <link rel="stylesheet" href="style.css?v=20261013-6">
 </head>
 <body>
 <div id="app" dir="rtl" lang="ar">
 
   <!-- الهيدر وشعار بوستيرا -->
+  <!-- الهيدر الفاخر بشعار بوستيرا والروابط والأزرار -->
   <header class="top">
-    <div class="wrap">
+    <div class="wrap header-wrap">
       <div class="top-start">
         <button class="menubtn" id="openMenu" type="button" aria-label="فتح القائمة الرئيسية" aria-expanded="false" aria-controls="navDrawer">
           <span class="bar"></span>
           <span class="bar"></span>
           <span class="bar"></span>
         </button>
-        <a class="brand" href="#top" data-scroll="hero"><b>بوستيرا</b><span>POSTERA</span></a>
+        <a class="brand" href="#top" data-scroll="hero">
+          <span class="brand-line"></span>
+          <b>POSTERA</b>
+        </a>
       </div>
-      <button class="cartbtn" id="openCart" type="button" aria-label="فتح السلة">
-        <span>السلة</span><span class="badge num" id="badge">0</span>
-      </button>
+
+      <nav class="header-nav" aria-label="أقسام المتجر الرئيسية">
+        <a href="#gallery" class="header-nav-link active" data-scroll="gallery">كل البوسترات</a>
+        <a href="#gallery" class="header-nav-link" data-cat-filter="أفلام ومسلسلات">أفلام ومسلسلات</a>
+        <a href="#gallery" class="header-nav-link" data-cat-filter="أنمي">أنمي</a>
+        <a href="#gallery" class="header-nav-link" data-cat-filter="ألعاب">ألعاب</a>
+        <a href="#gallery" class="header-nav-link" data-cat-filter="سيارات">سيارات</a>
+        <a href="#custom" class="header-nav-link" data-scroll="custom">طباعة خاصة</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="admin.html" class="head-action-btn" title="حساب الإدارة" aria-label="لوحة الإدارة">
+          <span>حسابي</span>
+        </a>
+        <button class="cartbtn" id="openCart" type="button" aria-label="فتح السلة">
+          <span>السلة</span><span class="badge num" id="badge">0</span>
+        </button>
+      </div>
     </div>
   </header>
 
   <main>
-    <!-- قسم الهيرو الرئيسي - تصميم فاخر ثلاثي الأبعاد -->
-    <section class="hero hero-luxury" id="hero">
-      <div class="wrap">
-        <div class="hero-center-content">
-          <div class="eyebrow-pill">
-            <span class="pulse-dot"></span>
-            <span>لوحات فنية فاخرة مطبوعة على ألواح ألومنيوم مصقولة</span>
+    <!-- قسم الهيرو المطابق للصورة المرجعية: لوحات على رف وجدار دافئ + عنوان وأزرار -->
+    <section class="hero hero-editorial" id="hero">
+      <div class="wrap hero-editorial-wrap">
+        
+        <!-- الجانب الأيسر: عرض الغرفة الحقيقية مع 3 لوحات معدنية على رف خشبي -->
+        <div class="hero-room-scene" aria-label="عرض لوحات بوستيرا في ديكور غرفة فاخرة">
+          <div class="room-wall">
+            <div class="shelf-plants"></div>
+            <div class="shelf-lamp"></div>
+            <div class="room-plates-row">
+              <div class="room-plate plate-abstract">
+                <div class="art" id="heroPlate1"></div>
+              </div>
+              <div class="room-plate plate-landscape">
+                <div class="art" id="heroPlate2"></div>
+              </div>
+              <div class="room-plate plate-car">
+                <div class="art" id="heroPlate3"></div>
+              </div>
+            </div>
+            <div class="wooden-shelf"></div>
+            <div class="shelf-books"></div>
           </div>
-          <h1 class="hero-headline">حيطتك تستاهل <em>معدن</em>.</h1>
-          <p class="lead hero-lead">ألوان عميقة بلمعان معدني فريد، مقاومة للخدش والرطوبة. اختار من تشكيلتنا الحصرية أو اطبع تصميمك الخاص بدقة فائقة.</p>
-          <div class="cta hero-cta-center">
-            <a class="btn hero-gold-btn" href="#gallery" data-scroll="gallery">
-              <span>تسوق التشكيلة الآن</span>
+        </div>
+
+        <!-- الجانب الأيمن: النص الرئيسي والأزرار -->
+        <div class="hero-editorial-content">
+          <h1 class="hero-editorial-title">حوّل حيطتك لحاجة شبهك</h1>
+          <p class="hero-editorial-sub">بوسترات معدنية بتصميمات تستاهل تتشاف كل يوم</p>
+          <div class="hero-editorial-cta">
+            <a class="btn hero-btn-primary" href="#gallery" data-scroll="gallery">
+              <span>اكتشف التصميمات</span>
+              <span class="btn-arrow" aria-hidden="true">←</span>
             </a>
-            <a class="btn ghost hero-ghost-btn" href="#custom" data-scroll="custom">
-              <span>اطبع صورتك على معدن</span>
+            <a class="btn-link hero-btn-secondary" href="#mounting" data-scroll="mounting">
+              <span>اعرف طريقة التعليق</span>
+              <span class="btn-arrow" aria-hidden="true">←</span>
             </a>
           </div>
         </div>
 
-        <div class="hero-art hero-3d-showcase">
-          <div class="plate-aura" aria-hidden="true"></div>
-          <div class="plate hero-isometric-plate" aria-hidden="false">
-            <div class="art" id="heroArt"></div>
-          </div>
-        </div>
-
-        <dl class="specs hero-specs-row">
-          <div><dt class="num">1.1 مم</dt><dd>سُمك لوح الألومنيوم</dd></div>
-          <div><dt class="num">4 مقاسات</dt><dd>من 20×30 حتى 50×75 سم</dd></div>
-          <div><dt class="num">3–5 أيام</dt><dd>طباعة وتجهيز فاخر</dd></div>
-        </dl>
       </div>
     </section>
 
-    <!-- شريط مميزات الثقة والجودة الفاخرة -->
-    <section class="trust-bar" aria-label="مميزات المتجر">
+    <!-- قسم: اختار عالمك (تصنيفات عريضة بصور مصغرة) -->
+    <section class="block section-categories" id="categoriesBlock">
       <div class="wrap">
-        <div class="trust-grid">
-          <div class="trust-item">
-            <div>
-              <strong>ألومنيوم مصقول 1.1 مم</strong>
-              <small>مقاوم للخدش، الرطوبة، والبهتان</small>
+        <div class="section-divider-title">
+          <span class="divider-line"></span>
+          <h2>اختار عالمك</h2>
+          <span class="divider-line"></span>
+        </div>
+        <div class="categories-grid" id="categoriesGrid">
+          <div class="cat-card" data-cat="سينما">
+            <div class="cat-bg cat-bg-cinema"></div>
+            <div class="cat-overlay">
+              <span class="cat-title">سينما</span>
+              <span class="cat-arrow" aria-hidden="true">←</span>
             </div>
           </div>
-          <div class="trust-item">
-            <div>
-              <strong>تثبيت مغناطيسي 3M</strong>
-              <small>تركيب سهل وفوري بدون مسامير</small>
+          <div class="cat-card" data-cat="أنمي">
+            <div class="cat-bg cat-bg-anime"></div>
+            <div class="cat-overlay">
+              <span class="cat-title">أنمي</span>
+              <span class="cat-arrow" aria-hidden="true">←</span>
             </div>
           </div>
-          <div class="trust-item">
-            <div>
-              <strong>لمعان معدني فريد</strong>
-              <small>انعكاس ضوء طبيعي وتفاصيل فائقة</small>
+          <div class="cat-card" data-cat="سيارات">
+            <div class="cat-bg cat-bg-cars"></div>
+            <div class="cat-overlay">
+              <span class="cat-title">سيارات</span>
+              <span class="cat-arrow" aria-hidden="true">←</span>
             </div>
           </div>
-          <div class="trust-item">
-            <div>
-              <strong>شحن لجميع المحافظات</strong>
-              <small>تغليف فاخر ومقاوم للصدمات</small>
+          <div class="cat-card" data-cat="فن تجريدي">
+            <div class="cat-bg cat-bg-abstract"></div>
+            <div class="cat-overlay">
+              <span class="cat-title">فن تجريدي</span>
+              <span class="cat-arrow" aria-hidden="true">←</span>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- قسم المعرض والتشكيلة -->
-    <section class="block" id="gallery">
+    <!-- قسم المعرض والتشكيلة: أحدث الإضافات -->
+    <section class="block section-latest" id="gallery">
       <div class="wrap">
-        <div class="head">
-          <div>
-            <p class="eyebrow">التشكيلة</p>
-            <h2>لوحات جاهزة للتعليق</h2>
-          </div>
-          <div class="seg" id="filters" role="group" aria-label="تصنيف اللوحات"></div>
+        <div class="section-divider-title">
+          <span class="divider-line"></span>
+          <h2>أحدث الإضافات</h2>
+          <span class="divider-line"></span>
         </div>
+        <div class="seg" id="filters" role="group" aria-label="تصنيف اللوحات" style="display:none;"></div>
         <div class="grid" id="grid"></div>
       </div>
     </section>
@@ -311,26 +347,44 @@
             </ul>
           </div>
         </div>
+    <!-- شريط مميزات الثقة والجودة الفاخرة المطابق للصورة المرجعية -->
+    <section class="trust-bar-editorial" aria-label="مميزات متجر بوستيرا">
+      <div class="wrap trust-editorial-wrap">
+        <div class="trust-editorial-item">
+          <strong>تغليف يحمي البوستر</strong>
+          <small>للوصول بأمان إلى باب بيتك</small>
+        </div>
+        <div class="trust-divider"></div>
+        <div class="trust-editorial-item">
+          <strong>شحن لكل المحافظات</strong>
+          <small>في مصر</small>
+        </div>
+        <div class="trust-divider"></div>
+        <div class="trust-editorial-item">
+          <strong>دفع آمن</strong>
+          <small>باستخدام أفضل وسائل الدفع</small>
+        </div>
       </div>
     </section>
   </main>
 
-  <!-- الفوتر -->
-  <footer>
-    <div class="wrap">
-      <div>
-        <b style="font-family:var(--font-display);font-size:1.3rem;color:var(--gold-text)">بوستيرا</b> — بوسترات معدنية فاخرة
+  <!-- الفوتر بتصميم ناعم ومطابق للمرجع -->
+  <footer class="footer-editorial">
+    <div class="wrap footer-wrap">
+      <div class="footer-brand">
+        <span class="brand-line"></span>
+        <b>POSTERA</b>
       </div>
-      <div style="display:flex;gap:18px;flex-wrap:wrap;font-size:0.88rem;">
-        <a href="#gallery" style="color:inherit;text-decoration:none;">التشكيلة</a>
-        <a href="#custom" style="color:inherit;text-decoration:none;">طباعة خاصة</a>
-        <a href="#mounting" style="color:inherit;text-decoration:none;">طريقة التعليق</a>
-        <a href="#reviews" style="color:inherit;text-decoration:none;">آراء العملاء</a>
-        <a href="#faq" style="color:inherit;text-decoration:none;">الأسئلة الشائعة</a>
-        <a href="#policy" style="color:inherit;text-decoration:none;">الشحن والاسترجاع</a>
+      <div class="footer-links">
+        <a href="#gallery">كل البوسترات</a>
+        <a href="#custom">طباعة خاصة</a>
+        <a href="#mounting">طريقة التعليق</a>
+        <a href="#reviews">آراء العملاء</a>
+        <a href="#faq">الأسئلة الشائعة</a>
+        <a href="#policy">الشحن والاسترجاع</a>
       </div>
-      <div>
-        واتساب: <bdi dir="ltr" class="num" id="footWa"></bdi> | الشحن لكل المحافظات
+      <div class="footer-contact">
+        واتساب: <bdi dir="ltr" class="num" id="footWa"></bdi>
       </div>
     </div>
   </footer>
@@ -444,8 +498,8 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <!-- ملف الإعدادات المشترك ومكتبة Supabase وملف السكريبت -->
-<script src="config.js?v=20261013-4"></script>
+<script src="config.js?v=20261013-6"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="script.js?v=20261013-4"></script>
+<script src="script.js?v=20261013-6"></script>
 </body>
 </html>

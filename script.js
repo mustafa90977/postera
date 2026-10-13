@@ -132,16 +132,16 @@ function artSvg(kind, label) {
   return `<svg viewBox="0 0 200 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${esc(label || '')}" xmlns="http://www.w3.org/2000/svg">${ART[kind](u)}</svg>`;
 }
 
-// قائمة اللوحات الجاهزة
+// قائمة اللوحات الجاهزة المطابقة للمرجع
 let POSTERS = [
-  { id: 1, kind: 'pyramids',  title: 'ليل الأهرامات',      cat: 'مصر' },
-  { id: 2, kind: 'moon',      title: 'القمر الذهبي',       cat: 'فضاء' },
-  { id: 3, kind: 'mountains', title: 'جبال الفجر',        cat: 'طبيعة' },
-  { id: 4, kind: 'deco',      title: 'أقواس الآرت ديكو',   cat: 'تجريدي' },
-  { id: 5, kind: 'city',      title: 'مدينة بعد الغروب',   cat: 'مدن' },
-  { id: 6, kind: 'calli',     title: 'جمال',             cat: 'مصر' },
-  { id: 7, kind: 'desert',    title: 'كثبان الصحراء',     cat: 'طبيعة' },
-  { id: 8, kind: 'waves',     title: 'خطوط الموج',        cat: 'تجريدي' }
+  { id: 1, kind: 'deco',      title: 'توازن الألوان', cat: 'فن تجريدي', tag: 'الأكثر مبيعاً' },
+  { id: 2, kind: 'city',      title: 'خط النهاية',   cat: 'سيارات' },
+  { id: 3, kind: 'desert',    title: 'وادي الغروب',  cat: 'سينما' },
+  { id: 4, kind: 'waves',     title: 'موجة هادئة',   cat: 'فن تجريدي', tag: 'الأكثر مبيعاً' },
+  { id: 5, kind: 'moon',      title: 'القمر الأسطوري', cat: 'أنمي' },
+  { id: 6, kind: 'mountains', title: 'قمم الصمت',    cat: 'سينما' },
+  { id: 7, kind: 'pyramids',  title: 'ليل الأهرامات', cat: 'مصر' },
+  { id: 8, kind: 'calli',     title: 'جمال',         cat: 'مصر' }
 ];
 let CATS = ['الكل', ...new Set(POSTERS.map(p => p.cat))];
 
@@ -168,8 +168,28 @@ document.addEventListener('click', e => {
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 
+/* فلترة التصنيفات من شريط الهيدر وبطاقات اختار عالمك */
+document.addEventListener('click', e => {
+  const catBtn = e.target.closest('[data-cat-filter], .cat-card');
+  if (!catBtn) return;
+  const targetCat = catBtn.dataset.catFilter || catBtn.dataset.cat;
+  if (!targetCat) return;
+  e.preventDefault();
+  st.filter = targetCat;
+  document.querySelectorAll('.header-nav-link').forEach(l => {
+    l.classList.toggle('active', l.dataset.catFilter === targetCat);
+  });
+  renderFilters();
+  renderGrid();
+  const galleryEl = document.getElementById('gallery');
+  if (galleryEl) galleryEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+
 /* ---------- قسم الهيرو والمعرض ---------- */
-$('#heroArt').innerHTML = artSvg('moon', 'لوحة القمر الذهبي');
+if ($('#heroPlate1')) $('#heroPlate1').innerHTML = artSvg('deco', 'توازن الألوان');
+if ($('#heroPlate2')) $('#heroPlate2').innerHTML = artSvg('desert', 'وادي الغروب');
+if ($('#heroPlate3')) $('#heroPlate3').innerHTML = artSvg('city', 'خط النهاية');
+if ($('#heroArt'))    $('#heroArt').innerHTML    = artSvg('moon', 'لوحة القمر');
 $('#footWa').textContent = SHOP.whatsapp;
 
 function segHTML(items, cur, attr) {
@@ -177,7 +197,9 @@ function segHTML(items, cur, attr) {
 }
 
 function renderFilters() {
-  $('#filters').innerHTML = CATS.map(c => `<button type="button" data-cat="${c}" aria-pressed="${c === st.filter}">${c}</button>`).join('');
+  if ($('#filters')) {
+    $('#filters').innerHTML = CATS.map(c => `<button type="button" data-cat="${c}" aria-pressed="${c === st.filter}">${c}</button>`).join('');
+  }
 }
 
 function renderGrid() {
@@ -185,22 +207,28 @@ function renderGrid() {
   const defaultSz = (SHOP.sizes[0] && SHOP.sizes[0].id) || 'm';
   $('#grid').innerHTML = list.map(p => {
     const cur = st.sizes[p.id] || defaultSz;
-    const szObj = sizeOf(cur) || SHOP.sizes[0] || { price: 0 };
+    const szObj = sizeOf(cur) || SHOP.sizes[0] || { price: 650 };
     const artContent = p.image_url 
       ? `<img src="${p.image_url}" alt="${esc(p.title)}" style="width:100%;height:100%;object-fit:cover;">` 
       : (p.kind ? artSvg(p.kind, p.title) : artSvg('moon', p.title));
-    return `<article class="card" data-id="${p.id}">
-      <div class="plate"><div class="art">${artContent}</div></div>
-      <div class="meta">
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-          <h3 style="margin:0;">${esc(p.title)}</h3>
-          <span class="cat">${esc(p.cat)}</span>
+    const badgeHtml = p.tag ? `<span class="card-pill-tag">${p.tag}</span>` : '';
+    return `<article class="card card-editorial" data-id="${p.id}">
+      <div class="card-room-preview">
+        ${badgeHtml}
+        <div class="card-plate-frame">
+          <div class="art">${artContent}</div>
         </div>
-        <div class="seg" role="group" aria-label="المقاس">${segHTML(SHOP.sizes.map(s => ({ id: s.id, html: `<bdi>${s.label}</bdi>` })), cur, 'data-size')}</div>
-        <div class="buy">
-          <div class="price num"><span data-p>${egp(szObj.price)}</span></div>
-          <button class="btn sm" type="button" data-add style="background:linear-gradient(135deg, #f5e2b3 0%, #c9a45c 50%, #9e7b37 100%);color:#120e06;font-weight:700;border-radius:999px;">أضف للسلة</button>
+      </div>
+      <div class="card-editorial-meta">
+        <div class="card-editorial-head">
+          <h3 class="card-editorial-title">${esc(p.title)}</h3>
+          <span class="card-editorial-fav" title="حفظ في المفضلة" aria-label="حفظ"></span>
         </div>
+        <div class="card-editorial-price num">${egp(szObj.price)}</div>
+        <div class="seg card-size-pick" role="group" aria-label="المقاس">${segHTML(SHOP.sizes.map(s => ({ id: s.id, html: `<bdi>${s.label}</bdi>` })), cur, 'data-size')}</div>
+        <button class="btn block hero-cart-btn" type="button" data-add>
+          <span>أضف إلى السلة</span>
+        </button>
       </div>
     </article>`;
   }).join('');
