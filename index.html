@@ -14,15 +14,14 @@
   <!-- الهيدر وشعار بوستيرا -->
   <header class="top">
     <div class="wrap">
-      <a class="brand" href="#top" data-scroll="hero"><b>بوستيرا</b><span>POSTERA</span></a>
-      <nav class="nav" aria-label="التنقل">
-        <a href="#gallery" data-scroll="gallery">التشكيلة</a>
-        <a href="#custom" data-scroll="custom">اطبع صورتك</a>
-        <a href="#mounting" data-scroll="mounting">طريقة التعليق</a>
-        <a href="#reviews" data-scroll="reviews">آراء العملاء</a>
-        <a href="#faq" data-scroll="faq">الأسئلة الشائعة</a>
-        <a href="#policy" data-scroll="policy">الشحن والاسترجاع</a>
-      </nav>
+      <div class="top-start">
+        <button class="menubtn" id="openMenu" type="button" aria-label="فتح القائمة الرئيسية" aria-expanded="false" aria-controls="navDrawer">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </button>
+        <a class="brand" href="#top" data-scroll="hero"><b>بوستيرا</b><span>POSTERA</span></a>
+      </div>
       <button class="cartbtn" id="openCart" type="button" aria-label="فتح السلة">
         <span>السلة</span><span class="badge num" id="badge">0</span>
       </button>
@@ -299,6 +298,53 @@
     </div>
   </footer>
 </div>
+
+<!-- القائمة الجانبية (Navigation Drawer) -->
+<div class="scrim" id="navScrim"></div>
+<aside class="nav-drawer" id="navDrawer" aria-hidden="true" inert dir="rtl" lang="ar" aria-labelledby="navDrawerTitle">
+  <div class="dhead">
+    <div class="brand" style="margin: 0;">
+      <b style="font-size: 1.4rem;">بوستيرا</b><span>POSTERA</span>
+    </div>
+    <button class="iconbtn" id="closeMenu" type="button" aria-label="إغلاق القائمة">✕</button>
+  </div>
+  <nav class="nav-drawer-body" id="navDrawerBody" aria-label="قائمة التصفح">
+    <a href="#gallery" class="nav-item" data-scroll="gallery">
+      <span class="nav-icon">🖼️</span>
+      <span class="nav-text">التشكيلة الفنية</span>
+    </a>
+    <a href="#custom" class="nav-item" data-scroll="custom">
+      <span class="nav-icon">✨</span>
+      <span class="nav-text">اطبع صورتك على معدن</span>
+    </a>
+    <a href="#mounting" class="nav-item" data-scroll="mounting">
+      <span class="nav-icon">🛠️</span>
+      <span class="nav-text">طريقة التعليق</span>
+    </a>
+    <a href="#reviews" class="nav-item" data-scroll="reviews">
+      <span class="nav-icon">⭐</span>
+      <span class="nav-text">آراء العملاء</span>
+    </a>
+    <a href="#faq" class="nav-item" data-scroll="faq">
+      <span class="nav-icon">❓</span>
+      <span class="nav-text">الأسئلة الشائعة</span>
+    </a>
+    <a href="#policy" class="nav-item" data-scroll="policy">
+      <span class="nav-icon">📦</span>
+      <span class="nav-text">الشحن والاسترجاع</span>
+    </a>
+    <div class="nav-divider"></div>
+    <a href="admin.html" class="nav-item nav-admin-link">
+      <span class="nav-icon">🔐</span>
+      <span class="nav-text">لوحة إدارة المتجر</span>
+    </a>
+  </nav>
+  <div class="nav-drawer-foot">
+    <a id="navWhatsappLink" class="btn block ghost sm" href="https://wa.me/201000000000" target="_blank" rel="noopener">
+      <span>تواصل واتساب 💬</span>
+    </a>
+  </div>
+</aside>
 
 <!-- نافذة السلة وإنهاء الطلب (Drawer) -->
 <div class="scrim" id="scrim"></div>

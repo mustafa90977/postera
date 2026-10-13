@@ -484,7 +484,54 @@ $('#dfoot').addEventListener('click', e => {
   if (e.target.id === 'submitOrder') submitOrder();
 });
 
+/* ---------- التحكم في القائمة الجانبية (Sidebar Navigation) ---------- */
+let lastNavFocus = null;
+
+function openNavMenu() {
+  const menu = $('#navDrawer');
+  const scrim = $('#navScrim');
+  const openBtn = $('#openMenu');
+  if (!menu || !scrim) return;
+  lastNavFocus = document.activeElement;
+  menu.inert = false;
+  menu.setAttribute('aria-hidden', 'false');
+  menu.classList.add('open');
+  scrim.classList.add('open');
+  if (openBtn) openBtn.setAttribute('aria-expanded', 'true');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => {
+    const c = $('#closeMenu');
+    if (c) c.focus();
+  }, 50);
+}
+
+function closeNavMenu() {
+  const menu = $('#navDrawer');
+  const scrim = $('#navScrim');
+  const openBtn = $('#openMenu');
+  if (!menu || !scrim) return;
+  menu.classList.remove('open');
+  scrim.classList.remove('open');
+  menu.setAttribute('aria-hidden', 'true');
+  menu.inert = true;
+  if (openBtn) openBtn.setAttribute('aria-expanded', 'false');
+  document.body.style.overflow = '';
+  if (lastNavFocus && lastNavFocus.focus) lastNavFocus.focus();
+}
+
+if ($('#openMenu')) $('#openMenu').addEventListener('click', openNavMenu);
+if ($('#closeMenu')) $('#closeMenu').addEventListener('click', closeNavMenu);
+if ($('#navScrim')) $('#navScrim').addEventListener('click', closeNavMenu);
+
+// إغلاق القائمة الجانبية عند الضغط على أي عنصر داخلها
+$$('#navDrawer .nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    closeNavMenu();
+  });
+});
+
 $('#openCart').addEventListener('click', () => {
+  if ($('#navDrawer') && $('#navDrawer').classList.contains('open')) closeNavMenu();
   setStep(step === 'done' ? 'cart' : step);
   openDrawer();
 });
@@ -492,7 +539,10 @@ $('#closeCart').addEventListener('click', closeDrawer);
 $('#scrim').addEventListener('click', closeDrawer);
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && $('#drawer').classList.contains('open')) closeDrawer();
+  if (e.key === 'Escape') {
+    if ($('#drawer') && $('#drawer').classList.contains('open')) closeDrawer();
+    if ($('#navDrawer') && $('#navDrawer').classList.contains('open')) closeNavMenu();
+  }
 });
 
 $('#backShop').addEventListener('click', () => {
@@ -876,6 +926,10 @@ async function syncWithSupabase() {
       if (revBtn && SHOP.whatsapp) {
         revBtn.href = `https://wa.me/20${SHOP.whatsapp.replace(/^0/, '')}?text=${encodeURIComponent('مرحباً بوستيرا، حابب أشارك رأيي وصورة اللوحة بعد التركيب 🖼️')}`;
       }
+      const navWa = $('#navWhatsappLink');
+      if (navWa && SHOP.whatsapp) {
+        navWa.href = `https://wa.me/20${SHOP.whatsapp.replace(/^0/, '')}`;
+      }
       renderPay();
       renderCart();
     }
@@ -931,6 +985,10 @@ if ($('#footWa')) $('#footWa').textContent = SHOP.whatsapp;
 const initRevBtn = $('#reviewShareWa');
 if (initRevBtn && SHOP.whatsapp) {
   initRevBtn.href = `https://wa.me/20${SHOP.whatsapp.replace(/^0/, '')}?text=${encodeURIComponent('مرحباً بوستيرا، حابب أشارك رأيي وصورة اللوحة بعد التركيب 🖼️')}`;
+}
+const initNavWa = $('#navWhatsappLink');
+if (initNavWa && SHOP.whatsapp) {
+  initNavWa.href = `https://wa.me/20${SHOP.whatsapp.replace(/^0/, '')}`;
 }
 renderFilters();
 renderGrid();
