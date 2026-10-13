@@ -764,6 +764,14 @@
               <small class="muted">الرقم الذي يستقبل رسائل تأكيد الطلب المباشرة من العملاء.</small>
             </div>
 
+            <div class="field" style="background:var(--surface-2);padding:12px 14px;border-radius:10px;border:1px solid var(--line);">
+              <label style="display:flex;align-items:center;gap:10px;cursor:pointer;margin:0;">
+                <input type="checkbox" id="setWhatsappFloat" style="width:18px;height:18px;accent-color:var(--gold);" checked>
+                <strong>تفعيل زر واتساب العائم في المتجر</strong>
+              </label>
+              <small class="muted" style="display:block;margin-top:4px;">إظهار زر دردشة واتساب عائم أسفل الشاشة للعملاء للتواصل السريع مع خدمة العملاء.</small>
+            </div>
+
             <div class="row">
               <div class="field">
                 <label for="setShipping">سعر الشحن لجميع المحافظات (ج.م)</label>
@@ -2793,6 +2801,10 @@
        4. إعدادات المتجر (Store Settings Controller)
        ========================================================================== */
     async function loadSettings() {
+      const waFloatLocal = localStorage.getItem('postera_wa_float') !== 'false';
+      const waFloatEl = document.getElementById('setWhatsappFloat');
+      if (waFloatEl) waFloatEl.checked = waFloatLocal;
+
       if (!sb || (currentUser && currentUser.isTemporary)) {
         const cfg = window.ADMIN_CONFIG || {};
         document.getElementById('setStoreName').value = 'بوستيرا | POSTERA';
@@ -2816,6 +2828,9 @@
           document.getElementById('setWhatsapp').value = pData.whatsapp_number || '';
           document.getElementById('setShipping').value = pData.shipping_fee || 60;
           document.getElementById('setFreeShipping').value = pData.free_shipping_threshold || 2500;
+          if (pData.whatsapp_float_enabled !== undefined && pData.whatsapp_float_enabled !== null) {
+            if (waFloatEl) waFloatEl.checked = !!pData.whatsapp_float_enabled;
+          }
         }
 
         // 2. تحميل إعدادات الإدارة المحمية (البريد والمفاتيح)
@@ -2840,10 +2855,13 @@
       btn.disabled = true;
       btn.textContent = 'جاري الحفظ والنشر...';
 
+      const isFloatChecked = document.getElementById('setWhatsappFloat')?.checked ?? true;
+      localStorage.setItem('postera_wa_float', isFloatChecked ? 'true' : 'false');
+
       if (!sb || (currentUser && currentUser.isTemporary)) {
         setTimeout(() => {
           btn.disabled = false;
-          btn.textContent = 'حفظ الإعدادات بالكامل';
+          btn.textContent = '💾 حفظ الإعدادات ونشرها للمتجر';
           toastAdmin('✓ تم حفظ إعدادات المتجر بنجاح وستظهر للعملاء فوراً!');
         }, 300);
         return;

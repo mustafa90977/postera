@@ -961,6 +961,16 @@ async function syncWithSupabase() {
       if (navWa && SHOP.whatsapp) {
         navWa.href = `https://wa.me/20${SHOP.whatsapp.replace(/^0/, '')}`;
       }
+      const floatWa = $('#whatsappFloat');
+      if (floatWa) {
+        const floatEnabled = sData.whatsapp_float_enabled !== false && localStorage.getItem('postera_wa_float') !== 'false';
+        if (floatEnabled && SHOP.whatsapp) {
+          floatWa.href = `https://wa.me/20${SHOP.whatsapp.replace(/^0/, '')}`;
+          floatWa.style.display = 'inline-flex';
+        } else {
+          floatWa.style.display = 'none';
+        }
+      }
       renderPay();
       renderCart();
     }
@@ -1020,6 +1030,16 @@ if (initRevBtn && SHOP.whatsapp) {
 const initNavWa = $('#navWhatsappLink');
 if (initNavWa && SHOP.whatsapp) {
   initNavWa.href = `https://wa.me/20${SHOP.whatsapp.replace(/^0/, '')}`;
+}
+const initFloatWa = $('#whatsappFloat');
+if (initFloatWa) {
+  const floatEnabled = localStorage.getItem('postera_wa_float') !== 'false';
+  if (floatEnabled && SHOP.whatsapp) {
+    initFloatWa.href = `https://wa.me/20${SHOP.whatsapp.replace(/^0/, '')}`;
+    initFloatWa.style.display = 'inline-flex';
+  } else {
+    initFloatWa.style.display = 'none';
+  }
 }
 renderFilters();
 renderGrid();
