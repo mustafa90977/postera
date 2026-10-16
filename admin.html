@@ -5,71 +5,189 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>لوحة الإدارة | بوستيرا POSTERA</title>
   <meta name="robots" content="noindex, nofollow">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+  
+  <!-- Google Fonts: IBM Plex Sans Arabic & Latin -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Material Symbols & FontAwesome Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  
+  <!-- Core Store Stylesheet -->
   <link rel="stylesheet" href="style.css">
+  
   <style>
     /* ==========================================================================
-       أنماط لوحة الإدارة الشاملة - بوستيرا POSTERA
+       أنماط لوحة الإدارة الشاملة - بوستيرا POSTERA (Atelier Identity)
+       تصميم موحد يطابق الهوية البصرية الفاخرة لواجهة المتجر
        ========================================================================== */
+    :root {
+      color-scheme: light;
+      box-sizing: border-box;
+
+      /* ألوان المتجر الرسمية (Warm Editorial Beige & Dark Accents) */
+      --bg: #faf9f5;
+      --surface: #ffffff;
+      --surface-2: #f5f4f0;
+      --surface-3: #efeeea;
+      --fg: #1b1c1a;
+      --fg-sub: #444748;
+      --muted: #747878;
+      --line: #e8e6e1;
+      --line-dark: #d4d1c9;
+      --brand: #0a0a0a;
+      --brand-hover: #262626;
+
+      /* توافق متغيرات الأزرار والروابط السابقة */
+      --gold: #0a0a0a;
+      --gold-hi: #2a2a2a;
+      --gold-text: #1b1c1a;
+      --gold-border: #e8e6e1;
+      --gold-glow: none;
+      --on-gold: #ffffff;
+      --metal: linear-gradient(135deg, #f5f4f0 0%, #ffffff 50%, #e8e6e1 100%);
+      
+      /* ألوان التنبيه واللمسات الفنية */
+      --patina: #8b5a2b;
+      --silver: #d1d5db;
+      --ok: #1b7a43;
+      --warn: #c06918;
+      --bad: #ba1a1a;
+      --info: #2563eb;
+      --purple: #7c3aed;
+
+      /* الخطوط والظلال */
+      --font-display: 'IBM Plex Sans Arabic', 'IBM Plex Sans', sans-serif;
+      --font-body: 'IBM Plex Sans Arabic', 'IBM Plex Sans', sans-serif;
+      --shadow-sm: 0 1px 2px rgba(27, 28, 26, 0.04);
+      --shadow: 0 1px 3px rgba(0, 0, 0, 0.03), 0 6px 20px -2px rgba(27, 28, 26, 0.04);
+      --shadow-lg: 0 12px 32px -4px rgba(27, 28, 26, 0.08);
+      
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       background-color: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      margin: 0;
     }
 
-    /* ملء الشاشة الكامل للوحة الإدارة بدون هوامش جانبية مقيدة */
+    /* شريط التوجيه والإعلان العلوي */
+    .admin-topbar {
+      background: #0a0a0a;
+      color: #faf9f5;
+      padding: 7px 0;
+      font-size: 0.78rem;
+      font-weight: 500;
+      border-bottom: 1px solid #1f1f1f;
+    }
+    .admin-topbar-wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-inline: clamp(16px, 2.5vw, 36px);
+      width: 100%;
+    }
+    .admin-topbar a {
+      color: #ffffff;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      opacity: 0.9;
+      transition: opacity 0.2s;
+    }
+    .admin-topbar a:hover {
+      opacity: 1;
+      color: var(--silver);
+    }
+
+    /* الهيدر الرئيسي المثبت */
+    header.top {
+      background: rgba(250, 249, 245, 0.96);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 1px 8px rgba(0, 0, 0, 0.02);
+    }
+
     .wrap {
       max-width: 100% !important;
       width: 100% !important;
-      padding-inline: clamp(16px, 2vw, 36px) !important;
+      padding-inline: clamp(16px, 2.5vw, 36px) !important;
       margin-inline: 0 !important;
     }
 
-    .admin-settings-card {
-      width: 100%;
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: clamp(20px, 2.5vw, 36px);
-      box-shadow: var(--shadow);
-    }
-    
     .admin-nav {
       display: flex;
       align-items: center;
       justify-content: space-between;
       width: 100%;
       gap: 16px;
+      height: 68px;
     }
 
     .admin-brand {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       text-decoration: none;
       color: var(--fg);
     }
+    .admin-brand .brand-logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
     .admin-brand b {
-      font-family: var(--font-display);
-      font-size: 1.6rem;
-      color: var(--gold-text);
+      font-family: 'IBM Plex Sans', 'IBM Plex Sans Arabic', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--brand);
+      text-transform: uppercase;
+    }
+    .admin-brand .brand-ar {
+      font-size: 0.82rem;
+      color: var(--muted);
+      border-right: 1px solid var(--line);
+      padding-right: 8px;
+      font-weight: 500;
     }
     .admin-badge {
       font-size: 0.72rem;
-      padding: 3px 8px;
-      border-radius: 6px;
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
       background: var(--surface-2);
-      border: 1px solid var(--gold);
-      color: var(--gold-text);
+      border: 1px solid var(--line);
+      color: var(--fg-sub);
       font-weight: 600;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.04em;
     }
 
     .admin-user-info {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       font-size: 0.88rem;
     }
 
@@ -79,83 +197,107 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 40px 20px;
+      padding: 60px 20px;
     }
     .auth-card {
       width: min(440px, 100%);
       background: var(--surface);
       border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: clamp(24px, 5vw, 36px);
-      box-shadow: var(--shadow);
+      border-radius: var(--radius-lg);
+      padding: clamp(28px, 5vw, 40px);
+      box-shadow: var(--shadow-lg);
     }
     .auth-card h1 {
-      font-size: 1.8rem;
-      margin-bottom: 8px;
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 6px;
       text-align: center;
-      color: var(--gold-text);
+      color: var(--fg);
     }
     .auth-card p.sub {
       text-align: center;
       color: var(--muted);
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       margin-bottom: 24px;
+    }
+    .auth-brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 18px;
+      border-radius: var(--radius-full);
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--brand);
+      text-transform: uppercase;
     }
 
     /* لوحة التحكم والتبويبات الرئيسية */
     .admin-content {
       flex: 1;
-      padding-block: 24px 48px;
+      padding-block: 24px 60px;
     }
 
     .admin-tabs {
       display: flex;
-      gap: 10px;
+      gap: 6px;
       border-bottom: 1px solid var(--line);
       margin-bottom: 28px;
       overflow-x: auto;
-      padding-bottom: 4px;
+      padding-bottom: 0px;
     }
     .tab-btn {
       background: transparent;
       border: none;
-      border-bottom: 3px solid transparent;
+      border-bottom: 2px solid transparent;
       color: var(--muted);
-      font-size: 1.05rem;
+      font-size: 0.94rem;
       font-weight: 600;
-      padding: 10px 18px;
+      padding: 12px 18px;
       cursor: pointer;
       white-space: nowrap;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 8px;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
+      font-family: var(--font-body);
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
     }
     .tab-btn:hover {
       color: var(--fg);
+      background: rgba(0, 0, 0, 0.02);
     }
     .tab-btn.active {
-      color: var(--gold-text);
-      border-bottom-color: var(--gold);
+      color: var(--brand);
+      border-bottom-color: var(--brand);
+      font-weight: 700;
     }
 
-    /* بطاقات الإحصائيات */
+    /* بطاقات الإحصائيات (KPIs) */
     .kpi-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
       margin-bottom: 24px;
     }
     .kpi-card {
       background: var(--surface);
       border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 16px 18px;
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
       display: flex;
       flex-direction: column;
       gap: 6px;
       position: relative;
       overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .kpi-card:hover {
+      box-shadow: var(--shadow-lg);
     }
     .kpi-card::before {
       content: "";
@@ -166,32 +308,35 @@
       height: 3px;
       background: var(--line);
     }
-    .kpi-card.gold::before { background: var(--gold); }
+    .kpi-card.gold::before { background: var(--brand); }
     .kpi-card.warn::before { background: var(--warn); }
     .kpi-card.ok::before { background: var(--ok); }
-    .kpi-card.info::before { background: #5a9cf8; }
+    .kpi-card.info::before { background: var(--info); }
     .kpi-card .val {
       font-family: var(--font-display);
       font-size: 2rem;
       font-weight: 700;
       color: var(--fg);
       line-height: 1.1;
+      letter-spacing: -0.02em;
     }
     .kpi-card .lbl {
-      font-size: 0.84rem;
+      font-size: 0.82rem;
       color: var(--muted);
+      font-weight: 500;
     }
 
     /* شريط أدوات البحث والفلترة */
     .toolbar {
       background: var(--surface);
       border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 16px;
+      border-radius: var(--radius-lg);
+      padding: 16px 20px;
       margin-bottom: 24px;
       display: flex;
       flex-direction: column;
       gap: 14px;
+      box-shadow: var(--shadow);
     }
     .search-box {
       display: flex;
@@ -202,13 +347,17 @@
       flex: 1;
       background: var(--surface-2);
       border: 1px solid var(--line);
-      border-radius: 999px;
-      padding: 0.65rem 1.2rem;
+      border-radius: var(--radius-full);
+      padding: 0.7rem 1.4rem;
       color: var(--fg);
       outline: none;
+      font-family: var(--font-body);
+      font-size: 0.88rem;
+      transition: all 0.2s;
     }
     .search-box input:focus {
-      border-color: var(--gold);
+      border-color: var(--brand);
+      background: var(--surface);
     }
     
     .status-filters {
@@ -218,30 +367,42 @@
     }
     .status-filters button {
       font-size: 0.82rem;
-      padding: 0.35rem 0.9rem;
-      border-radius: 999px;
+      font-weight: 500;
+      padding: 0.4rem 1rem;
+      border-radius: var(--radius-full);
       border: 1px solid var(--line);
       background: var(--surface-2);
-      color: var(--muted);
+      color: var(--fg-sub);
       cursor: pointer;
-      transition: all 0.15s;
+      transition: all 0.15s ease;
+      font-family: var(--font-body);
     }
     .status-filters button:hover {
-      border-color: var(--gold);
+      border-color: var(--fg);
       color: var(--fg);
     }
     .status-filters button.active {
-      background: var(--gold);
-      color: var(--on-gold);
-      border-color: var(--gold);
+      background: var(--brand);
+      color: #ffffff;
+      border-color: var(--brand);
       font-weight: 600;
+    }
+
+    /* بطاقات الإعدادات والمحتوى */
+    .admin-settings-card {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      padding: clamp(20px, 2.5vw, 36px);
+      box-shadow: var(--shadow);
     }
 
     /* جداول البيانات */
     .admin-card-wrap {
       background: var(--surface);
       border: 1px solid var(--line);
-      border-radius: 14px;
+      border-radius: var(--radius-lg);
       overflow: hidden;
       box-shadow: var(--shadow);
     }
@@ -249,22 +410,26 @@
       width: 100%;
       border-collapse: collapse;
       text-align: right;
-      font-size: 0.92rem;
+      font-size: 0.9rem;
     }
     .admin-table th {
       background: var(--surface-2);
-      padding: 14px 16px;
+      padding: 14px 18px;
       color: var(--muted);
       font-weight: 600;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
       border-bottom: 1px solid var(--line);
     }
     .admin-table td {
-      padding: 14px 16px;
+      padding: 14px 18px;
       border-bottom: 1px solid var(--line);
       vertical-align: middle;
+      color: var(--fg);
     }
     .admin-table tr:hover td {
-      background: rgba(201, 164, 92, 0.04);
+      background: #faf8f5;
     }
     .admin-table tr:last-child td {
       border-bottom: none;
@@ -275,8 +440,8 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 4px 10px;
-      border-radius: 999px;
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
       font-size: 0.78rem;
       font-weight: 600;
       white-space: nowrap;
@@ -287,21 +452,21 @@
       height: 6px;
       border-radius: 50%;
     }
-    .st-pending   { background: rgba(230, 154, 74, 0.14); color: #f2a65a; }
-    .st-pending::before { background: #f2a65a; }
-    .st-confirmed { background: rgba(90, 156, 248, 0.14); color: #7db0fb; }
-    .st-confirmed::before { background: #7db0fb; }
-    .st-printing  { background: rgba(194, 154, 74, 0.18); color: var(--gold-hi); }
-    .st-printing::before { background: var(--gold-hi); }
-    .st-shipped   { background: rgba(168, 85, 247, 0.14); color: #c084fc; }
-    .st-shipped::before { background: #c084fc; }
-    .st-completed { background: rgba(109, 187, 142, 0.14); color: #6dbb8e; }
-    .st-completed::before { background: #6dbb8e; }
-    .st-cancelled { background: rgba(229, 115, 106, 0.14); color: #e5736a; }
-    .st-cancelled::before { background: #e5736a; }
+    .st-pending   { background: #fef3c7; color: #92400e; }
+    .st-pending::before { background: #d97706; }
+    .st-confirmed { background: #dbeafe; color: #1e40af; }
+    .st-confirmed::before { background: #2563eb; }
+    .st-printing  { background: #fef08a; color: #854d0e; }
+    .st-printing::before { background: #ca8a04; }
+    .st-shipped   { background: #f3e8ff; color: #6b21a8; }
+    .st-shipped::before { background: #9333ea; }
+    .st-completed { background: #d1fae5; color: #065f46; }
+    .st-completed::before { background: #059669; }
+    .st-cancelled { background: #fee2e2; color: #991b1b; }
+    .st-cancelled::before { background: #dc2626; }
 
-    .vis-badge-on  { background: rgba(109, 187, 142, 0.14); color: #6dbb8e; }
-    .vis-badge-off { background: rgba(229, 115, 106, 0.14); color: #e5736a; }
+    .vis-badge-on  { background: #d1fae5; color: #065f46; }
+    .vis-badge-off { background: #fee2e2; color: #991b1b; }
 
     /* تنبيه فرق المبلغ */
     .amt-alert {
@@ -309,9 +474,9 @@
       align-items: center;
       gap: 4px;
       font-size: 0.76rem;
-      padding: 2px 6px;
-      border-radius: 4px;
-      background: rgba(229, 115, 106, 0.16);
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: #fee2e2;
       color: var(--bad);
       font-weight: 600;
       margin-top: 4px;
@@ -321,19 +486,98 @@
       align-items: center;
       gap: 4px;
       font-size: 0.76rem;
-      padding: 2px 6px;
-      border-radius: 4px;
-      background: rgba(109, 187, 142, 0.14);
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: #d1fae5;
       color: var(--ok);
       font-weight: 600;
       margin-top: 4px;
+    }
+
+    /* أزرار النظام */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: var(--brand);
+      color: #ffffff;
+      border: 1px solid var(--brand);
+      border-radius: var(--radius-full);
+      padding: 0.65rem 1.4rem;
+      font-size: 0.92rem;
+      font-weight: 600;
+      font-family: var(--font-body);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    .btn:hover {
+      background: var(--brand-hover);
+      border-color: var(--brand-hover);
+      transform: translateY(-1px);
+    }
+    .btn.ghost {
+      background: var(--surface);
+      color: var(--fg);
+      border: 1px solid var(--line);
+      box-shadow: none;
+    }
+    .btn.ghost:hover {
+      background: var(--surface-2);
+      border-color: var(--fg);
+      color: var(--fg);
+    }
+    .btn.sm {
+      padding: 0.4rem 0.95rem;
+      font-size: 0.82rem;
+      border-radius: var(--radius-full);
+    }
+    .btn.block {
+      width: 100%;
+      border-radius: var(--radius-md);
+    }
+
+    /* حقول الإدخال والفورم */
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+    .field label {
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--fg);
+    }
+    .field input, .field select, .field textarea {
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      padding: 0.7rem 1.1rem;
+      color: var(--fg);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus {
+      border-color: var(--brand);
+      background: var(--surface);
+      box-shadow: 0 0 0 1px var(--brand);
+    }
+    .row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
     }
 
     /* نوافذ المودال */
     .modal-scrim {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.72);
+      background: rgba(10, 10, 10, 0.75);
       backdrop-filter: blur(8px);
       z-index: 100;
       display: grid;
@@ -352,19 +596,20 @@
       max-height: 90vh;
       background: var(--surface);
       border: 1px solid var(--line);
-      border-radius: 18px;
+      border-radius: 20px;
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      box-shadow: var(--shadow);
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.3);
     }
     .modal-header {
-      padding: 18px 24px;
+      padding: 20px 24px;
       border-bottom: 1px solid var(--line);
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
+      background: var(--surface);
     }
     .modal-body {
       padding: 24px;
@@ -391,7 +636,7 @@
     .detail-box {
       background: var(--surface-2);
       border: 1px solid var(--line);
-      border-radius: 12px;
+      border-radius: var(--radius-md);
       padding: 16px;
       display: flex;
       flex-direction: column;
@@ -400,7 +645,8 @@
     .detail-box h4 {
       margin: 0 0 6px 0;
       font-size: 0.95rem;
-      color: var(--gold-text);
+      color: var(--fg);
+      font-weight: 700;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -423,7 +669,7 @@
     .item-card {
       background: var(--surface-2);
       border: 1px solid var(--line);
-      border-radius: 12px;
+      border-radius: var(--radius-md);
       padding: 14px;
       display: grid;
       grid-template-columns: 60px 1fr auto;
@@ -435,19 +681,20 @@
       aspect-ratio: 2/3;
       border-radius: 6px;
       overflow: hidden;
-      background: var(--metal);
-      padding: 2px;
+      background: #000;
+      padding: 1px;
     }
     .item-card .thumb img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      border-radius: 4px;
+      border-radius: 5px;
     }
     .item-meta h5 {
       margin: 0;
       font-family: var(--font-display);
       font-size: 1.15rem;
+      color: var(--fg);
     }
     .item-meta p {
       color: var(--muted);
@@ -479,24 +726,27 @@
     /* شبكة المنتجات في الإدارة */
     .prod-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
       gap: 20px;
     }
     .prod-admin-card {
       background: var(--surface);
       border: 1px solid var(--line);
-      border-radius: 12px;
+      border-radius: var(--radius-md);
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      transition: transform 0.15s, border-color 0.15s;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+      box-shadow: var(--shadow);
     }
     .prod-admin-card:hover {
-      border-color: var(--gold);
+      border-color: var(--brand);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
     }
     .prod-admin-thumb {
       aspect-ratio: 2/3;
-      background: #000;
+      background: #111;
       overflow: hidden;
       position: relative;
     }
@@ -525,7 +775,7 @@
     /* أنماط السحب والإفلات لرفع شيت الإكسيل */
     .excel-drop-zone {
       border: 2px dashed var(--line);
-      border-radius: 12px;
+      border-radius: var(--radius-md);
       padding: 28px 18px;
       text-align: center;
       cursor: pointer;
@@ -533,8 +783,8 @@
       transition: all 0.2s ease;
     }
     .excel-drop-zone:hover, .excel-drop-zone.dragover {
-      border-color: var(--gold);
-      background: rgba(201, 164, 92, 0.06);
+      border-color: var(--brand);
+      background: rgba(0, 0, 0, 0.02);
     }
     @media (max-width: 640px) {
       .upload-split-boxes {
@@ -561,19 +811,20 @@
 
     /* بطاقات إدارة البانرات ومقاطع الفيديو */
     .banner-admin-card {
-      background: var(--surface-2);
+      background: var(--surface);
       border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 16px;
+      border-radius: var(--radius-lg);
+      padding: 16px 20px;
       display: grid;
       grid-template-columns: 140px 1fr auto;
       gap: 18px;
       align-items: center;
       transition: border-color 0.2s, box-shadow 0.2s;
+      box-shadow: var(--shadow);
     }
     .banner-admin-card:hover {
-      border-color: rgba(201, 164, 92, 0.4);
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.15);
+      border-color: var(--brand);
+      box-shadow: var(--shadow-lg);
     }
     .banner-thumb-container {
       position: relative;
@@ -597,9 +848,9 @@
       right: 6px;
       font-size: 0.72rem;
       font-weight: 700;
-      padding: 2px 7px;
-      border-radius: 999px;
-      background: rgba(10, 10, 15, 0.8);
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      background: rgba(10, 10, 15, 0.85);
       backdrop-filter: blur(4px);
       color: #ffffff;
       border: 1px solid rgba(255, 255, 255, 0.15);
@@ -608,11 +859,11 @@
       display: inline-block;
       font-size: 0.76rem;
       font-weight: 700;
-      color: var(--gold-text);
-      background: rgba(201, 164, 92, 0.15);
-      border: 1px solid rgba(201, 164, 92, 0.3);
-      padding: 2px 8px;
-      border-radius: 999px;
+      color: var(--fg);
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      padding: 2px 10px;
+      border-radius: var(--radius-full);
       margin-bottom: 4px;
     }
     @media (max-width: 768px) {
@@ -629,19 +880,42 @@
 </head>
 <body>
 
+  <!-- شريط الإعلان والتوجيه العلوي للأدمن -->
+  <div class="admin-topbar">
+    <div class="admin-topbar-wrap">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#d1d5db;"></span>
+        <span>POSTERA ATELIER — لوحة الإدارة والتحكم المركزي</span>
+      </div>
+      <a href="index.html" title="العودة لمتجر بوستيرا">
+        <span>العودة للمتجر الرئيسي</span>
+        <span class="material-symbols-outlined" style="font-size:14px;">arrow_back</span>
+      </a>
+    </div>
+  </div>
+
   <!-- الهيدر الخاص بالإدارة -->
   <header class="top">
     <div class="wrap">
       <div class="admin-nav">
-        <a class="admin-brand" href="index.html">
-          <b>بوستيرا</b>
-          <span class="admin-badge">إدارة المتجر</span>
+        <a class="admin-brand" href="index.html" title="بوستيرا - الرئيسية">
+          <div class="brand-logo-wrap">
+            <b>POSTERA</b>
+            <span class="brand-ar">بوستيرا</span>
+          </div>
+          <span class="admin-badge">لوحة التحكم</span>
         </a>
 
         <div id="authNavArea" class="admin-user-info" style="display:none;">
-          <span id="adminEmailDisplay" class="muted num"></span>
-          <button id="refreshBtn" class="btn ghost sm" type="button" title="تحديث البيانات">🔄 تحديث</button>
-          <button id="logoutBtn" class="btn ghost sm" type="button" style="border-color:var(--bad);color:var(--bad);">خروج</button>
+          <span id="adminEmailDisplay" class="muted num" style="background:var(--surface-2);border:1px solid var(--line);padding:4px 12px;border-radius:var(--radius-full);font-size:0.82rem;font-weight:600;color:var(--fg);"></span>
+          <button id="refreshBtn" class="btn ghost sm" type="button" title="تحديث البيانات">
+            <span class="material-symbols-outlined" style="font-size:16px;">refresh</span>
+            <span>تحديث</span>
+          </button>
+          <button id="logoutBtn" class="btn ghost sm" type="button" style="border-color:rgba(186,26,26,0.3);color:var(--bad);">
+            <span class="material-symbols-outlined" style="font-size:16px;">logout</span>
+            <span>خروج</span>
+          </button>
         </div>
       </div>
     </div>
@@ -650,9 +924,11 @@
   <!-- شاشة 1: تسجيل دخول الإدارة (تظهر فقط عند عدم وجود جلسة نشطة) -->
   <section id="loginSection" class="auth-wrap">
     <div class="auth-card">
-      <div style="text-align:center;margin-bottom:14px;">
-        <span class="plate" style="display:inline-block;padding:8px 24px;border-radius:999px;">
-          <b style="font-family:var(--font-display);font-size:1.5rem;color:var(--gold-text)">POSTERA ADMIN</b>
+      <div style="text-align:center;margin-bottom:16px;">
+        <span class="auth-brand-badge">
+          <span>POSTERA ATELIER</span>
+          <span style="opacity:0.4;">|</span>
+          <span>إدارة</span>
         </span>
       </div>
       <h1>تسجيل دخول المدير</h1>
@@ -671,15 +947,19 @@
           <input id="adminPass" type="password" autocomplete="current-password" dir="ltr" required>
         </div>
 
-        <button id="loginSubmitBtn" class="btn block" type="submit" style="margin-top:10px;">
-          تسجيل الدخول
+        <button id="loginSubmitBtn" class="btn block" type="submit" style="margin-top:12px;">
+          <span>تسجيل الدخول</span>
+          <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>
         </button>
 
-        <div style="background:var(--surface-2);border:1px dashed var(--gold);border-radius:12px;padding:14px;margin-top:16px;font-size:0.86rem;text-align:right;">
-          <div style="color:var(--gold-text);font-weight:bold;margin-bottom:6px;">🔑 بيانات الدخول المؤقتة لتجربة اللوحة:</div>
-          <div style="margin-bottom:3px;">البريد: <strong style="color:var(--fg);direction:ltr;display:inline-block;">admin@postera.com</strong></div>
-          <div style="margin-bottom:8px;">كلمة المرور: <strong style="color:var(--fg);direction:ltr;display:inline-block;">postera123</strong></div>
-          <button type="button" id="fillDemoLoginBtn" class="btn ghost sm" style="width:100%;font-size:0.82rem;padding:0.45rem;">⚡ تجربة الدخول الفوري بضغطة زر</button>
+        <div style="background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:20px;font-size:0.86rem;text-align:right;">
+          <div style="color:var(--fg);font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+            <span class="material-symbols-outlined" style="font-size:18px;color:var(--patina);">key</span>
+            <span>بيانات الدخول المؤقتة لتجربة اللوحة:</span>
+          </div>
+          <div style="margin-bottom:4px;color:var(--muted);">البريد: <strong style="color:var(--fg);direction:ltr;display:inline-block;">admin@postera.com</strong></div>
+          <div style="margin-bottom:12px;color:var(--muted);">كلمة المرور: <strong style="color:var(--fg);direction:ltr;display:inline-block;">postera123</strong></div>
+          <button type="button" id="fillDemoLoginBtn" class="btn ghost sm" style="width:100%;font-size:0.82rem;padding:0.5rem;">⚡ تجربة الدخول الفوري بضغطة زر</button>
         </div>
       </form>
     </div>
@@ -690,20 +970,35 @@
     <div class="wrap">
       
       <!-- تنبيه وضع المعاينة المؤقت -->
-      <div id="tempAdminNotice" style="display:none;background:rgba(201,164,92,0.12);border:1px dashed var(--gold);border-radius:12px;padding:12px 18px;margin-bottom:18px;font-size:0.9rem;color:var(--gold-text);">
+      <div id="tempAdminNotice" style="display:none;background:#fefce8;border:1px solid #fef08a;border-radius:14px;padding:12px 18px;margin-bottom:20px;font-size:0.88rem;color:#854d0e;">
         ⚡ <strong>وضع المعاينة المؤقت:</strong> أنت داخل حالياً بحساب الأدمن المؤقت لتجربة اللوحة. عند ربط Supabase سيتم التحقق الحقيقي من قاعدة البيانات السحابية.
       </div>
       
       <!-- شريط التبويبات الرئيسي -->
       <nav class="admin-tabs" role="tablist">
-        <button type="button" class="tab-btn active" data-tab="tabOrders">📦 الطلبات</button>
-        <button type="button" class="tab-btn" data-tab="tabProducts">🖼️ المنتجات والكتالوج</button>
-        <button type="button" class="tab-btn" data-tab="tabSizes">📏 المقاسات والأسعار</button>
-        <button type="button" class="tab-btn" data-tab="tabBanners">🎬 البانرات والفيديو</button>
-        <button type="button" class="tab-btn" data-tab="tabSettings">⚙️ إعدادات المتجر</button>
+        <button type="button" class="tab-btn active" data-tab="tabOrders">
+          <span class="material-symbols-outlined" style="font-size:18px;">package_2</span>
+          <span>الطلبات</span>
+        </button>
+        <button type="button" class="tab-btn" data-tab="tabProducts">
+          <span class="material-symbols-outlined" style="font-size:18px;">photo_library</span>
+          <span>المنتجات والكتالوج</span>
+        </button>
+        <button type="button" class="tab-btn" data-tab="tabSizes">
+          <span class="material-symbols-outlined" style="font-size:18px;">straighten</span>
+          <span>المقاسات والأسعار</span>
+        </button>
+        <button type="button" class="tab-btn" data-tab="tabBanners">
+          <span class="material-symbols-outlined" style="font-size:18px;">movie</span>
+          <span>البانرات والفيديو</span>
+        </button>
+        <button type="button" class="tab-btn" data-tab="tabSettings">
+          <span class="material-symbols-outlined" style="font-size:18px;">settings</span>
+          <span>إعدادات المتجر</span>
+        </button>
       </nav>
 
-      <!-- ==================== تبويب 1: الطلبات ==================== -->
+<!-- ==================== تبويب 1: الطلبات ==================== -->
       <section id="tabOrders" class="tab-pane">
         <!-- شريط الإحصائيات (KPIs) -->
         <div class="kpi-grid">
@@ -1234,7 +1529,7 @@
 
       <div class="modal-body" style="display:flex;flex-direction:column;gap:16px;">
         <!-- إرشادات طريقتي الرفع -->
-        <div style="background:rgba(201,164,92,0.08);border:1px solid rgba(201,164,92,0.3);border-radius:10px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+        <div style="background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
           <div style="max-width:540px;">
             <strong style="color:var(--gold-text);font-size:0.92rem;">✨ متاح لك طريقتين للرفع حسب رغبتك:</strong>
             <p class="muted" style="font-size:0.8rem;margin:3px 0 0 0;line-height:1.45;">
@@ -1350,7 +1645,7 @@
         </div>
 
         <!-- روابط ونماذج سريعة جاهزة للتجربة بضغطة زر -->
-        <div style="background:rgba(201,164,92,0.08);border:1px dashed var(--gold);border-radius:10px;padding:12px;font-size:0.84rem;">
+        <div style="background:var(--surface-2);border:1px dashed var(--line);border-radius:10px;padding:12px;font-size:0.84rem;">
           <div style="color:var(--gold-text);font-weight:bold;margin-bottom:6px;">⚡ نماذج سريعة جاهزة للاختيار الفوري:</div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
             <button type="button" class="btn ghost sm" id="btnPresetVideoFire" style="font-size:0.78rem;padding:5px 10px;">
@@ -1455,7 +1750,7 @@
             <div id="previewMediaContainer" style="position:absolute;inset:0;"></div>
             <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.85) 100%);"></div>
             <div style="position:relative;z-index:2;padding:16px;height:100%;display:flex;flex-direction:column;justify-content:center;color:#fff;">
-              <span id="previewBadge" style="display:inline-block;font-size:0.75rem;color:var(--gold-text);background:rgba(201,164,92,0.18);padding:2px 8px;border-radius:999px;width:fit-content;margin-bottom:4px;">شارة البانر</span>
+              <span id="previewBadge" style="display:inline-block;font-size:0.75rem;color:var(--gold-text);background:var(--surface-2);padding:2px 8px;border-radius:999px;width:fit-content;margin-bottom:4px;">شارة البانر</span>
               <h4 id="previewTitle" style="margin:0 0 4px;font-size:1.15rem;font-family:var(--font-display);">عنوان البانر</h4>
               <p id="previewSub" style="margin:0;font-size:0.8rem;color:#ccc;max-width:85%;">الوصف الفرعي للبانر...</p>
             </div>
@@ -1840,7 +2135,7 @@
             </td>
             <td>
               ${o.payment_screenshot_url 
-                ? `<button class="btn sm view-order-btn" data-id="${o.id}" type="button" style="background:rgba(201,164,92,0.15);color:var(--gold-text);border:1px solid var(--gold-border);font-size:0.78rem;padding:4px 8px;cursor:pointer;">عرض الإيصال</button>` 
+                ? `<button class="btn sm view-order-btn" data-id="${o.id}" type="button" style="background:var(--surface-2);color:var(--gold-text);border:1px solid var(--gold-border);font-size:0.78rem;padding:4px 8px;cursor:pointer;">عرض الإيصال</button>` 
                 : `<span class="muted" style="font-size:0.8rem;">غير مرفق</span>`}
             </td>
             <td><span class="st-badge ${st.class}">${st.text}</span></td>
@@ -2017,7 +2312,7 @@
           <div class="item-meta">
             <h5>${escapeHtml(it.product_title)}</h5>
             <p>المقاس: <strong class="num">${it.size_label}</strong> | الكمية: <strong class="num">${it.quantity}</strong> ${it.finish ? `| التشطيب: ${it.finish}` : ''}</p>
-            ${it.is_custom ? `<span style="font-size:0.78rem;background:rgba(201,164,92,0.18);color:var(--gold-text);padding:2px 8px;border-radius:4px;display:inline-block;margin-top:4px;">✨ طباعة صورة خاصة للعميل</span>` : ''}
+            ${it.is_custom ? `<span style="font-size:0.78rem;background:var(--surface-2);color:var(--gold-text);padding:2px 8px;border-radius:4px;display:inline-block;margin-top:4px;">✨ طباعة صورة خاصة للعميل</span>` : ''}
             ${it.custom_image_url ? `
               <div style="margin-top:8px;">
                 <button type="button" class="btn sm dl-custom-btn" data-path="${it.custom_image_url}" style="background:var(--gold);color:var(--on-gold);font-size:0.82rem;padding:0.4rem 0.9rem;">
