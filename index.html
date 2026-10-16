@@ -6,7 +6,17 @@
   <title>بوستيرا | POSTERA — متجر بوسترات معدنية</title>
   <meta name="description" content="بوستيرا (POSTERA) - متجر متخصص في طباعة البوسترات واللوحات الفنية على ألواح ألومنيوم معدنية مصقولة بأعلى دقة ومقاومة للخدش والرطوبة.">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap">
-  <link rel="stylesheet" href="style.css?v=20261013-7">
+  <link rel="stylesheet" href="style.css?v=20261013-8">
+  <script>
+    /* تطبيق فوري لثيم ديسبليت الداكن أو تفضيل المستخدم قبل اكتمال الريندر لمنع الوميض */
+    (function() {
+      try {
+        var saved = localStorage.getItem('postera_theme');
+        var theme = saved || 'dark';
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch(e) {}
+    })();
+  </script>
 </head>
 <body>
 <div id="app" dir="rtl" lang="ar">
@@ -37,6 +47,10 @@
       </nav>
 
       <div class="header-actions">
+        <!-- زر تبديل وضع ديسبليت الداكن / الوضع الفاتح -->
+        <button class="theme-toggle-btn" id="themeToggle" type="button" aria-label="تبديل مظهر المتجر (داكن / فاتح)" title="تبديل المظهر (وضع ديسبليت الداكن)">
+          <span class="theme-icon" id="themeIcon">☀️</span>
+        </button>
         <a href="admin.html" class="head-action-btn" title="حساب الإدارة" aria-label="لوحة الإدارة">
           <span>حسابي</span>
         </a>
@@ -48,87 +62,39 @@
   </header>
 
   <main>
-    <!-- قسم الهيرو المطابق للصورة المرجعية: لوحات على رف وجدار دافئ + عنوان وأزرار -->
-    <section class="hero hero-editorial" id="hero">
-      <div class="wrap hero-editorial-wrap">
-        
-        <!-- الجانب الأيسر: عرض الغرفة الحقيقية مع 3 لوحات معدنية على رف خشبي -->
-        <div class="hero-room-scene" aria-label="عرض لوحات بوستيرا في ديكور غرفة فاخرة">
-          <div class="room-wall">
-            <div class="shelf-plants"></div>
-            <div class="shelf-lamp"></div>
-            <div class="room-plates-row">
-              <div class="room-plate plate-abstract">
-                <div class="art" id="heroPlate1"></div>
-              </div>
-              <div class="room-plate plate-landscape">
-                <div class="art" id="heroPlate2"></div>
-              </div>
-              <div class="room-plate plate-car">
-                <div class="art" id="heroPlate3"></div>
-              </div>
-            </div>
-            <div class="wooden-shelf"></div>
-            <div class="shelf-books"></div>
-          </div>
+    <!-- ==================== هيرو سلايدر سينمائي مطابق لديسبليت مع دعم الفيديو والبانرات ==================== -->
+    <section class="displate-hero-section" id="heroSliderSection" aria-label="بانرات العروض الرئيسية">
+      <div class="hero-slider-container" id="heroSliderContainer">
+        <!-- شريط الشرائح المتحرك -->
+        <div class="hero-slider-track" id="heroSliderTrack">
+          <!-- يتم حقن الشرائح ديناميكياً من script.js -->
         </div>
 
-        <!-- الجانب الأيمن: النص الرئيسي والأزرار -->
-        <div class="hero-editorial-content">
-          <h1 class="hero-editorial-title">حوّل حيطتك لحاجة شبهك</h1>
-          <p class="hero-editorial-sub">بوسترات معدنية بتصميمات تستاهل تتشاف كل يوم</p>
-          <div class="hero-editorial-cta">
-            <a class="btn hero-btn-primary" href="#gallery" data-scroll="gallery">
-              <span>اكتشف التصميمات</span>
-              <span class="btn-arrow" aria-hidden="true">←</span>
-            </a>
-            <a class="btn-link hero-btn-secondary" href="#mounting" data-scroll="mounting">
-              <span>اعرف طريقة التعليق</span>
-              <span class="btn-arrow" aria-hidden="true">←</span>
-            </a>
-          </div>
-        </div>
+        <!-- أسهم التنقل الزجاجية على جانبي السلايدر -->
+        <button class="slider-arrow slider-arrow-prev" id="sliderPrevBtn" type="button" aria-label="البانر السابق">
+          <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.2" fill="none"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+        <button class="slider-arrow slider-arrow-next" id="sliderNextBtn" type="button" aria-label="البانر التالي">
+          <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.2" fill="none"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
 
+        <!-- مؤشرات السلايدر (Dots) -->
+        <div class="slider-indicators" id="sliderIndicators" role="tablist" aria-label="مؤشرات الشرائح">
+          <!-- نقاط ديناميكية -->
+        </div>
       </div>
     </section>
 
-    <!-- قسم: اختار عالمك (تصنيفات عريضة بصور مصغرة) -->
+    <!-- قسم: المجموعات المختارة (Curated Collections) بنفس أسلوب ديسبليت -->
     <section class="block section-categories" id="categoriesBlock">
       <div class="wrap">
         <div class="section-divider-title">
           <span class="divider-line"></span>
-          <h2>اختار عالمك</h2>
+          <h2>المجموعات المميزة</h2>
           <span class="divider-line"></span>
         </div>
-        <div class="categories-grid" id="categoriesGrid">
-          <div class="cat-card" data-cat="سينما">
-            <div class="cat-bg cat-bg-cinema"></div>
-            <div class="cat-overlay">
-              <span class="cat-title">سينما</span>
-              <span class="cat-arrow" aria-hidden="true">←</span>
-            </div>
-          </div>
-          <div class="cat-card" data-cat="أنمي">
-            <div class="cat-bg cat-bg-anime"></div>
-            <div class="cat-overlay">
-              <span class="cat-title">أنمي</span>
-              <span class="cat-arrow" aria-hidden="true">←</span>
-            </div>
-          </div>
-          <div class="cat-card" data-cat="سيارات">
-            <div class="cat-bg cat-bg-cars"></div>
-            <div class="cat-overlay">
-              <span class="cat-title">سيارات</span>
-              <span class="cat-arrow" aria-hidden="true">←</span>
-            </div>
-          </div>
-          <div class="cat-card" data-cat="فن تجريدي">
-            <div class="cat-bg cat-bg-abstract"></div>
-            <div class="cat-overlay">
-              <span class="cat-title">فن تجريدي</span>
-              <span class="cat-arrow" aria-hidden="true">←</span>
-            </div>
-          </div>
+        <div class="displate-curated-grid" id="curatedGrid">
+          <!-- يتم توليد البطاقات الـ 4 ديناميكياً من script.js -->
         </div>
       </div>
     </section>
@@ -424,6 +390,10 @@
     </a>
   </nav>
   <div class="nav-drawer-foot">
+    <button class="btn block ghost sm" id="drawerThemeToggle" type="button" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px;">
+      <span id="drawerThemeIcon">☀️</span>
+      <span id="drawerThemeLabel">الوضع الفاتح</span>
+    </button>
     <a id="navWhatsappLink" class="btn block ghost sm" href="https://wa.me/201000000000" target="_blank" rel="noopener">
       <span>تواصل واتساب</span>
     </a>
@@ -454,6 +424,38 @@
         </div>
         <div class="field"><label for="fAddr">العنوان بالتفصيل</label><textarea id="fAddr" autocomplete="street-address" required></textarea></div>
 
+        <!-- اختيار نظام الدفع (كامل المبلغ أو عربون) -->
+        <div class="field" id="depositChoiceField">
+          <label style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+            <span>نظام دفع الطلب</span>
+            <span class="deposit-tag" id="depositBadgeTag">متاح دفع عربون ⚡</span>
+          </label>
+          <div class="deposit-grid-picker" role="radiogroup" aria-label="نظام الدفع">
+            <label class="deposit-card active" id="optPayFullCard">
+              <input type="radio" name="payType" id="payTypeFull" value="full" checked style="display:none;">
+              <span class="dep-radio-indicator"></span>
+              <div class="dep-content">
+                <strong>دفع المبلغ بالكامل</strong>
+                <span class="num dep-main-amt" id="optPayFullAmt"></span>
+                <small class="muted" id="optPayFullShippingNote">شامل مصاريف الشحن بالكامل</small>
+              </div>
+            </label>
+
+            <label class="deposit-card" id="optPayDepositCard">
+              <input type="radio" name="payType" id="payTypeDeposit" value="deposit" style="display:none;">
+              <span class="dep-radio-indicator"></span>
+              <div class="dep-content">
+                <strong id="optPayDepositTitle">دفع عربون مقدماً</strong>
+                <span class="num dep-main-amt" id="optPayDepositAmt"></span>
+                <small class="muted" id="optPayDepositRemaining"></small>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- تفاصيل الحساب ومصاريف الشحن المطلوب تحويلها -->
+        <div class="totals checkout-totals-box" id="coTotals"></div>
+
         <div class="field">
           <label>طريقة الدفع</label>
           <div class="paypick" role="radiogroup" aria-label="طريقة الدفع">
@@ -464,7 +466,7 @@
         <div class="payinfo">
           <p id="payHow"></p>
           <div class="paynum"><bdi dir="ltr" id="payNum" class="num"></bdi><button class="btn ghost sm" id="copyNum" type="button">نسخ</button></div>
-          <p class="muted" style="font-size:.84rem">حوّل الإجمالي بالظبط، وبعدها اكتب المبلغ وارفع سكرين التحويل.</p>
+          <p class="muted" style="font-size:.84rem" id="paySubText">حوّل الإجمالي بالظبط، وبعدها اكتب المبلغ وارفع سكرين التحويل.</p>
         </div>
         <div class="field">
           <label for="fAmount">المبلغ اللي حوّلته (ج.م)</label>
@@ -475,7 +477,6 @@
           <label for="fShot">سكرين التحويل</label>
           <div class="shot"><input class="vh" type="file" id="fShot" accept="image/*"><label for="fShot" class="btn ghost sm" style="margin:0;color:var(--fg)" id="shotBtn">اختار الصورة</label><img id="shotImg" alt="معاينة سكرين التحويل" hidden></div>
         </div>
-        <div class="totals" id="coTotals"></div>
       </form>
     </section>
 
@@ -486,6 +487,7 @@
         <p class="muted">رقم الطلب</p>
         <p class="ord num" id="ordNo"></p>
         <p class="muted">هنراجع التحويل ونكلمك على الموبايل لتأكيد الطلب وميعاد الشحن.</p>
+        <div id="doneDepositInfo" class="done-deposit-box" style="display:none;margin-block:12px;"></div>
         <a class="btn" id="waOrderBtn" href="#" target="_blank" style="display:none;background:#25D366;color:#fff;text-decoration:none;padding:0.75rem 1.4rem;margin-block:6px;font-weight:600;">كلّم خدمة العملاء على واتساب</a>
         <button class="btn ghost" id="backShop" type="button">رجوع للمتجر</button>
       </div>

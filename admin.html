@@ -17,6 +17,23 @@
       flex-direction: column;
       background-color: var(--bg);
     }
+
+    /* ملء الشاشة الكامل للوحة الإدارة بدون هوامش جانبية مقيدة */
+    .wrap {
+      max-width: 100% !important;
+      width: 100% !important;
+      padding-inline: clamp(16px, 2vw, 36px) !important;
+      margin-inline: 0 !important;
+    }
+
+    .admin-settings-card {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: clamp(20px, 2.5vw, 36px);
+      box-shadow: var(--shadow);
+    }
     
     .admin-nav {
       display: flex;
@@ -541,6 +558,73 @@
         text-align: left;
       }
     }
+
+    /* بطاقات إدارة البانرات ومقاطع الفيديو */
+    .banner-admin-card {
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 140px 1fr auto;
+      gap: 18px;
+      align-items: center;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .banner-admin-card:hover {
+      border-color: rgba(201, 164, 92, 0.4);
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.15);
+    }
+    .banner-thumb-container {
+      position: relative;
+      width: 140px;
+      height: 90px;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #0d0d12;
+      border: 1px solid var(--line);
+    }
+    .banner-thumb-container img,
+    .banner-thumb-container video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .banner-type-badge {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(10, 10, 15, 0.8);
+      backdrop-filter: blur(4px);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .banner-badge-pill {
+      display: inline-block;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--gold-text);
+      background: rgba(201, 164, 92, 0.15);
+      border: 1px solid rgba(201, 164, 92, 0.3);
+      padding: 2px 8px;
+      border-radius: 999px;
+      margin-bottom: 4px;
+    }
+    @media (max-width: 768px) {
+      .banner-admin-card {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .banner-thumb-container {
+        width: 100%;
+        height: 140px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -615,6 +699,7 @@
         <button type="button" class="tab-btn active" data-tab="tabOrders">📦 الطلبات</button>
         <button type="button" class="tab-btn" data-tab="tabProducts">🖼️ المنتجات والكتالوج</button>
         <button type="button" class="tab-btn" data-tab="tabSizes">📏 المقاسات والأسعار</button>
+        <button type="button" class="tab-btn" data-tab="tabBanners">🎬 البانرات والفيديو</button>
         <button type="button" class="tab-btn" data-tab="tabSettings">⚙️ إعدادات المتجر</button>
       </nav>
 
@@ -731,6 +816,82 @@
         </div>
       </section>
 
+      <!-- ==================== تبويب: البانرات ومقاطع الفيديو ==================== -->
+      <section id="tabBanners" class="tab-pane" style="display:none;">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:20px;">
+          <div>
+            <h2 style="font-family:var(--font-display);margin:0;font-size:1.6rem;color:var(--fg);">إدارة البانرات ومقاطع الفيديو (Hero Slider)</h2>
+            <p class="muted" style="font-size:0.88rem;margin:4px 0 0;">تحكم كامل في السلايدر الرئيسي، الفيديوهات الخلفية المتحركة (MP4/WebM)، نصوص العروض، أزرار التوجيه، والمجموعات المميزة.</p>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button type="button" class="btn ghost sm" id="btnResetBannersDefault" style="font-size:0.84rem;">
+              ⚡ استرجاع النماذج الافتراضية
+            </button>
+            <button type="button" class="btn sm" id="openAddBannerBtn" style="font-size:0.92rem;display:inline-flex;align-items:center;gap:6px;">
+              <span>+ إضافة بانر جديد</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- شريط الإحصائيات السريع للبانرات -->
+        <div class="kpi-grid" style="grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));margin-bottom:24px;">
+          <div class="kpi-card gold">
+            <span class="lbl">إجمالي الشرائح</span>
+            <span class="val num" id="cntTotalBanners">0</span>
+          </div>
+          <div class="kpi-card">
+            <span class="lbl">الشرائح النشطة</span>
+            <span class="val num" id="cntActiveBanners" style="color:var(--ok);">0</span>
+          </div>
+          <div class="kpi-card">
+            <span class="lbl">بانرات الفيديو 🎬</span>
+            <span class="val num" id="cntVideoBanners">0</span>
+          </div>
+          <div class="kpi-card">
+            <span class="lbl">بانرات الصور 🖼️</span>
+            <span class="val num" id="cntImageBanners">0</span>
+          </div>
+        </div>
+
+        <!-- قائمة البانرات والشرائح -->
+        <div class="admin-settings-card" style="margin-bottom:32px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+            <h3 style="margin:0;font-size:1.15rem;color:var(--gold-text);display:flex;align-items:center;gap:8px;">
+              <span>🎬 شرائح السلايدر النشطة بالمتجر</span>
+            </h3>
+            <span class="deposit-tag" id="bannerCountTag">0 شرائح</span>
+          </div>
+          <p class="muted" style="font-size:0.86rem;margin-bottom:18px;">
+            يمكنك تفعيل أو تعطيل أي بانر فوراً، أو تعديل الفيديو/الصورة والنصوص، أو إعادة الترتيب بالأسهم (الأعلى والأسفل).
+          </p>
+
+          <div id="bannersList" style="display:flex;flex-direction:column;gap:14px;">
+            <!-- يتم تعبئة بطاقات البانرات ديناميكياً بالجافاسكريبت -->
+          </div>
+        </div>
+
+        <!-- قسم إدارة بطاقات المجموعات المختارة (Curated Collections - 4 بطاقات) -->
+        <div class="admin-settings-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px;">
+            <div>
+              <h3 style="margin:0;font-size:1.15rem;color:var(--gold-text);display:flex;align-items:center;gap:8px;">
+                <span>✨ بطاقات المجموعات المميزة (Curated Collections)</span>
+              </h3>
+              <p class="muted" style="font-size:0.86rem;margin:4px 0 0;">
+                البطاقات الـ 4 المعروضة مباشرة أسفل الهيرو سلايدر في الصفحة الرئيسية، يمكنك تغيير صورها، عناوينها، والتصنيف المرتبط بها.
+              </p>
+            </div>
+            <button type="button" class="btn sm" id="btnSaveCuratedCards">
+              💾 حفظ تعديلات المجموعات
+            </button>
+          </div>
+
+          <div id="curatedCardsAdminGrid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:16px;">
+            <!-- يتم ملء بطاقات التحكم بالمجموعات الـ 4 ديناميكياً -->
+          </div>
+        </div>
+      </section>
+
       <!-- ==================== تبويب 4: إعدادات المتجر ==================== -->
       <section id="tabSettings" class="tab-pane" style="display:none;">
         <div style="margin-bottom:20px;">
@@ -738,15 +899,24 @@
           <p class="muted" style="font-size:0.88rem;">أي تعديل هنا يظهر فوراً للعملاء في الموقع وحسابات التحويل بدون لمس الكود.</p>
         </div>
 
-        <div class="auth-card" style="width:min(680px, 100%);margin:0 auto;box-shadow:none;">
+        <div class="admin-settings-card">
           <form id="settingsForm" class="f">
             <div id="settingsMsg" class="toast" style="position:static;transform:none;opacity:1;display:none;margin-bottom:12px;"></div>
 
-            <div class="field">
-              <label for="setStoreName">اسم المتجر</label>
-              <input id="setStoreName" required>
+            <!-- معلومات المتجر والتواصل -->
+            <div class="row">
+              <div class="field">
+                <label for="setStoreName">اسم المتجر</label>
+                <input id="setStoreName" required>
+              </div>
+              <div class="field">
+                <label for="setWhatsapp">رقم واتساب خدمة العملاء والطلبات</label>
+                <input id="setWhatsapp" dir="ltr" placeholder="01xxxxxxxxx" required>
+                <small class="muted">الرقم الذي يستقبل رسائل تأكيد الطلب المباشرة من العملاء.</small>
+              </div>
             </div>
 
+            <!-- بيانات الدفع الإلكتروني -->
             <div class="row">
               <div class="field">
                 <label for="setInstapay">عنوان إنستا باي (InstaPay Handle)</label>
@@ -758,13 +928,7 @@
               </div>
             </div>
 
-            <div class="field">
-              <label for="setWhatsapp">رقم واتساب خدمة العملاء والطلبات</label>
-              <input id="setWhatsapp" dir="ltr" placeholder="01xxxxxxxxx" required>
-              <small class="muted">الرقم الذي يستقبل رسائل تأكيد الطلب المباشرة من العملاء.</small>
-            </div>
-
-            <div class="field" style="background:var(--surface-2);padding:12px 14px;border-radius:10px;border:1px solid var(--line);">
+            <div class="field" style="background:var(--surface-2);padding:12px 16px;border-radius:10px;border:1px solid var(--line);">
               <label style="display:flex;align-items:center;gap:10px;cursor:pointer;margin:0;">
                 <input type="checkbox" id="setWhatsappFloat" style="width:18px;height:18px;accent-color:var(--gold);" checked>
                 <strong>تفعيل زر واتساب العائم في المتجر</strong>
@@ -772,18 +936,81 @@
               <small class="muted" style="display:block;margin-top:4px;">إظهار زر دردشة واتساب عائم أسفل الشاشة للعملاء للتواصل السريع مع خدمة العملاء.</small>
             </div>
 
+            <!-- أسعار الشحن الأساسية -->
             <div class="row">
               <div class="field">
-                <label for="setShipping">سعر الشحن لجميع المحافظات (ج.م)</label>
+                <label for="setShipping">سعر الشحن الافتراضي للمحافظات (ج.م)</label>
                 <input id="setShipping" type="number" dir="ltr" min="0" required>
+                <small class="muted">السعر الأساسي المطبق على أي محافظة لم يتم تحديد سعر خاص لها في الجدول أدناه.</small>
               </div>
               <div class="field">
                 <label for="setFreeShipping">حد الشحن المجاني (ج.م)</label>
                 <input id="setFreeShipping" type="number" dir="ltr" min="0" required>
-                <small class="muted">إذا تجاوز إجمالي طلب العميل هذا المبلغ يصبح الشحن مجاناً تلقائياً.</small>
+                <small class="muted">إذا تجاوز إجمالي طلب العميل هذا المبلغ يصبح الشحن مجاناً تلقائياً لكل المحافظات.</small>
               </div>
             </div>
 
+            <!-- أسعار الشحن المخصصة حسب المحافظات -->
+            <div style="background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:16px;margin-top:14px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:8px;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span style="font-size:1.3rem;">🚚</span>
+                  <strong style="color:var(--gold-text);font-size:1.02rem;">تخصيص سعر الشحن حسب المحافظة</strong>
+                </div>
+                <span class="deposit-tag" id="govShipCountBadge">27 محافظة</span>
+              </div>
+              <p class="muted" style="font-size:0.86rem;margin-bottom:14px;line-height:1.5;">
+                يمكنك تحديد سعر شحن مخصص لكل محافظة على حدة، أو تطبيق تسعير المناطق الجغرافية بنقرة زر واحدة. في حال ترك خانة أي محافظة فارغة، سيتم تطبيق سعر الشحن الافتراضي المحدد أعلاه تلقائياً.
+              </p>
+
+              <!-- شريط الإجراءات والبحث السريع -->
+              <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px;background:var(--surface);padding:10px 12px;border-radius:10px;border:1px solid var(--line);">
+                <input type="search" id="govShipSearch" placeholder="🔍 بحث عن محافظة..." style="flex:1;min-width:180px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 12px;color:var(--fg);font-size:0.88rem;">
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                  <button type="button" class="btn ghost sm" id="btnPresetZones" style="font-size:0.8rem;padding:6px 12px;" title="تطبيق التسعير الموصى به للمناطق الجغرافية في مصر">
+                    ⚡ تطبيق تسعير المناطق المقترح
+                  </button>
+                  <button type="button" class="btn ghost sm" id="btnApplyDefaultToAll" style="font-size:0.8rem;padding:6px 12px;" title="تعيين كل المحافظات على سعر الشحن الافتراضي أعلاه">
+                    تطبيق الافتراضي على الكل
+                  </button>
+                </div>
+              </div>
+
+              <!-- شبكة المحافظات الـ 27 -->
+              <div id="govShippingGrid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(210px, 1fr));gap:10px;max-height:480px;overflow-y:auto;padding-inline-end:4px;">
+                <!-- يتم توليد البطاقات ديناميكياً بالجافاسكريبت -->
+              </div>
+            </div>
+
+            <!-- إعدادات خاصية العربون والدفع الجزئي -->
+            <div style="background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:16px;margin-top:14px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                <label style="display:flex;align-items:center;gap:10px;cursor:pointer;margin:0;font-size:1.02rem;">
+                  <input type="checkbox" id="setDepositEnabled" style="width:20px;height:20px;accent-color:var(--gold);" checked>
+                  <strong style="color:var(--gold-text);">تفعيل خاصية دفع العربون مقدماً (Deposit)</strong>
+                </label>
+                <span class="deposit-tag">تحكم الإدارة</span>
+              </div>
+              <p class="muted" style="font-size:0.86rem;margin-bottom:14px;line-height:1.5;">
+                عند تفعيل هذه الخاصية، يتاح للعميل في السلة الاختيار بحرية بين <b>دفع إجمالي الطلب كاملاً</b> أو <b>دفع عربون مقدماً</b>، ويظهر له بوضوح المبلغ المتبقي لتحصيله كاش عند تسليم المندوب.
+              </p>
+              <div class="row" id="depositConfigFields">
+                <div class="field">
+                  <label for="setDepositType">نوع حساب العربون</label>
+                  <select id="setDepositType" style="background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:0.6rem;color:var(--fg);width:100%;">
+                    <option value="percent">نسبة مئوية من إجمالي الطلب (%)</option>
+                    <option value="fixed">مبلغ مالي ثابت (ج.م)</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="setDepositValue" id="setDepositValueLabel">قيمة العربون (%)</label>
+                  <input id="setDepositValue" type="number" dir="ltr" min="1" step="1" value="50" required>
+                  <small class="muted" id="setDepositValueHint">مثال: 50 تعني 50% من إجمالي الطلب.</small>
+                </div>
+              </div>
+            </div>
+
+            <!-- إعدادات الإشعارات والبريد الإلكتروني -->
             <div class="field" style="border-top:1px dashed var(--line);padding-top:16px;margin-top:8px;">
               <label for="setNotifEmail">📧 بريد إشعارات الطلبات الجديدة (Admin Email)</label>
               <input id="setNotifEmail" type="email" dir="ltr" placeholder="admin@postera.com">
@@ -799,11 +1026,11 @@
               <div class="field">
                 <label for="setEmailWebhook">🔗 رابط Webhook بديل للإشعارات (اختياري)</label>
                 <input id="setEmailWebhook" type="url" dir="ltr" placeholder="https://formspree.io/f/... أو n8n / Discord">
-                <small class="muted">يمكنك استخدام Formspree أو أي Webhook webhook خارجي.</small>
+                <small class="muted">يمكنك استخدام Formspree أو أي Webhook خارجي.</small>
               </div>
             </div>
 
-            <button id="saveSettingsBtn" class="btn block" type="submit" style="margin-top:16px;">
+            <button id="saveSettingsBtn" class="btn block" type="submit" style="margin-top:20px;padding:14px;font-size:1.05rem;">
               💾 حفظ الإعدادات ونشرها للمتجر
             </button>
           </form>
@@ -842,10 +1069,15 @@
 
           <div class="detail-box">
             <h4>💳 التحقق من الدفع والمبالغ</h4>
-            <div class="info-line"><span class="lbl">طريقة الدفع:</span><span class="val" id="mPayMethod"></span></div>
-            <div class="info-line"><span class="lbl">الإجمالي المطلوب:</span><span class="val num" id="mTotalAmt" style="font-weight:700"></span></div>
+            <div class="info-line"><span class="lbl">نظام الدفع:</span><span class="val" id="mPayTypeDesc"></span></div>
+            <div class="info-line"><span class="lbl">طريقة التحويل:</span><span class="val" id="mPayMethod"></span></div>
+            <div class="info-line"><span class="lbl">إجمالي الطلب:</span><span class="val num" id="mTotalAmt" style="font-weight:700"></span></div>
+            <div class="info-line" id="mShippingFeeRow"><span class="lbl">سعر الشحن للمحافظة:</span><span class="val num" id="mShippingFee" style="color:var(--gold-text);font-weight:600;"></span></div>
+            <div class="info-line" id="mDepositAmtRow" style="display:none;"><span class="lbl">العربون المطلوب:</span><span class="val num" id="mDepositAmt" style="font-weight:700;color:var(--gold-text);"></span></div>
             <div class="info-line"><span class="lbl">المبلغ المحوّل:</span><span class="val num" id="mTransAmt" style="font-weight:700"></span></div>
+            <div class="info-line" id="mRemainingAmtRow" style="display:none;"><span class="lbl">المتبقي عند الاستلام:</span><span class="val num" id="mRemainingAmt" style="font-weight:700;color:#6dbb8e;font-size:1.05rem;"></span></div>
             <div id="mAmtCheckAlert"></div>
+            <div id="mCourierBanner" style="display:none;"></div>
           </div>
         </div>
 
@@ -1085,6 +1317,159 @@
     </div>
   </div>
 
+  <!-- ==================== مودال إضافة / تعديل بانر وفيديو ==================== -->
+  <div id="bannerModal" class="modal-scrim" role="dialog" aria-modal="true">
+    <div class="modal-card" style="max-width:720px;width:95%;">
+      <div class="modal-header">
+        <h3 id="bannerModalTitle" style="margin:0;font-family:var(--font-display);color:var(--gold-text)">إضافة بانر جديد</h3>
+        <button id="closeBannerModalBtn" class="iconbtn" type="button" aria-label="إغلاق">✕</button>
+      </div>
+
+      <form id="bannerForm" class="f modal-body" style="gap:16px;">
+        <input type="hidden" id="bannerIdHidden">
+
+        <!-- اختيار نوع الوسائط: فيديو أم صورة -->
+        <div class="field">
+          <label style="font-weight:700;margin-bottom:8px;">نوع الوسائط في خلفية البانر</label>
+          <div style="display:flex;gap:14px;flex-wrap:wrap;">
+            <label style="display:flex;align-items:center;gap:8px;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:10px 16px;cursor:pointer;flex:1;">
+              <input type="radio" name="bannerMediaType" value="video" id="bMediaVideo" checked style="accent-color:var(--gold);">
+              <div>
+                <strong>🎬 مقطع فيديو متحرك (Video Loop)</strong>
+                <small class="muted" style="display:block;font-size:0.78rem;">تشغيل تلقائي بدون صوت ومتكرر كخلفية سينمائية مثل ديسبليت</small>
+              </div>
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:10px 16px;cursor:pointer;flex:1;">
+              <input type="radio" name="bannerMediaType" value="image" id="bMediaImage" style="accent-color:var(--gold);">
+              <div>
+                <strong>🖼️ صورة ثابتة عالية الدقة</strong>
+                <small class="muted" style="display:block;font-size:0.78rem;">صورة فوتوغرافية أو ديكور غرفة بدقة 4K</small>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- روابط ونماذج سريعة جاهزة للتجربة بضغطة زر -->
+        <div style="background:rgba(201,164,92,0.08);border:1px dashed var(--gold);border-radius:10px;padding:12px;font-size:0.84rem;">
+          <div style="color:var(--gold-text);font-weight:bold;margin-bottom:6px;">⚡ نماذج سريعة جاهزة للاختيار الفوري:</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button type="button" class="btn ghost sm" id="btnPresetVideoFire" style="font-size:0.78rem;padding:5px 10px;">
+              🎬 تجربة فيديو سينمائي (لهب وبريق)
+            </button>
+            <button type="button" class="btn ghost sm" id="btnPresetImgGaming" style="font-size:0.78rem;padding:5px 10px;">
+              🖼️ تجربة صورة غرفة ألعاب نيون
+            </button>
+            <button type="button" class="btn ghost sm" id="btnPresetImgCar" style="font-size:0.78rem;padding:5px 10px;">
+              🖼️ تجربة صورة سيارة سباق فاخرة
+            </button>
+          </div>
+        </div>
+
+        <!-- رابط ملف الفيديو / الصورة -->
+        <div class="field" id="fieldVideoUrl">
+          <label for="bVideoUrl">رابط مقطع الفيديو المباشر (Direct MP4 URL)</label>
+          <div style="display:flex;gap:8px;">
+            <input id="bVideoUrl" dir="ltr" placeholder="https://.../video.mp4" style="flex:1;">
+            <label class="btn ghost sm" style="margin:0;cursor:pointer;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;">
+              <span>📁 رفع ملف فيديو</span>
+              <input type="file" id="bVideoFileInput" accept="video/mp4,video/webm" style="display:none;">
+            </label>
+          </div>
+          <small class="muted">يفضل روابط MP4 مباشرة وخفيفة الحجم (أقل من 20MB) لسرعة التحميل على الموبايل.</small>
+        </div>
+
+        <div class="field" id="fieldImageUrl" style="display:none;">
+          <label for="bImageUrl">رابط الصورة (Image URL)</label>
+          <div style="display:flex;gap:8px;">
+            <input id="bImageUrl" dir="ltr" placeholder="https://images.unsplash.com/..." style="flex:1;">
+            <label class="btn ghost sm" style="margin:0;cursor:pointer;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;">
+              <span>📁 رفع صورة</span>
+              <input type="file" id="bImageFileInput" accept="image/*" style="display:none;">
+            </label>
+          </div>
+        </div>
+
+        <!-- صورة البوستر البديلة (Poster) -->
+        <div class="field">
+          <label for="bPosterUrl">صورة الغلاف / المعاينة البديلة (Poster Fallback Image)</label>
+          <input id="bPosterUrl" dir="ltr" placeholder="https://images.unsplash.com/...">
+          <small class="muted">تظهر فورياً أثناء تحميل الفيديو أو على الأجهزة الضعيفة التي تمنع التشغيل التلقائي.</small>
+        </div>
+
+        <!-- النصوص والشارات -->
+        <div class="row">
+          <div class="field">
+            <label for="bBadge">شارة العرض أو الخصم (Badge)</label>
+            <input id="bBadge" placeholder="مثال: خصم 20% لفترة محدودة 🔥 أو إصدار خاص ✨">
+          </div>
+          <div class="field">
+            <label for="bOrder">ترتيب العرض في السلايدر</label>
+            <input id="bOrder" type="number" dir="ltr" min="1" value="1" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="bTitle">العنوان الرئيسي للبانر</label>
+          <input id="bTitle" placeholder="مثال: حوّل حيطتك لتحفة فنية من المعدن" required>
+        </div>
+
+        <div class="field">
+          <label for="bSubtitle">الوصف الفرعي</label>
+          <textarea id="bSubtitle" rows="2" placeholder="بوسترات ألومنيوم فائقة الجودة بتفاصيل حادة وبريق معدني يدوم للأبد."></textarea>
+        </div>
+
+        <!-- أزرار التوجيه (CTAs) -->
+        <div class="row">
+          <div class="field">
+            <label for="bPrimaryBtnText">نص الزر الأساسي (Primary CTA)</label>
+            <input id="bPrimaryBtnText" placeholder="مثال: اكتشف المجموعة">
+          </div>
+          <div class="field">
+            <label for="bPrimaryBtnLink">رابط الزر الأساسي</label>
+            <input id="bPrimaryBtnLink" dir="ltr" placeholder="#gallery">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="bSecondaryBtnText">نص الزر الثانوي (Secondary CTA)</label>
+            <input id="bSecondaryBtnText" placeholder="مثال: اصنع لوحتك الخاصة">
+          </div>
+          <div class="field">
+            <label for="bSecondaryBtnLink">رابط الزر الثانوي</label>
+            <input id="bSecondaryBtnLink" dir="ltr" placeholder="#custom">
+          </div>
+        </div>
+
+        <div class="field" style="background:var(--surface-2);padding:10px 14px;border-radius:8px;border:1px solid var(--line);">
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;margin:0;">
+            <input type="checkbox" id="bIsActive" style="width:18px;height:18px;accent-color:var(--gold);" checked>
+            <strong>تفعيل هذا البانر في المتجر</strong>
+          </label>
+        </div>
+
+        <!-- معاينة حية للمودال -->
+        <div style="margin-top:4px;">
+          <label style="font-weight:700;margin-bottom:6px;display:block;">👁️ معاينة حية لشكل البانر:</label>
+          <div id="modalBannerPreviewBox" style="position:relative;height:180px;border-radius:12px;overflow:hidden;background:#09090d;border:1px solid var(--line);">
+            <div id="previewMediaContainer" style="position:absolute;inset:0;"></div>
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.85) 100%);"></div>
+            <div style="position:relative;z-index:2;padding:16px;height:100%;display:flex;flex-direction:column;justify-content:center;color:#fff;">
+              <span id="previewBadge" style="display:inline-block;font-size:0.75rem;color:var(--gold-text);background:rgba(201,164,92,0.18);padding:2px 8px;border-radius:999px;width:fit-content;margin-bottom:4px;">شارة البانر</span>
+              <h4 id="previewTitle" style="margin:0 0 4px;font-size:1.15rem;font-family:var(--font-display);">عنوان البانر</h4>
+              <p id="previewSub" style="margin:0;font-size:0.8rem;color:#ccc;max-width:85%;">الوصف الفرعي للبانر...</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer" style="padding:14px 0 0;margin-top:8px;">
+          <button type="button" class="btn ghost" id="cancelBannerModalBtn">إلغاء</button>
+          <button type="submit" class="btn" id="saveBannerSubmitBtn" style="min-width:140px;">حفظ البانر</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- التوست للإشعارات السريعة -->
   <div class="toast" id="adminToast" role="status" aria-live="polite"></div>
 
@@ -1174,6 +1559,8 @@
       loadOrders();
       loadProducts();
       loadSizes();
+      loadBannersAdmin();
+      loadCuratedAdmin();
       loadSettings();
     }
 
@@ -1222,6 +1609,13 @@
           onLoggedIn();
           return;
         } catch (err) {
+          if (email === 'admin@postera.com' && password === 'postera123') {
+            currentUser = { email: 'admin@postera.com', isTemporary: true };
+            sessionStorage.setItem('postera_admin_temp_session', JSON.stringify(currentUser));
+            toastAdmin('مرحباً بك! تم الدخول بالحساب التجريبي للوحة');
+            onLoggedIn();
+            return;
+          }
           showLoginError(err.message === 'Invalid login credentials' ? 'البريد الإلكتروني أو كلمة المرور غير صحيحة.' : err.message);
           return;
         } finally {
@@ -1407,11 +1801,21 @@
 
       tbody.innerHTML = filtered.map(o => {
         const st = STATUS_MAP[o.status] || { text: o.status, class: 'st-pending' };
-        const isUnderpaid = Number(o.transferred_amount) < Number(o.total_amount);
+        const isDep = !!o.is_deposit || (o.notes && o.notes.includes('عربون'));
+        const totalAmt = Number(o.total_amount) || 0;
+        const transAmt = Number(o.transferred_amount) || 0;
+        const depAmt = Number(o.deposit_amount) || (isDep ? transAmt : 0);
+        const remAmt = Number(o.remaining_amount) || (isDep ? Math.max(0, totalAmt - transAmt) : 0);
+        const isDepUnderpaid = isDep && transAmt < depAmt;
+        const isFullUnderpaid = !isDep && transAmt < totalAmt;
         const dateStr = new Date(o.created_at).toLocaleDateString('ar-EG', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+
         return `
           <tr data-id="${o.id}">
-            <td><strong style="color:var(--gold-text);" class="num">${o.order_number}</strong></td>
+            <td>
+              <strong style="color:var(--gold-text);" class="num">${o.order_number}</strong>
+              ${isDep ? `<div style="margin-top:3px;"><span class="deposit-tag" style="font-size:0.72rem;padding:2px 6px;">عربون مقدماً</span></div>` : ''}
+            </td>
             <td>
               <div><strong>${escapeHtml(o.customer_name)}</strong></div>
               <small class="muted num" dir="ltr">${o.customer_phone}</small>
@@ -1419,10 +1823,20 @@
             <td>${escapeHtml(o.governorate)}</td>
             <td>${o.payment_method === 'instapay' ? 'إنستا باي' : 'محفظة كاش'}</td>
             <td>
-              <div class="num font-bold">${Number(o.total_amount).toLocaleString('en-US')} ج.م</div>
-              ${isUnderpaid 
-                ? `<div class="amt-alert num">حوّل: ${Number(o.transferred_amount).toLocaleString('en-US')} ج.م</div>` 
-                : `<div class="amt-ok num">حوّل: ${Number(o.transferred_amount).toLocaleString('en-US')} ج.م</div>`}
+              <div class="num font-bold">${totalAmt.toLocaleString('en-US')} ج.م</div>
+              ${isDep ? `
+                <div style="font-size:0.8rem;color:var(--gold-text);margin-top:2px;">
+                  حوّل عربون: <strong class="num">${transAmt.toLocaleString('en-US')} ج.م</strong>
+                </div>
+                <div style="font-size:0.76rem;color:#6dbb8e;font-weight:600;margin-top:2px;">
+                  متبقي للمندوب: ${remAmt.toLocaleString('en-US')} ج.م
+                </div>
+                ${isDepUnderpaid ? `<div class="amt-alert num" style="font-size:0.75rem;margin-top:2px;">العربون ناقص!</div>` : ''}
+              ` : `
+                ${isFullUnderpaid 
+                  ? `<div class="amt-alert num">حوّل: ${transAmt.toLocaleString('en-US')} ج.م</div>` 
+                  : `<div class="amt-ok num">سداد كامل ✓</div>`}
+              `}
             </td>
             <td>
               ${o.payment_screenshot_url 
@@ -1475,15 +1889,76 @@
       document.getElementById('mCustGov').textContent = order.governorate;
       document.getElementById('mCustAddr').textContent = order.address;
       document.getElementById('mPayMethod').textContent = order.payment_method === 'instapay' ? 'إنستا باي' : 'محفظة كاش';
-      document.getElementById('mTotalAmt').textContent = Number(order.total_amount).toLocaleString('en-US') + ' ج.م';
-      document.getElementById('mTransAmt').textContent = Number(order.transferred_amount).toLocaleString('en-US') + ' ج.م';
 
-      const diff = Number(order.total_amount) - Number(order.transferred_amount);
+      const isDep = !!order.is_deposit || (order.notes && order.notes.includes('عربون'));
+      const totalAmt = Number(order.total_amount) || 0;
+      const transAmt = Number(order.transferred_amount) || 0;
+      const depAmt = Number(order.deposit_amount) || (isDep ? transAmt : 0);
+      const remAmt = Number(order.remaining_amount) || (isDep ? Math.max(0, totalAmt - transAmt) : 0);
+
+      document.getElementById('mTotalAmt').textContent = totalAmt.toLocaleString('en-US') + ' ج.م';
+      document.getElementById('mTransAmt').textContent = transAmt.toLocaleString('en-US') + ' ج.م';
+
+      const payTypeEl = document.getElementById('mPayTypeDesc');
+      if (payTypeEl) {
+        payTypeEl.innerHTML = isDep 
+          ? `<span class="deposit-tag">⏳ دفع عربون مقدماً</span>` 
+          : `<span style="color:#6dbb8e;font-weight:600;">سداد كامل المبلغ مقدماً ✓</span>`;
+      }
+
+      const depRow = document.getElementById('mDepositAmtRow');
+      if (depRow) {
+        depRow.style.display = isDep ? 'flex' : 'none';
+        document.getElementById('mDepositAmt').textContent = depAmt.toLocaleString('en-US') + ' ج.م';
+      }
+
+      const shipRow = document.getElementById('mShippingFeeRow');
+      const shipFee = order.shipping_fee !== undefined && order.shipping_fee !== null ? Number(order.shipping_fee) : null;
+      if (shipRow) {
+        if (shipFee !== null && !isNaN(shipFee)) {
+          document.getElementById('mShippingFee').textContent = shipFee === 0 ? 'شحن مجاني ✓' : `${shipFee.toLocaleString('en-US')} ج.م`;
+          shipRow.style.display = 'flex';
+        } else {
+          shipRow.style.display = 'none';
+        }
+      }
+
+      const remRow = document.getElementById('mRemainingAmtRow');
+      if (remRow) {
+        remRow.style.display = isDep ? 'flex' : 'none';
+        document.getElementById('mRemainingAmt').textContent = remAmt.toLocaleString('en-US') + ' ج.م';
+      }
+
       const alertDiv = document.getElementById('mAmtCheckAlert');
-      if (diff > 0) {
-        alertDiv.innerHTML = `<div class="amt-alert" style="padding:8px 12px;font-size:0.88rem;width:100%;">⚠️ تنبيه: المبلغ المحول أقل من المطلوب بفارق ${diff.toLocaleString('en-US')} ج.م!</div>`;
+      const courierBanner = document.getElementById('mCourierBanner');
+
+      if (isDep) {
+        const depDiff = depAmt - transAmt;
+        if (depDiff > 0) {
+          alertDiv.innerHTML = `<div class="amt-alert" style="padding:8px 12px;font-size:0.88rem;width:100%;">⚠️ تنبيه: المبلغ المحول أقل من العربون المطلوب بفارق ${depDiff.toLocaleString('en-US')} ج.م!</div>`;
+        } else {
+          alertDiv.innerHTML = `<div class="amt-ok" style="padding:8px 12px;font-size:0.88rem;width:100%;">✓ تم سداد العربون بنجاح (${transAmt.toLocaleString('en-US')} ج.م).</div>`;
+        }
+        if (courierBanner) {
+          courierBanner.style.display = 'block';
+          courierBanner.innerHTML = `
+            <div style="background:rgba(109,187,142,0.12);border:1px solid rgba(109,187,142,0.4);border-radius:10px;padding:12px 14px;margin-top:10px;">
+              <div style="font-weight:bold;color:#6dbb8e;margin-bottom:4px;font-size:0.95rem;">🚚 تنبيه فاتورة الشحن والمندوب:</div>
+              <div style="font-size:0.92rem;color:var(--fg);">المطلوب تحصيله من العميل كاش عند الاستلام: <strong style="font-size:1.15rem;color:var(--gold-text);">${remAmt.toLocaleString('en-US')} ج.م</strong></div>
+            </div>
+          `;
+        }
       } else {
-        alertDiv.innerHTML = `<div class="amt-ok" style="padding:8px 12px;font-size:0.88rem;width:100%;">✓ المبلغ المحول يطابق إجمالي الطلب.</div>`;
+        const diff = totalAmt - transAmt;
+        if (diff > 0) {
+          alertDiv.innerHTML = `<div class="amt-alert" style="padding:8px 12px;font-size:0.88rem;width:100%;">⚠️ تنبيه: المبلغ المحول أقل من المطلوب بفارق ${diff.toLocaleString('en-US')} ج.م!</div>`;
+        } else {
+          alertDiv.innerHTML = `<div class="amt-ok" style="padding:8px 12px;font-size:0.88rem;width:100%;">✓ المبلغ المحول يطابق إجمالي الطلب.</div>`;
+        }
+        if (courierBanner) {
+          courierBanner.style.display = 'none';
+          courierBanner.innerHTML = '';
+        }
       }
 
       setupReceiptImage(order);
@@ -2024,7 +2499,13 @@
         return;
       }
       const data = allOrders.map((o, idx) => {
+        const isDep = !!o.is_deposit || (o.notes && o.notes.includes('عربون'));
+        const totalAmt = Number(o.total_amount) || 0;
+        const transAmt = Number(o.transferred_amount) || 0;
+        const depAmt = Number(o.deposit_amount) || (isDep ? transAmt : 0);
+        const remAmt = Number(o.remaining_amount) || (isDep ? Math.max(0, totalAmt - transAmt) : 0);
         const itemsStr = (o.order_items || []).map(i => `${i.product_title} (${i.size_label}) × ${i.quantity}`).join(' | ');
+
         return {
           "م": idx + 1,
           "رقم الطلب": o.order_number,
@@ -2032,12 +2513,15 @@
           "الموبايل": o.customer_phone,
           "المحافظة": o.governorate,
           "العنوان": o.address,
-          "طريقة الدفع": o.payment_method === 'instapay' ? 'إنستاباي' : 'محفظة كاش',
-          "المبلغ المطلوب (ج.م)": Number(o.total_amount),
-          "المبلغ المحول (ج.م)": Number(o.transferred_amount),
+          "نظام السداد": isDep ? 'عربون مقدماً' : 'سداد كامل',
+          "طريقة التحويل": o.payment_method === 'instapay' ? 'إنستاباي' : 'محفظة كاش',
+          "إجمالي الطلب (ج.م)": totalAmt,
+          "المبلغ المحول / العربون (ج.م)": transAmt,
+          "المتبقي للتحصيل مع المندوب (ج.م)": isDep ? remAmt : 0,
           "الحالة": STATUS_MAP[o.status]?.text || o.status,
           "تاريخ الطلب": new Date(o.created_at).toLocaleString('ar-EG'),
-          "تفاصيل البنود": itemsStr
+          "تفاصيل البنود": itemsStr,
+          "ملاحظات": o.notes || ''
         };
       });
 
@@ -2049,12 +2533,15 @@
         { wch: 14 },
         { wch: 14 },
         { wch: 35 },
+        { wch: 16 },
         { wch: 14 },
         { wch: 18 },
-        { wch: 18 },
+        { wch: 22 },
+        { wch: 25 },
         { wch: 18 },
         { wch: 22 },
-        { wch: 45 }
+        { wch: 45 },
+        { wch: 30 }
       ];
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "الطلبات");
@@ -2800,10 +3287,128 @@
     /* ==========================================================================
        4. إعدادات المتجر (Store Settings Controller)
        ========================================================================== */
+    const EGYPT_GOVS = [
+      { name: 'القاهرة', zone: 'القاهرة الكبرى', defaultPrice: 50 },
+      { name: 'الجيزة', zone: 'القاهرة الكبرى', defaultPrice: 50 },
+      { name: 'القليوبية', zone: 'القاهرة الكبرى', defaultPrice: 50 },
+      { name: 'الإسكندرية', zone: 'الإسكندرية والبحيرة', defaultPrice: 60 },
+      { name: 'البحيرة', zone: 'الإسكندرية والبحيرة', defaultPrice: 60 },
+      { name: 'الغربية', zone: 'الدلتا والوجه البحري', defaultPrice: 65 },
+      { name: 'المنوفية', zone: 'الدلتا والوجه البحري', defaultPrice: 65 },
+      { name: 'الدقهلية', zone: 'الدلتا والوجه البحري', defaultPrice: 65 },
+      { name: 'الشرقية', zone: 'الدلتا والوجه البحري', defaultPrice: 65 },
+      { name: 'كفر الشيخ', zone: 'الدلتا والوجه البحري', defaultPrice: 65 },
+      { name: 'دمياط', zone: 'الدلتا والوجه البحري', defaultPrice: 65 },
+      { name: 'بورسعيد', zone: 'مدن القناة', defaultPrice: 65 },
+      { name: 'الإسماعيلية', zone: 'مدن القناة', defaultPrice: 65 },
+      { name: 'السويس', zone: 'مدن القناة', defaultPrice: 65 },
+      { name: 'الفيوم', zone: 'شمال ووسط الصعيد', defaultPrice: 75 },
+      { name: 'بني سويف', zone: 'شمال ووسط الصعيد', defaultPrice: 75 },
+      { name: 'المنيا', zone: 'شمال ووسط الصعيد', defaultPrice: 75 },
+      { name: 'أسيوط', zone: 'شمال ووسط الصعيد', defaultPrice: 75 },
+      { name: 'سوهاج', zone: 'جنوب الصعيد', defaultPrice: 85 },
+      { name: 'قنا', zone: 'جنوب الصعيد', defaultPrice: 85 },
+      { name: 'الأقصر', zone: 'جنوب الصعيد', defaultPrice: 85 },
+      { name: 'أسوان', zone: 'جنوب الصعيد', defaultPrice: 85 },
+      { name: 'البحر الأحمر', zone: 'المحافظات الحدودية والنائية', defaultPrice: 100 },
+      { name: 'مطروح', zone: 'المحافظات الحدودية والنائية', defaultPrice: 100 },
+      { name: 'شمال سيناء', zone: 'المحافظات الحدودية والنائية', defaultPrice: 100 },
+      { name: 'جنوب سيناء', zone: 'المحافظات الحدودية والنائية', defaultPrice: 100 },
+      { name: 'الوادي الجديد', zone: 'المحافظات الحدودية والنائية', defaultPrice: 100 }
+    ];
+
+    function renderGovShippingGrid(savedMap = {}) {
+      const grid = document.getElementById('govShippingGrid');
+      if (!grid) return;
+      const defShipping = parseFloat(document.getElementById('setShipping')?.value) || 60;
+
+      grid.innerHTML = EGYPT_GOVS.map(g => {
+        const val = savedMap[g.name] !== undefined && savedMap[g.name] !== null ? savedMap[g.name] : '';
+        return `
+          <div class="gov-ship-card" data-gov="${g.name}" data-zone="${g.zone}" style="background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;transition:border-color 0.2s;">
+            <div style="min-width:0;flex:1;">
+              <strong style="display:block;font-size:0.88rem;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${g.name}</strong>
+              <span class="muted" style="font-size:0.72rem;display:block;">${g.zone}</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
+              <input type="number" class="gov-ship-input" id="govShip_${g.name}" data-gov="${g.name}" min="0" step="5" style="width:72px;padding:5px 6px;text-align:center;border-radius:6px;border:1px solid var(--line);background:var(--bg);color:var(--gold-text);font-size:0.9rem;font-weight:700;" placeholder="${defShipping}" value="${val}" dir="ltr">
+              <span style="font-size:0.72rem;color:var(--muted)">ج.م</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // مستمع البحث السريع
+      const searchInput = document.getElementById('govShipSearch');
+      if (searchInput && !searchInput.dataset.bound) {
+        searchInput.dataset.bound = 'true';
+        searchInput.addEventListener('input', e => {
+          const q = e.target.value.trim().toLowerCase();
+          document.querySelectorAll('.gov-ship-card').forEach(card => {
+            const govName = (card.dataset.gov || '').toLowerCase();
+            const govZone = (card.dataset.zone || '').toLowerCase();
+            const matched = !q || govName.includes(q) || govZone.includes(q);
+            card.style.display = matched ? 'flex' : 'none';
+          });
+        });
+      }
+
+      // زر تطبيق تسعير المناطق المقترح
+      const presetBtn = document.getElementById('btnPresetZones');
+      if (presetBtn && !presetBtn.dataset.bound) {
+        presetBtn.dataset.bound = 'true';
+        presetBtn.addEventListener('click', () => {
+          EGYPT_GOVS.forEach(g => {
+            const inp = document.getElementById('govShip_' + g.name);
+            if (inp) inp.value = g.defaultPrice;
+          });
+          toastAdmin('⚡ تم تطبيق تسعير المناطق الجغرافية المقترح. لا تنسَ الضغط على حفظ في الأسفل.');
+        });
+      }
+
+      // زر تطبيق السعر الافتراضي على الكل
+      const defaultToAllBtn = document.getElementById('btnApplyDefaultToAll');
+      if (defaultToAllBtn && !defaultToAllBtn.dataset.bound) {
+        defaultToAllBtn.dataset.bound = 'true';
+        defaultToAllBtn.addEventListener('click', () => {
+          const curDef = parseFloat(document.getElementById('setShipping')?.value) || 60;
+          EGYPT_GOVS.forEach(g => {
+            const inp = document.getElementById('govShip_' + g.name);
+            if (inp) inp.value = curDef;
+          });
+          toastAdmin(`تم تعيين جميع المحافظات على ${curDef} ج.م. لا تنسَ الضغط على حفظ في الأسفل.`);
+        });
+      }
+    }
+
     async function loadSettings() {
       const waFloatLocal = localStorage.getItem('postera_wa_float') !== 'false';
       const waFloatEl = document.getElementById('setWhatsappFloat');
       if (waFloatEl) waFloatEl.checked = waFloatLocal;
+
+      const depEnabledEl = document.getElementById('setDepositEnabled');
+      const depTypeEl = document.getElementById('setDepositType');
+      const depValueEl = document.getElementById('setDepositValue');
+      const depValueLabel = document.getElementById('setDepositValueLabel');
+      const depValueHint = document.getElementById('setDepositValueHint');
+
+      const updateDepositFieldLabels = () => {
+        if (!depTypeEl || !depValueLabel || !depValueHint) return;
+        if (depTypeEl.value === 'fixed') {
+          depValueLabel.textContent = 'قيمة العربون (ج.م)';
+          depValueHint.textContent = 'مثال: 200 تعني تحصيل 200 ج.م كعربون ثابت لأي طلب.';
+          if (depValueEl) depValueEl.max = '';
+        } else {
+          depValueLabel.textContent = 'قيمة العربون (%)';
+          depValueHint.textContent = 'مثال: 50 تعني تحصيل 50% من إجمالي الطلب مقدماً.';
+          if (depValueEl) depValueEl.max = '99';
+        }
+      };
+
+      if (depTypeEl && !depTypeEl.dataset.bound) {
+        depTypeEl.dataset.bound = 'true';
+        depTypeEl.addEventListener('change', updateDepositFieldLabels);
+      }
 
       if (!sb || (currentUser && currentUser.isTemporary)) {
         const cfg = window.ADMIN_CONFIG || {};
@@ -2813,9 +3418,20 @@
         document.getElementById('setWhatsapp').value = '201012345678';
         document.getElementById('setShipping').value = 60;
         document.getElementById('setFreeShipping').value = 2500;
+        if (depEnabledEl) depEnabledEl.checked = localStorage.getItem('postera_deposit_enabled') !== 'false';
+        if (depTypeEl) depTypeEl.value = localStorage.getItem('postera_deposit_type') || 'percent';
+        if (depValueEl) depValueEl.value = localStorage.getItem('postera_deposit_value') || '50';
+        updateDepositFieldLabels();
         document.getElementById('setNotifEmail').value = cfg.notificationEmail || 'admin@postera.com';
         document.getElementById('setResendKey').value = cfg.resendApiKey || '';
         document.getElementById('setEmailWebhook').value = cfg.emailWebhookUrl || '';
+
+        const localGov = localStorage.getItem('postera_gov_shipping');
+        let savedGovShipping = {};
+        if (localGov) {
+          try { savedGovShipping = JSON.parse(localGov); } catch (e) {}
+        }
+        renderGovShippingGrid(savedGovShipping);
         return;
       }
       try {
@@ -2831,6 +3447,37 @@
           if (pData.whatsapp_float_enabled !== undefined && pData.whatsapp_float_enabled !== null) {
             if (waFloatEl) waFloatEl.checked = !!pData.whatsapp_float_enabled;
           }
+          if (depEnabledEl) {
+            if (pData.deposit_enabled !== undefined && pData.deposit_enabled !== null) {
+              depEnabledEl.checked = !!pData.deposit_enabled;
+            } else {
+              depEnabledEl.checked = localStorage.getItem('postera_deposit_enabled') !== 'false';
+            }
+          }
+          if (depTypeEl) {
+            depTypeEl.value = pData.deposit_type || localStorage.getItem('postera_deposit_type') || 'percent';
+          }
+          if (depValueEl) {
+            depValueEl.value = (pData.deposit_value !== undefined && pData.deposit_value !== null)
+              ? pData.deposit_value
+              : (localStorage.getItem('postera_deposit_value') || '50');
+          }
+          updateDepositFieldLabels();
+
+          let savedGovShipping = {};
+          if (pData.governorate_shipping) {
+            savedGovShipping = typeof pData.governorate_shipping === 'string'
+              ? JSON.parse(pData.governorate_shipping)
+              : pData.governorate_shipping;
+          } else {
+            const localGov = localStorage.getItem('postera_gov_shipping');
+            if (localGov) {
+              try { savedGovShipping = JSON.parse(localGov); } catch (e) {}
+            }
+          }
+          renderGovShippingGrid(savedGovShipping);
+        } else {
+          renderGovShippingGrid({});
         }
 
         // 2. تحميل إعدادات الإدارة المحمية (البريد والمفاتيح)
@@ -2858,11 +3505,31 @@
       const isFloatChecked = document.getElementById('setWhatsappFloat')?.checked ?? true;
       localStorage.setItem('postera_wa_float', isFloatChecked ? 'true' : 'false');
 
+      const isDepEnabled = document.getElementById('setDepositEnabled')?.checked ?? true;
+      const depType = document.getElementById('setDepositType')?.value || 'percent';
+      const depVal = parseFloat(document.getElementById('setDepositValue')?.value) || 50;
+
+      localStorage.setItem('postera_deposit_enabled', isDepEnabled ? 'true' : 'false');
+      localStorage.setItem('postera_deposit_type', depType);
+      localStorage.setItem('postera_deposit_value', String(depVal));
+
+      const govShippingMap = {};
+      EGYPT_GOVS.forEach(g => {
+        const inp = document.getElementById('govShip_' + g.name);
+        if (inp && inp.value !== '') {
+          const val = parseFloat(inp.value);
+          if (!isNaN(val) && val >= 0) {
+            govShippingMap[g.name] = val;
+          }
+        }
+      });
+      localStorage.setItem('postera_gov_shipping', JSON.stringify(govShippingMap));
+
       if (!sb || (currentUser && currentUser.isTemporary)) {
         setTimeout(() => {
           btn.disabled = false;
           btn.textContent = '💾 حفظ الإعدادات ونشرها للمتجر';
-          toastAdmin('✓ تم حفظ إعدادات المتجر بنجاح وستظهر للعملاء فوراً!');
+          toastAdmin('✓ تم حفظ إعدادات المتجر وأسعار المحافظات بنجاح وستظهر للعملاء فوراً!');
         }, 300);
         return;
       }
@@ -2875,6 +3542,10 @@
         whatsapp_number: document.getElementById('setWhatsapp').value.trim(),
         shipping_fee: parseFloat(document.getElementById('setShipping').value) || 0,
         free_shipping_threshold: parseFloat(document.getElementById('setFreeShipping').value) || 0,
+        deposit_enabled: isDepEnabled,
+        deposit_type: depType,
+        deposit_value: depVal,
+        governorate_shipping: govShippingMap,
         updated_at: new Date().toISOString()
       };
 
@@ -2888,7 +3559,16 @@
 
       try {
         // حفظ الإعدادات العامة (المتجر والزوار)
-        const { error: pErr } = await sb.from('settings').upsert([publicPayload]);
+        let { error: pErr } = await sb.from('settings').upsert([publicPayload]);
+        if (pErr && (pErr.message?.includes('deposit_enabled') || pErr.message?.includes('deposit_type') || pErr.message?.includes('deposit_value') || pErr.message?.includes('governorate_shipping'))) {
+          console.warn('Fallback: إعادة حفظ الإعدادات بدون الأعمدة غير المضافة بعد في settings:', pErr.message);
+          delete publicPayload.deposit_enabled;
+          delete publicPayload.deposit_type;
+          delete publicPayload.deposit_value;
+          delete publicPayload.governorate_shipping;
+          const retry = await sb.from('settings').upsert([publicPayload]);
+          pErr = retry.error;
+        }
         if (pErr) throw pErr;
 
         // حفظ إعدادات الإدارة السرية (محمية للأدمن فقط)
@@ -2896,7 +3576,7 @@
           await sb.from('admin_settings').upsert([adminPayload]);
         } catch (_) {}
 
-        toastAdmin('✓ تم حفظ إعدادات المتجر بنجاح وستظهر للعملاء فوراً!');
+        toastAdmin('✓ تم حفظ إعدادات المتجر وأسعار المحافظات بنجاح وستظهر للعملاء فوراً!');
       } catch (err) {
         toastAdmin('حدث خطأ أثناء حفظ الإعدادات: ' + err.message);
       } finally {
@@ -2905,10 +3585,549 @@
       }
     });
 
+    /* ==============================================================================
+     * إدارة البانرات ومقاطع الفيديو وسلايدر الهيرو (Banners & Video Hero Controller)
+     * ============================================================================== */
+    const DEFAULT_ADMIN_BANNERS = [
+      {
+        id: 'b-1',
+        type: 'video',
+        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+        posterUrl: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1600&auto=format&fit=crop&q=80',
+        badge: 'إصدارات حصرية 2026 ✨',
+        title: 'حوّل حيطتك لتحفة فنية من المعدن',
+        subtitle: 'بوسترات ألومنيوم فائقة الجودة بتفاصيل حادة وبريق معدني يدوم للأبد بدون بهتان.',
+        primaryBtnText: 'اكتشف المجموعة',
+        primaryBtnLink: '#gallery',
+        secondaryBtnText: 'اصنع لوحتك الخاصة',
+        secondaryBtnLink: '#custom',
+        isActive: true,
+        order: 1
+      },
+      {
+        id: 'b-2',
+        type: 'image',
+        imageUrl: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1600&auto=format&fit=crop&q=80',
+        badge: 'خصم 20% لفترة محدودة 🔥',
+        title: 'عالم الألعاب والأنمي بأعلى دقة',
+        subtitle: 'تصميمات أيقونية مطبوعة على ألومنيوم فاخر بلمسة نهائية فائقة الوضوح ومقاومة للخدش.',
+        primaryBtnText: 'تصفح ألعاب وأنيمي',
+        primaryBtnLink: '#gallery',
+        secondaryBtnText: 'شاهد كل المعرض',
+        secondaryBtnLink: '#gallery',
+        isActive: true,
+        order: 2
+      },
+      {
+        id: 'b-3',
+        type: 'image',
+        imageUrl: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=1600&auto=format&fit=crop&q=80',
+        badge: 'الأكثر مبيعاً 🏆',
+        title: 'هيبة السيارات والفن السينمائي',
+        subtitle: 'أضف طابع الفخامة والقوة لغرفتك أو مكتبك مع لوحات بوستيرا المعدنية الفاخرة.',
+        primaryBtnText: 'تصفح تصنيف السيارات',
+        primaryBtnLink: '#gallery',
+        secondaryBtnText: 'اطلب تصميمك المفضل',
+        secondaryBtnLink: '#custom',
+        isActive: true,
+        order: 3
+      }
+    ];
+
+    const DEFAULT_ADMIN_CURATED = [
+      { id: 'c1', title: 'ألعاب وجيمنج', sub: 'عالم المغامرة والأبطال', cat: 'أنمي', img: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=600&auto=format&fit=crop&q=80' },
+      { id: 'c2', title: 'سينما ومسلسلات', sub: 'أعظم مشاهد الشاشة', cat: 'سينما', img: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=600&auto=format&fit=crop&q=80' },
+      { id: 'c3', title: 'سيارات وسرعة', sub: 'قوة وفخامة المحركات', cat: 'سيارات', img: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&auto=format&fit=crop&q=80' },
+      { id: 'c4', title: 'فن تجريدي ومودرن', sub: 'لمسات عصرية ملهمة', cat: 'فن تجريدي', img: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=600&auto=format&fit=crop&q=80' }
+    ];
+
+    let allBanners = [];
+    let allCurated = [];
+
+    async function loadBannersAdmin() {
+      try {
+        const local = localStorage.getItem('postera_banners');
+        if (local) allBanners = JSON.parse(local);
+      } catch (e) {}
+
+      if (!allBanners || !allBanners.length) {
+        allBanners = JSON.parse(JSON.stringify(DEFAULT_ADMIN_BANNERS));
+      }
+
+      if (sb && (!currentUser || !currentUser.isTemporary)) {
+        try {
+          const { data, error } = await sb.from('settings').select('banners').single();
+          if (!error && data && data.banners) {
+            const parsed = typeof data.banners === 'string' ? JSON.parse(data.banners) : data.banners;
+            if (Array.isArray(parsed) && parsed.length) {
+              allBanners = parsed;
+              localStorage.setItem('postera_banners', JSON.stringify(allBanners));
+            }
+          }
+        } catch (err) {
+          console.warn('Load banners from Supabase:', err);
+        }
+      }
+
+      renderBannersList();
+    }
+
+    function renderBannersList() {
+      const container = document.getElementById('bannersList');
+      if (!container) return;
+
+      allBanners.sort((a,b) => (Number(a.order) || 0) - (Number(b.order) || 0));
+
+      const total = allBanners.length;
+      const activeCount = allBanners.filter(b => b.isActive !== false).length;
+      const videoCount = allBanners.filter(b => b.type === 'video').length;
+      const imageCount = allBanners.filter(b => b.type === 'image' || !b.type).length;
+
+      document.getElementById('cntTotalBanners').textContent = total;
+      document.getElementById('cntActiveBanners').textContent = activeCount;
+      document.getElementById('cntVideoBanners').textContent = videoCount;
+      document.getElementById('cntImageBanners').textContent = imageCount;
+      document.getElementById('bannerCountTag').textContent = `${total} شرائح`;
+
+      if (!total) {
+        container.innerHTML = `
+          <div style="text-align:center;padding:36px;color:var(--muted);background:var(--surface);border-radius:12px;border:1px dashed var(--line);">
+            <div style="font-size:2rem;margin-bottom:8px;">🎬</div>
+            <p>لا توجد بانرات مضافة حالياً. يمكنك إضافة بانر جديد أو استرجاع النماذج الافتراضية.</p>
+            <button type="button" class="btn sm" id="btnEmptyAddBanner" style="margin-top:10px;">+ إضافة أول بانر</button>
+          </div>
+        `;
+        const addBtn = document.getElementById('btnEmptyAddBanner');
+        if (addBtn) addBtn.addEventListener('click', () => openBannerModal());
+        return;
+      }
+
+      container.innerHTML = allBanners.map((b, idx) => {
+        const isVideo = b.type === 'video';
+        const mediaPreview = isVideo
+          ? (b.videoUrl ? `<video src="${escapeHtml(b.videoUrl)}" poster="${escapeHtml(b.posterUrl||'')}" muted loop preload="metadata"></video>` : (b.posterUrl ? `<img src="${escapeHtml(b.posterUrl)}">` : `<div style="background:#1a1a24;display:grid;place-items:center;height:100%;">🎬</div>`))
+          : (b.imageUrl ? `<img src="${escapeHtml(b.imageUrl)}">` : `<div style="background:#1a1a24;display:grid;place-items:center;height:100%;">🖼️</div>`);
+
+        return `
+          <div class="banner-admin-card" data-id="${escapeHtml(b.id)}">
+            <div class="banner-thumb-container">
+              ${mediaPreview}
+              <span class="banner-type-badge">${isVideo ? '🎬 فيديو' : '🖼️ صورة'}</span>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                ${b.badge ? `<span class="banner-badge-pill">${escapeHtml(b.badge)}</span>` : ''}
+                <span style="font-size:0.78rem;color:var(--muted);background:var(--surface);padding:1px 6px;border-radius:4px;border:1px solid var(--line);">ترتيب: #${b.order || (idx + 1)}</span>
+                <span class="status-pill ${b.isActive !== false ? 'st-completed' : 'st-cancelled'}" style="font-size:0.75rem;padding:2px 8px;">
+                  ${b.isActive !== false ? 'مفعل بالمتجر' : 'معطل'}
+                </span>
+              </div>
+              <strong style="font-size:1.05rem;color:var(--fg);">${escapeHtml(b.title || 'بدون عنوان')}</strong>
+              <p class="muted" style="font-size:0.84rem;margin:0;line-height:1.4;max-width:550px;">
+                ${escapeHtml(b.subtitle || 'لا يوجد وصف فرعي')}
+              </p>
+              <div style="display:flex;gap:12px;font-size:0.8rem;color:var(--gold-text);margin-top:4px;">
+                ${b.primaryBtnText ? `<span>الزر: <strong>${escapeHtml(b.primaryBtnText)}</strong> (${escapeHtml(b.primaryBtnLink||'#')})</span>` : ''}
+                ${b.secondaryBtnText ? `<span>ثانوي: <strong>${escapeHtml(b.secondaryBtnText)}</strong></span>` : ''}
+              </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;">
+              <div style="display:flex;gap:6px;">
+                <button type="button" class="btn ghost sm" onclick="moveBannerOrder('${b.id}', -1)" title="تحريك لأعلى" style="padding:4px 8px;font-size:0.85rem;" ${idx === 0 ? 'disabled' : ''}>▲</button>
+                <button type="button" class="btn ghost sm" onclick="moveBannerOrder('${b.id}', 1)" title="تحريك لأسفل" style="padding:4px 8px;font-size:0.85rem;" ${idx === total - 1 ? 'disabled' : ''}>▼</button>
+                <button type="button" class="btn ghost sm" onclick="toggleBannerActiveStatus('${b.id}')" title="${b.isActive !== false ? 'تعطيل' : 'تفعيل'}" style="padding:4px 10px;font-size:0.85rem;color:${b.isActive !== false ? 'var(--bad)' : 'var(--ok)'};border-color:${b.isActive !== false ? 'rgba(229,115,106,0.3)' : 'rgba(109,187,142,0.3)'};">
+                  ${b.isActive !== false ? 'تعطيل' : 'تفعيل'}
+                </button>
+              </div>
+              <div style="display:flex;gap:6px;">
+                <button type="button" class="btn ghost sm" onclick="editBannerById('${b.id}')" style="padding:5px 12px;font-size:0.84rem;">✏️ تعديل</button>
+                <button type="button" class="btn ghost sm" onclick="deleteBannerById('${b.id}')" style="padding:5px 12px;font-size:0.84rem;color:var(--bad);border-color:rgba(229,115,106,0.35);">🗑️ حذف</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openBannerModal(banner = null) {
+      const modal = document.getElementById('bannerModal');
+      const titleEl = document.getElementById('bannerModalTitle');
+      const form = document.getElementById('bannerForm');
+      form.reset();
+
+      if (banner) {
+        titleEl.textContent = 'تعديل البانر: ' + (banner.title || '');
+        document.getElementById('bannerIdHidden').value = banner.id;
+        if (banner.type === 'video') {
+          document.getElementById('bMediaVideo').checked = true;
+          document.getElementById('bVideoUrl').value = banner.videoUrl || '';
+        } else {
+          document.getElementById('bMediaImage').checked = true;
+          document.getElementById('bImageUrl').value = banner.imageUrl || '';
+        }
+        document.getElementById('bPosterUrl').value = banner.posterUrl || '';
+        document.getElementById('bBadge').value = banner.badge || '';
+        document.getElementById('bTitle').value = banner.title || '';
+        document.getElementById('bSubtitle').value = banner.subtitle || '';
+        document.getElementById('bPrimaryBtnText').value = banner.primaryBtnText || '';
+        document.getElementById('bPrimaryBtnLink').value = banner.primaryBtnLink || '';
+        document.getElementById('bSecondaryBtnText').value = banner.secondaryBtnText || '';
+        document.getElementById('bSecondaryBtnLink').value = banner.secondaryBtnLink || '';
+        document.getElementById('bOrder').value = banner.order || 1;
+        document.getElementById('bIsActive').checked = banner.isActive !== false;
+      } else {
+        titleEl.textContent = 'إضافة بانر جديد للسلايدر';
+        document.getElementById('bannerIdHidden').value = '';
+        document.getElementById('bMediaVideo').checked = true;
+        document.getElementById('bOrder').value = (allBanners.length + 1);
+        document.getElementById('bIsActive').checked = true;
+        document.getElementById('bPrimaryBtnText').value = 'اكتشف المجموعة';
+        document.getElementById('bPrimaryBtnLink').value = '#gallery';
+        document.getElementById('bSecondaryBtnText').value = 'اصنع لوحتك الخاصة';
+        document.getElementById('bSecondaryBtnLink').value = '#custom';
+      }
+
+      updateBannerMediaTypeUI();
+      updateBannerLivePreview();
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeBannerModal() {
+      const modal = document.getElementById('bannerModal');
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function updateBannerMediaTypeUI() {
+      const isVideo = document.getElementById('bMediaVideo').checked;
+      const fVideo = document.getElementById('fieldVideoUrl');
+      const fImg = document.getElementById('fieldImageUrl');
+      if (fVideo && fImg) {
+        fVideo.style.display = isVideo ? 'block' : 'none';
+        fImg.style.display = isVideo ? 'none' : 'block';
+      }
+      updateBannerLivePreview();
+    }
+
+    function updateBannerLivePreview() {
+      const isVideo = document.getElementById('bMediaVideo').checked;
+      const mediaContainer = document.getElementById('previewMediaContainer');
+      const pBadge = document.getElementById('previewBadge');
+      const pTitle = document.getElementById('previewTitle');
+      const pSub = document.getElementById('previewSub');
+
+      const titleVal = document.getElementById('bTitle').value || 'عنوان البانر الرئيسي';
+      const subVal = document.getElementById('bSubtitle').value || 'الوصف الفرعي ومميزات اللوحات الفاخرة...';
+      const badgeVal = document.getElementById('bBadge').value || 'شارة العرض ✨';
+      const posterVal = document.getElementById('bPosterUrl').value || '';
+      const videoVal = document.getElementById('bVideoUrl').value || '';
+      const imgVal = document.getElementById('bImageUrl').value || '';
+
+      pTitle.textContent = titleVal;
+      pSub.textContent = subVal;
+      pBadge.textContent = badgeVal;
+
+      if (isVideo) {
+        if (videoVal) {
+          mediaContainer.innerHTML = `<video src="${escapeHtml(videoVal)}" poster="${escapeHtml(posterVal)}" autoplay muted loop style="width:100%;height:100%;object-fit:cover;"></video>`;
+        } else if (posterVal) {
+          mediaContainer.innerHTML = `<img src="${escapeHtml(posterVal)}" style="width:100%;height:100%;object-fit:cover;">`;
+        } else {
+          mediaContainer.innerHTML = `<div style="background:#111;height:100%;"></div>`;
+        }
+      } else {
+        if (imgVal || posterVal) {
+          mediaContainer.innerHTML = `<img src="${escapeHtml(imgVal || posterVal)}" style="width:100%;height:100%;object-fit:cover;">`;
+        } else {
+          mediaContainer.innerHTML = `<div style="background:#111;height:100%;"></div>`;
+        }
+      }
+    }
+
+    async function saveBannerFromForm(e) {
+      e.preventDefault();
+      const saveBtn = document.getElementById('saveBannerSubmitBtn');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'جاري الحفظ...';
+
+      try {
+        const id = document.getElementById('bannerIdHidden').value || ('banner-' + Date.now());
+        const isVideo = document.getElementById('bMediaVideo').checked;
+        const bannerObj = {
+          id: id,
+          type: isVideo ? 'video' : 'image',
+          videoUrl: isVideo ? document.getElementById('bVideoUrl').value.trim() : '',
+          imageUrl: !isVideo ? document.getElementById('bImageUrl').value.trim() : '',
+          posterUrl: document.getElementById('bPosterUrl').value.trim(),
+          badge: document.getElementById('bBadge').value.trim(),
+          title: document.getElementById('bTitle').value.trim(),
+          subtitle: document.getElementById('bSubtitle').value.trim(),
+          primaryBtnText: document.getElementById('bPrimaryBtnText').value.trim(),
+          primaryBtnLink: document.getElementById('bPrimaryBtnLink').value.trim(),
+          secondaryBtnText: document.getElementById('bSecondaryBtnText').value.trim(),
+          secondaryBtnLink: document.getElementById('bSecondaryBtnLink').value.trim(),
+          order: Number(document.getElementById('bOrder').value) || 1,
+          isActive: document.getElementById('bIsActive').checked
+        };
+
+        const existingIdx = allBanners.findIndex(b => b.id === id);
+        if (existingIdx >= 0) {
+          allBanners[existingIdx] = bannerObj;
+        } else {
+          allBanners.push(bannerObj);
+        }
+
+        localStorage.setItem('postera_banners', JSON.stringify(allBanners));
+        await syncBannersToSupabase();
+
+        toastAdmin('✓ تم حفظ البانر بنجاح وتحديث السلايدر بالمتجر!');
+        closeBannerModal();
+        renderBannersList();
+      } catch (err) {
+        toastAdmin('خطأ في حفظ البانر: ' + err.message);
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'حفظ البانر';
+      }
+    }
+
+    async function syncBannersToSupabase() {
+      if (!sb || (currentUser && currentUser.isTemporary)) return;
+      try {
+        const { error } = await sb.from('settings').update({ banners: allBanners }).eq('id', 1);
+        if (error) {
+          await sb.from('settings').upsert([{ id: 1, banners: allBanners }]);
+        }
+      } catch (e) {
+        console.warn('Sync banners to Supabase warning:', e);
+      }
+    }
+
+    async function toggleBannerActiveStatus(id) {
+      const banner = allBanners.find(b => b.id === id);
+      if (!banner) return;
+      banner.isActive = !(banner.isActive !== false);
+      localStorage.setItem('postera_banners', JSON.stringify(allBanners));
+      await syncBannersToSupabase();
+      renderBannersList();
+      toastAdmin(banner.isActive ? 'تم تفعيل البانر في المتجر ✓' : 'تم تعطيل البانر ✕');
+    }
+
+    async function deleteBannerById(id) {
+      if (!confirm('هل أنت متأكد من حذف هذا البانر نهائياً؟')) return;
+      allBanners = allBanners.filter(b => b.id !== id);
+      localStorage.setItem('postera_banners', JSON.stringify(allBanners));
+      await syncBannersToSupabase();
+      renderBannersList();
+      toastAdmin('تم حذف البانر بنجاح');
+    }
+
+    async function moveBannerOrder(id, delta) {
+      const idx = allBanners.findIndex(b => b.id === id);
+      if (idx < 0) return;
+      const targetIdx = idx + delta;
+      if (targetIdx < 0 || targetIdx >= allBanners.length) return;
+
+      const temp = allBanners[idx];
+      allBanners[idx] = allBanners[targetIdx];
+      allBanners[targetIdx] = temp;
+
+      allBanners.forEach((b, i) => b.order = i + 1);
+
+      localStorage.setItem('postera_banners', JSON.stringify(allBanners));
+      await syncBannersToSupabase();
+      renderBannersList();
+    }
+
+    window.editBannerById = function(id) {
+      const b = allBanners.find(x => x.id === id);
+      if (b) openBannerModal(b);
+    };
+    window.deleteBannerById = deleteBannerById;
+    window.toggleBannerActiveStatus = toggleBannerActiveStatus;
+    window.moveBannerOrder = moveBannerOrder;
+
+    /* ==============================================================================
+     * إدارة بطاقات المجموعات المختارة (Curated Collections - 4 بطاقات)
+     * ============================================================================== */
+    async function loadCuratedAdmin() {
+      try {
+        const local = localStorage.getItem('postera_curated_cards');
+        if (local) allCurated = JSON.parse(local);
+      } catch (e) {}
+
+      if (!allCurated || !allCurated.length) {
+        allCurated = JSON.parse(JSON.stringify(DEFAULT_ADMIN_CURATED));
+      }
+
+      if (sb && (!currentUser || !currentUser.isTemporary)) {
+        try {
+          const { data, error } = await sb.from('settings').select('curated_cards').single();
+          if (!error && data && data.curated_cards) {
+            const parsed = typeof data.curated_cards === 'string' ? JSON.parse(data.curated_cards) : data.curated_cards;
+            if (Array.isArray(parsed) && parsed.length) {
+              allCurated = parsed;
+              localStorage.setItem('postera_curated_cards', JSON.stringify(allCurated));
+            }
+          }
+        } catch (e) {}
+      }
+
+      renderCuratedAdminGrid();
+    }
+
+    function renderCuratedAdminGrid() {
+      const grid = document.getElementById('curatedCardsAdminGrid');
+      if (!grid) return;
+
+      grid.innerHTML = allCurated.map((c, idx) => `
+        <div style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <strong style="color:var(--gold-text);font-size:0.95rem;">بطاقة #${idx + 1}</strong>
+            <span style="font-size:0.75rem;color:var(--muted);">التصنيف: ${escapeHtml(c.cat || '')}</span>
+          </div>
+          <div style="height:100px;border-radius:8px;overflow:hidden;background:#1a1a24;position:relative;">
+            <img src="${escapeHtml(c.img || '')}" id="curatedImgPrev_${idx}" style="width:100%;height:100%;object-fit:cover;">
+          </div>
+          <div class="field" style="margin:0;">
+            <label style="font-size:0.8rem;">عنوان المجموعة</label>
+            <input type="text" id="curatedTitle_${idx}" value="${escapeHtml(c.title || '')}" style="font-size:0.85rem;padding:6px 10px;">
+          </div>
+          <div class="field" style="margin:0;">
+            <label style="font-size:0.8rem;">الوصف المختصر</label>
+            <input type="text" id="curatedSub_${idx}" value="${escapeHtml(c.sub || '')}" style="font-size:0.85rem;padding:6px 10px;">
+          </div>
+          <div class="field" style="margin:0;">
+            <label style="font-size:0.8rem;">التصنيف المفلتر عند الضغط</label>
+            <input type="text" id="curatedCat_${idx}" value="${escapeHtml(c.cat || '')}" placeholder="مثال: أنمي، سينما، سيارات، فن تجريدي" style="font-size:0.85rem;padding:6px 10px;">
+          </div>
+          <div class="field" style="margin:0;">
+            <label style="font-size:0.8rem;">رابط صورة الخلفية</label>
+            <input type="url" id="curatedImg_${idx}" value="${escapeHtml(c.img || '')}" dir="ltr" style="font-size:0.82rem;padding:6px 10px;" oninput="document.getElementById('curatedImgPrev_${idx}').src = this.value;">
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function saveCuratedCardsAdmin() {
+      const btn = document.getElementById('btnSaveCuratedCards');
+      btn.disabled = true;
+      btn.textContent = 'جاري الحفظ...';
+
+      try {
+        const updated = allCurated.map((c, idx) => ({
+          id: c.id || ('c' + (idx + 1)),
+          title: (document.getElementById(`curatedTitle_${idx}`)?.value || c.title).trim(),
+          sub: (document.getElementById(`curatedSub_${idx}`)?.value || c.sub).trim(),
+          cat: (document.getElementById(`curatedCat_${idx}`)?.value || c.cat).trim(),
+          img: (document.getElementById(`curatedImg_${idx}`)?.value || c.img).trim()
+        }));
+
+        allCurated = updated;
+        localStorage.setItem('postera_curated_cards', JSON.stringify(allCurated));
+
+        if (sb && (!currentUser || !currentUser.isTemporary)) {
+          await sb.from('settings').update({ curated_cards: allCurated }).eq('id', 1);
+        }
+
+        toastAdmin('✓ تم حفظ بطاقات المجموعات المميزة بنجاح!');
+        renderCuratedAdminGrid();
+      } catch (err) {
+        toastAdmin('خطأ في حفظ المجموعات: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '💾 حفظ تعديلات المجموعات';
+      }
+    }
+
+    // ربط الأحداث للبانرات
+    document.getElementById('openAddBannerBtn')?.addEventListener('click', () => openBannerModal());
+    document.getElementById('closeBannerModalBtn')?.addEventListener('click', closeBannerModal);
+    document.getElementById('cancelBannerModalBtn')?.addEventListener('click', closeBannerModal);
+    document.getElementById('bannerForm')?.addEventListener('submit', saveBannerFromForm);
+    document.getElementById('bMediaVideo')?.addEventListener('change', updateBannerMediaTypeUI);
+    document.getElementById('bMediaImage')?.addEventListener('change', updateBannerMediaTypeUI);
+
+    ['bTitle', 'bSubtitle', 'bBadge', 'bVideoUrl', 'bImageUrl', 'bPosterUrl'].forEach(id => {
+      document.getElementById(id)?.addEventListener('input', updateBannerLivePreview);
+    });
+
+    // النماذج الجاهزة السريعة
+    document.getElementById('btnPresetVideoFire')?.addEventListener('click', () => {
+      document.getElementById('bMediaVideo').checked = true;
+      document.getElementById('bVideoUrl').value = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4';
+      document.getElementById('bPosterUrl').value = 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1600&auto=format&fit=crop&q=80';
+      document.getElementById('bTitle').value = 'حوّل حيطتك لتحفة فنية من المعدن';
+      document.getElementById('bSubtitle').value = 'بوسترات ألومنيوم فائقة الجودة بتفاصيل حادة وبريق معدني يدوم للأبد بدون بهتان.';
+      document.getElementById('bBadge').value = 'إصدارات حصرية 2026 ✨';
+      updateBannerMediaTypeUI();
+    });
+
+    document.getElementById('btnPresetImgGaming')?.addEventListener('click', () => {
+      document.getElementById('bMediaImage').checked = true;
+      document.getElementById('bImageUrl').value = 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1600&auto=format&fit=crop&q=80';
+      document.getElementById('bPosterUrl').value = 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1600&auto=format&fit=crop&q=80';
+      document.getElementById('bTitle').value = 'عالم الألعاب والأنمي بأعلى دقة';
+      document.getElementById('bSubtitle').value = 'تصميمات أيقونية مطبوعة على ألومنيوم فاخر بلمسة نهائية فائقة الوضوح ومقاومة للخدش.';
+      document.getElementById('bBadge').value = 'خصم 20% لفترة محدودة 🔥';
+      updateBannerMediaTypeUI();
+    });
+
+    document.getElementById('btnPresetImgCar')?.addEventListener('click', () => {
+      document.getElementById('bMediaImage').checked = true;
+      document.getElementById('bImageUrl').value = 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=1600&auto=format&fit=crop&q=80';
+      document.getElementById('bPosterUrl').value = 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=1600&auto=format&fit=crop&q=80';
+      document.getElementById('bTitle').value = 'هيبة السيارات والفن السينمائي';
+      document.getElementById('bSubtitle').value = 'أضف طابع الفخامة والقوة لغرفتك أو مكتبك مع لوحات بوستيرا المعدنية الفاخرة.';
+      document.getElementById('bBadge').value = 'الأكثر مبيعاً 🏆';
+      updateBannerMediaTypeUI();
+    });
+
+    // رفع ملفات الفيديو والصور من الجهاز
+    document.getElementById('bVideoFileInput')?.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (re) => {
+        document.getElementById('bVideoUrl').value = re.target.result;
+        updateBannerLivePreview();
+        toastAdmin('تم تحميل ملف الفيديو بنجاح');
+      };
+      reader.readAsDataURL(file);
+    });
+
+    document.getElementById('bImageFileInput')?.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (re) => {
+        document.getElementById('bImageUrl').value = re.target.result;
+        updateBannerLivePreview();
+        toastAdmin('تم تحميل الصورة بنجاح');
+      };
+      reader.readAsDataURL(file);
+    });
+
+    document.getElementById('btnResetBannersDefault')?.addEventListener('click', async () => {
+      if (!confirm('هل تريد استرجاع النماذج الافتراضية للبانرات؟')) return;
+      allBanners = JSON.parse(JSON.stringify(DEFAULT_ADMIN_BANNERS));
+      localStorage.setItem('postera_banners', JSON.stringify(allBanners));
+      await syncBannersToSupabase();
+      renderBannersList();
+      toastAdmin('تم استرجاع النماذج الافتراضية للبانرات بنجاح');
+    });
+
+    document.getElementById('btnSaveCuratedCards')?.addEventListener('click', saveCuratedCardsAdmin);
+
     document.getElementById('refreshBtn').addEventListener('click', () => {
       loadOrders();
       loadProducts();
       loadSizes();
+      loadBannersAdmin();
+      loadCuratedAdmin();
       loadSettings();
       toastAdmin('تم تحديث جميع البيانات');
     });

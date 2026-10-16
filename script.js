@@ -10,8 +10,9 @@ var SHOP = window.SHOP || {
   instapay: 'postera@instapay',        // عنوان إنستا باي للمتجر
   wallet:   '01000000000',            // رقم محفظة كاش (فودافون كاش / غيرها)
   whatsapp: '01000000000',            // واتساب خدمة العملاء
-  shipping: 60,                       // سعر الشحن لجميع المحافظات (جنيه)
+  shipping: 60,                       // سعر الشحن الافتراضي لجميع المحافظات (جنيه)
   freeShippingOver: 2500,             // الشحن مجاناً لو الطلب تخطى هذا المبلغ
+  govShipping: {},                    // أسعار الشحن المخصصة لكل محافظة { 'القاهرة': 50, ... }
   // المقاسات بالسنتيمتر والأسعار بالجنيه المصري
   sizes: [
     { id: 's',  label: '20×30', w: 20, h: 30, price: 450 },
@@ -20,6 +21,12 @@ var SHOP = window.SHOP || {
     { id: 'xl', label: '50×75', w: 50, h: 75, price: 1800 }
   ]
 };
+
+// تهيئة أسعار المحافظات المحفوظة محلياً مبدئياً
+try {
+  const localGovInit = localStorage.getItem('postera_gov_shipping');
+  if (localGovInit) SHOP.govShipping = JSON.parse(localGovInit);
+} catch (e) {}
 
 var SUPABASE_CONFIG = window.SUPABASE_CONFIG || {
   url: '',
@@ -168,9 +175,250 @@ document.addEventListener('click', e => {
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 
-/* فلترة التصنيفات من شريط الهيدر وبطاقات اختار عالمك */
+/* ==========================================================================
+   نظام البانرات والفيديو وسلايدر الهيرو (Displate Hero Slider & Banners)
+   ========================================================================== */
+const DEFAULT_BANNERS = [
+  {
+    id: 'b-1',
+    type: 'video',
+    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+    posterUrl: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1600&auto=format&fit=crop&q=80',
+    badge: 'إصدارات حصرية 2026 ✨',
+    title: 'حوّل حيطتك لتحفة فنية من المعدن',
+    subtitle: 'بوسترات ألومنيوم فائقة الجودة بتفاصيل حادة ولمعان معدني يدوم للأبد بدون بهتان.',
+    primaryBtnText: 'اكتشف المجموعة',
+    primaryBtnLink: '#gallery',
+    secondaryBtnText: 'اصنع لوحتك الخاصة',
+    secondaryBtnLink: '#custom',
+    isActive: true,
+    order: 1
+  },
+  {
+    id: 'b-2',
+    type: 'image',
+    imageUrl: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1600&auto=format&fit=crop&q=80',
+    badge: 'خصم 20% لفترة محدودة 🔥',
+    title: 'عالم الألعاب والأنمي بأعلى دقة',
+    subtitle: 'تصميمات أيقونية مطبوعة على ألومنيوم فاخر بلمسة نهائية فائقة الوضوح ومقاومة للخدش.',
+    primaryBtnText: 'تصفح ألعاب وأنيمي',
+    primaryBtnLink: '#gallery',
+    secondaryBtnText: 'شاهد كل المعرض',
+    secondaryBtnLink: '#gallery',
+    isActive: true,
+    order: 2
+  },
+  {
+    id: 'b-3',
+    type: 'image',
+    imageUrl: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=1600&auto=format&fit=crop&q=80',
+    badge: 'الأكثر مبيعاً 🏆',
+    title: 'هيبة السيارات والفن السينمائي',
+    subtitle: 'أضف طابع الفخامة والقوة لغرفتك أو مكتبك مع لوحات بوستيرا المعدنية الفاخرة.',
+    primaryBtnText: 'تصفح تصنيف السيارات',
+    primaryBtnLink: '#gallery',
+    secondaryBtnText: 'اطلب تصميمك المفضل',
+    secondaryBtnLink: '#custom',
+    isActive: true,
+    order: 3
+  }
+];
+
+const DEFAULT_CURATED = [
+  { id: 'c1', title: 'ألعاب وجيمنج', sub: 'عالم المغامرة والأبطال', cat: 'أنمي', img: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=600&auto=format&fit=crop&q=80' },
+  { id: 'c2', title: 'سينما ومسلسلات', sub: 'أعظم مشاهد الشاشة', cat: 'سينما', img: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=600&auto=format&fit=crop&q=80' },
+  { id: 'c3', title: 'سيارات وسرعة', sub: 'قوة وفخامة المحركات', cat: 'سيارات', img: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&auto=format&fit=crop&q=80' },
+  { id: 'c4', title: 'فن تجريدي ومودرن', sub: 'لمسات عصرية ملهمة', cat: 'فن تجريدي', img: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=600&auto=format&fit=crop&q=80' }
+];
+
+let BANNERS = [];
+try {
+  const localBanners = localStorage.getItem('postera_banners');
+  if (localBanners) BANNERS = JSON.parse(localBanners);
+} catch (e) {}
+if (!BANNERS || !BANNERS.length) BANNERS = [...DEFAULT_BANNERS];
+
+let CURATED = [];
+try {
+  const localCurated = localStorage.getItem('postera_curated_cards');
+  if (localCurated) CURATED = JSON.parse(localCurated);
+} catch (e) {}
+if (!CURATED || !CURATED.length) CURATED = [...DEFAULT_CURATED];
+
+let currentSlideIdx = 0;
+let sliderAutoplayTimer = null;
+
+function renderHeroSlider() {
+  const track = $('#heroSliderTrack');
+  const indicators = $('#sliderIndicators');
+  if (!track) return;
+
+  const activeBanners = BANNERS.filter(b => b.isActive !== false).sort((a,b) => (a.order || 0) - (b.order || 0));
+  const list = activeBanners.length ? activeBanners : DEFAULT_BANNERS;
+
+  if (currentSlideIdx >= list.length) currentSlideIdx = 0;
+
+  track.innerHTML = list.map((b, idx) => {
+    const isAct = idx === currentSlideIdx ? 'active' : '';
+    let mediaHtml = '';
+    if (b.type === 'video' && b.videoUrl) {
+      mediaHtml = `
+        <video class="hero-slide-video" autoplay muted loop playsinline preload="auto" poster="${esc(b.posterUrl || '')}">
+          <source src="${esc(b.videoUrl)}" type="video/mp4">
+          ${b.posterUrl ? `<img src="${esc(b.posterUrl)}" alt="${esc(b.title || '')}" class="hero-slide-img">` : ''}
+        </video>
+      `;
+    } else {
+      mediaHtml = `
+        <img class="hero-slide-img" src="${esc(b.imageUrl || b.posterUrl || '')}" alt="${esc(b.title || '')}">
+      `;
+    }
+    return `
+      <div class="hero-slide ${isAct}" data-index="${idx}">
+        <div class="hero-slide-media">${mediaHtml}</div>
+        <div class="hero-slide-overlay"></div>
+        <div class="hero-slide-content">
+          ${b.badge ? `<div class="hero-slide-badge">${esc(b.badge)}</div>` : ''}
+          <h1 class="hero-slide-title">${esc(b.title || '')}</h1>
+          ${b.subtitle ? `<p class="hero-slide-sub">${esc(b.subtitle)}</p>` : ''}
+          <div class="hero-slide-actions">
+            ${b.primaryBtnText ? `
+              <a href="${esc(b.primaryBtnLink || '#gallery')}" class="btn hero-cta-btn-primary" data-scroll="${b.primaryBtnLink && b.primaryBtnLink.startsWith('#') ? b.primaryBtnLink.replace('#','') : ''}">
+                <span>${esc(b.primaryBtnText)}</span>
+                <span class="btn-arrow" aria-hidden="true">←</span>
+              </a>
+            ` : ''}
+            ${b.secondaryBtnText ? `
+              <a href="${esc(b.secondaryBtnLink || '#custom')}" class="hero-cta-btn-secondary" data-scroll="${b.secondaryBtnLink && b.secondaryBtnLink.startsWith('#') ? b.secondaryBtnLink.replace('#','') : ''}">
+                <span>${esc(b.secondaryBtnText)}</span>
+              </a>
+            ` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  if (indicators) {
+    indicators.innerHTML = list.map((_, idx) => `
+      <button class="slider-dot ${idx === currentSlideIdx ? 'active' : ''}" type="button" aria-label="الشريحة ${idx + 1}" data-slide-to="${idx}"></button>
+    `).join('');
+  }
+
+  const activeVideo = track.querySelector('.hero-slide.active video');
+  if (activeVideo && activeVideo.paused) {
+    activeVideo.play().catch(() => {});
+  }
+}
+
+function goToSlide(idx) {
+  const activeBanners = BANNERS.filter(b => b.isActive !== false);
+  const total = activeBanners.length || DEFAULT_BANNERS.length;
+  currentSlideIdx = (idx + total) % total;
+
+  const slides = $$('.hero-slide', $('#heroSliderTrack'));
+  slides.forEach((sl, i) => {
+    sl.classList.toggle('active', i === currentSlideIdx);
+    const vid = sl.querySelector('video');
+    if (vid) {
+      if (i === currentSlideIdx) vid.play().catch(() => {});
+      else vid.pause();
+    }
+  });
+
+  const dots = $$('.slider-dot', $('#sliderIndicators'));
+  dots.forEach((d, i) => d.classList.toggle('active', i === currentSlideIdx));
+}
+
+function nextSlide() {
+  goToSlide(currentSlideIdx + 1);
+}
+
+function prevSlide() {
+  goToSlide(currentSlideIdx - 1);
+}
+
+function startSliderAutoplay() {
+  stopSliderAutoplay();
+  sliderAutoplayTimer = setInterval(nextSlide, 6500);
+}
+
+function stopSliderAutoplay() {
+  if (sliderAutoplayTimer) {
+    clearInterval(sliderAutoplayTimer);
+    sliderAutoplayTimer = null;
+  }
+}
+
+function initSliderInteractions() {
+  const prevBtn = $('#sliderPrevBtn');
+  const nextBtn = $('#sliderNextBtn');
+  if (prevBtn && !prevBtn.dataset.bound) {
+    prevBtn.dataset.bound = 'true';
+    prevBtn.addEventListener('click', () => { prevSlide(); startSliderAutoplay(); });
+  }
+  if (nextBtn && !nextBtn.dataset.bound) {
+    nextBtn.dataset.bound = 'true';
+    nextBtn.addEventListener('click', () => { nextSlide(); startSliderAutoplay(); });
+  }
+
+  const indicators = $('#sliderIndicators');
+  if (indicators && !indicators.dataset.bound) {
+    indicators.dataset.bound = 'true';
+    indicators.addEventListener('click', e => {
+      const dot = e.target.closest('[data-slide-to]');
+      if (!dot) return;
+      goToSlide(Number(dot.dataset.slideTo));
+      startSliderAutoplay();
+    });
+  }
+
+  const container = $('#heroSliderContainer');
+  if (container && !container.dataset.bound) {
+    container.dataset.bound = 'true';
+    container.addEventListener('mouseenter', stopSliderAutoplay);
+    container.addEventListener('mouseleave', startSliderAutoplay);
+
+    let touchStartX = 0;
+    container.addEventListener('touchstart', e => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    container.addEventListener('touchend', e => {
+      const touchEndX = e.changedTouches[0].screenX;
+      const diff = touchEndX - touchStartX;
+      if (Math.abs(diff) > 40) {
+        if (diff > 0) prevSlide();
+        else nextSlide();
+        startSliderAutoplay();
+      }
+    }, { passive: true });
+  }
+
+  startSliderAutoplay();
+}
+
+function renderCuratedGrid() {
+  const gridEl = $('#curatedGrid');
+  if (!gridEl) return;
+  gridEl.innerHTML = CURATED.map(c => `
+    <div class="curated-card" data-cat="${esc(c.cat || '')}">
+      <div class="curated-card-bg" style="background-image: url('${esc(c.img || '')}');"></div>
+      <div class="curated-card-overlay"></div>
+      <div class="curated-card-content">
+        <h3 class="curated-card-title">${esc(c.title || '')}</h3>
+        <p class="curated-card-sub">${esc(c.sub || '')}</p>
+        <span class="curated-card-pill">
+          <span>استكشف المجموعة</span>
+          <span aria-hidden="true">←</span>
+        </span>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* فلترة التصنيفات من شريط الهيدر وبطاقات المجموعات المختارة (Curated) */
 document.addEventListener('click', e => {
-  const catBtn = e.target.closest('[data-cat-filter], .cat-card');
+  const catBtn = e.target.closest('[data-cat-filter], .cat-card, .curated-card');
   if (!catBtn) return;
   const targetCat = catBtn.dataset.catFilter || catBtn.dataset.cat;
   if (!targetCat) return;
@@ -185,11 +433,6 @@ document.addEventListener('click', e => {
   if (galleryEl) galleryEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 
-/* ---------- قسم الهيرو والمعرض ---------- */
-if ($('#heroPlate1')) $('#heroPlate1').innerHTML = artSvg('deco', 'توازن الألوان');
-if ($('#heroPlate2')) $('#heroPlate2').innerHTML = artSvg('desert', 'وادي الغروب');
-if ($('#heroPlate3')) $('#heroPlate3').innerHTML = artSvg('city', 'خط النهاية');
-if ($('#heroArt'))    $('#heroArt').innerHTML    = artSvg('moon', 'لوحة القمر');
 $('#footWa').textContent = SHOP.whatsapp;
 
 function segHTML(items, cur, attr) {
@@ -224,6 +467,7 @@ function renderGrid() {
           <h3 class="card-editorial-title">${esc(p.title)}</h3>
           <span class="card-editorial-fav" title="حفظ في المفضلة" aria-label="حفظ"></span>
         </div>
+        <div class="card-spec-note"><span class="spec-dot"></span> ألومنيوم أصلي 1.1 مم • طباعة سينمائية</div>
         <div class="card-editorial-price num"><span data-p>${egp(szObj.price)}</span></div>
         <div class="seg card-size-pick" role="group" aria-label="المقاس">${segHTML(SHOP.sizes.map(s => ({ id: s.id, html: `<bdi>${s.label}</bdi>` })), cur, 'data-size')}</div>
         <button class="btn block hero-cart-btn" type="button" data-add>
@@ -398,14 +642,150 @@ function addItem(it) {
 }
 
 const subtotal = () => cart.reduce((a, i) => a + i.price * i.qty, 0);
-const shipping = () => cart.length && subtotal() < SHOP.freeShippingOver ? SHOP.shipping : 0;
+
+function getGovShippingFee(govName) {
+  if (!govName) return SHOP.shipping;
+  if (SHOP.govShipping && typeof SHOP.govShipping === 'object' && SHOP.govShipping[govName] !== undefined && SHOP.govShipping[govName] !== '') {
+    const fee = Number(SHOP.govShipping[govName]);
+    if (!isNaN(fee) && fee >= 0) return fee;
+  }
+  return SHOP.shipping;
+}
+
+const shipping = (gov) => {
+  if (!cart.length || subtotal() >= SHOP.freeShippingOver) return 0;
+  const currentGov = gov || ($('#fGov') ? $('#fGov').value : '');
+  return getGovShippingFee(currentGov);
+};
+
 const total = () => subtotal() + shipping();
 
 function totalsHTML() {
-  const s = shipping();
+  const gov = $('#fGov')?.value;
+  const s = shipping(gov);
   return `<div><span>المجموع</span><span class="num">${egp(subtotal())}</span></div>
-          <div><span>الشحن</span><span class="num">${s ? egp(s) : 'ببلاش'}</span></div>
+          <div><span>الشحن${gov ? ` (${gov})` : ''}</span><span class="num">${s ? egp(s) : 'ببلاش'}</span></div>
           <div class="grand"><span>الإجمالي</span><span class="num">${egp(total())}</span></div>`;
+}
+
+/* دوال احتساب العربون (Deposit) */
+function getDepositAmount() {
+  if (!SHOP.depositEnabled) return total();
+  const t = total();
+  if (SHOP.depositType === 'fixed') {
+    const fixedVal = Math.round(Number(SHOP.depositValue) || 200);
+    return Math.min(t, Math.max(50, fixedVal));
+  } else {
+    const pct = Math.max(10, Math.min(90, Number(SHOP.depositValue) || 50));
+    return Math.max(50, Math.round((t * pct) / 100));
+  }
+}
+
+function isDepositSelected() {
+  if (!SHOP.depositEnabled) return false;
+  const rad = document.querySelector('input[name="payType"]:checked');
+  return rad ? rad.value === 'deposit' : false;
+}
+
+function getRemainingAmount() {
+  return isDepositSelected() ? Math.max(0, total() - getDepositAmount()) : 0;
+}
+
+function checkoutTotalsHTML() {
+  const gov = $('#fGov')?.value;
+  const s = shipping(gov);
+  const sub = subtotal();
+  const t = total();
+  const isDep = isDepositSelected();
+  const depAmt = getDepositAmount();
+  const remAmt = getRemainingAmount();
+
+  const shipTitle = gov ? `سعر الشحن لـ ${gov}:` : 'سعر الشحن لعنوانك:';
+  const govHint = gov ? '' : ' <small style="font-size:0.75rem;color:var(--muted);font-weight:normal;">(اختار المحافظة)</small>';
+
+  if (isDep) {
+    return `
+      <div style="font-size:0.9rem;color:var(--muted);margin-bottom:4px;"><span>مجموع المنتجات:</span><span class="num">${egp(sub)}</span></div>
+      <div style="font-size:0.9rem;color:${s ? 'var(--fg)' : '#52b788'};margin-bottom:6px;">
+        <span>${shipTitle}</span>
+        <span class="num font-bold">${s ? egp(s) : 'شحن مجاني ✓'}${govHint}</span>
+      </div>
+      <div style="color:var(--muted);font-size:0.85rem;border-top:1px dashed var(--line);padding-top:6px;margin-bottom:6px;">
+        <span>إجمالي الطلب بالكامل:</span>
+        <span class="num font-bold">${egp(t)}</span>
+      </div>
+      <div class="grand" style="border-top:1px dashed var(--gold);padding-top:8px;margin-top:2px;">
+        <span style="color:var(--gold-text)">المطلوب تحويله الآن (عربون):</span>
+        <span class="num" style="color:var(--gold-hi)">${egp(depAmt)}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:0.88rem;color:#6dbb8e;margin-top:6px;background:rgba(109,187,142,0.12);padding:7px 10px;border-radius:8px;">
+        <span>المتبقي عند الاستلام مع المندوب:</span>
+        <span class="num font-bold">${egp(remAmt)}</span>
+      </div>
+    `;
+  }
+
+  return `
+    <div style="font-size:0.9rem;color:var(--muted);margin-bottom:4px;"><span>مجموع المنتجات:</span><span class="num">${egp(sub)}</span></div>
+    <div style="font-size:0.9rem;color:${s ? 'var(--fg)' : '#52b788'};margin-bottom:6px;">
+      <span>${shipTitle}</span>
+      <span class="num font-bold">${s ? egp(s) : 'شحن مجاني ✓'}${govHint}</span>
+    </div>
+    <div class="grand" style="border-top:1px dashed var(--gold);padding-top:8px;margin-top:2px;">
+      <span style="color:var(--gold-text)">الإجمالي المطلوب تحويله:</span>
+      <span class="num" style="color:var(--gold-hi)">${egp(t)}</span>
+    </div>
+  `;
+}
+
+function updateDepositUI() {
+  const depositBox = $('#depositChoiceField');
+  if (!depositBox) return;
+
+  if (!SHOP.depositEnabled || !cart.length) {
+    depositBox.style.display = 'none';
+    return;
+  }
+  depositBox.style.display = 'block';
+
+  const gov = $('#fGov')?.value;
+  const s = shipping(gov);
+  const t = total();
+  const depAmt = getDepositAmount();
+  const remAmt = Math.max(0, t - depAmt);
+
+  const fullAmtEl = $('#optPayFullAmt');
+  if (fullAmtEl) fullAmtEl.textContent = egp(t);
+
+  const fullNoteEl = $('#optPayFullShippingNote');
+  if (fullNoteEl) {
+    if (!s) {
+      fullNoteEl.textContent = 'شحن مجاني بالكامل';
+    } else {
+      fullNoteEl.textContent = gov ? `شامل مصاريف الشحن لـ ${gov} (${egp(s)})` : `شامل مصاريف الشحن (${egp(s)})`;
+    }
+  }
+
+  const depTitleEl = $('#optPayDepositTitle');
+  if (depTitleEl) {
+    depTitleEl.textContent = SHOP.depositType === 'fixed' 
+      ? `دفع عربون مقدماً (${egp(depAmt)})` 
+      : `دفع عربون مقدماً (${SHOP.depositValue || 50}%)`;
+  }
+
+  const depAmtEl = $('#optPayDepositAmt');
+  if (depAmtEl) depAmtEl.textContent = egp(depAmt) + ' الآن';
+
+  const depRemEl = $('#optPayDepositRemaining');
+  if (depRemEl) {
+    depRemEl.textContent = `المتبقي: ${egp(remAmt)} عند الاستلام مع المندوب`;
+  }
+
+  const isDep = isDepositSelected();
+  const cardFull = $('#optPayFullCard');
+  const cardDep = $('#optPayDepositCard');
+  if (cardFull) cardFull.classList.toggle('active', !isDep);
+  if (cardDep) cardDep.classList.toggle('active', isDep);
 }
 
 function renderCart() {
@@ -434,7 +814,10 @@ function renderCart() {
     `).join('');
     $('#cartTotals').innerHTML = totalsHTML();
   }
-  $('#coTotals').innerHTML = totalsHTML();
+  renderGovOptions();
+  $('#coTotals').innerHTML = checkoutTotalsHTML();
+  updateDepositUI();
+  renderPay();
   updateAmtHint();
   renderFoot();
 }
@@ -490,6 +873,13 @@ function setStep(s) {
   $$('#stepbar span').forEach((sp, i) => sp.classList.toggle('on', i === ['cart', 'checkout', 'done'].indexOf(s)));
   $('#stepbar').hidden = false;
   $('#dbody').scrollTop = 0;
+  if (s === 'checkout') {
+    renderGovOptions();
+    $('#coTotals').innerHTML = checkoutTotalsHTML();
+    updateDepositUI();
+    renderPay();
+    updateAmtHint();
+  }
   renderFoot();
 }
 
@@ -592,7 +982,23 @@ const GOVS = [
   'سوهاج', 'قنا', 'الأقصر', 'أسوان', 'البحر الأحمر', 'مطروح',
   'شمال سيناء', 'جنوب سيناء', 'الوادي الجديد'
 ];
-$('#fGov').innerHTML = '<option value="">اختار المحافظة</option>' + GOVS.map(g => `<option>${g}</option>`).join('');
+function renderGovOptions() {
+  const sel = $('#fGov');
+  if (!sel) return;
+  const curVal = sel.value;
+  const isFree = cart.length && subtotal() >= SHOP.freeShippingOver;
+
+  sel.innerHTML = '<option value="">اختار المحافظة</option>' + GOVS.map(g => {
+    const fee = getGovShippingFee(g);
+    const feeText = isFree ? 'شحن مجاني ✓' : (fee ? `${fee} ج.م` : 'شحن مجاني');
+    return `<option value="${g}">${g} (${feeText})</option>`;
+  }).join('');
+
+  if (curVal && GOVS.includes(curVal)) {
+    sel.value = curVal;
+  }
+}
+renderGovOptions();
 
 function payMethod() {
   return ($('input[name="pay"]:checked') || {}).value || 'instapay';
@@ -602,9 +1008,65 @@ function renderPay() {
   const w = payMethod() === 'wallet';
   $('#payHow').textContent = w ? 'حوّل على رقم محفظة كاش ده:' : 'حوّل على إنستا باي على العنوان ده:';
   $('#payNum').textContent = w ? SHOP.wallet : SHOP.instapay;
+
+  const subText = $('#paySubText');
+  if (subText && cart.length) {
+    const gov = $('#fGov')?.value;
+    const s = shipping(gov);
+    const isDep = isDepositSelected();
+    const reqAmt = isDep ? getDepositAmount() : total();
+    const shipStr = s ? (gov ? `سعر الشحن لـ ${gov} ${egp(s)}` : `سعر الشحن ${egp(s)}`) : 'الشحن مجاني';
+
+    if (isDep) {
+      const rem = getRemainingAmount();
+      subText.innerHTML = `المطلوب تحويله الآن كعربون: <b class="num" style="color:var(--gold-text);font-weight:700;">${egp(reqAmt)}</b> <span style="font-size:0.82rem;color:var(--muted);">(شامل ${shipStr} + جزء من قيمة اللوحات | والمتبقي ${egp(rem)} عند الاستلام)</span>`;
+    } else {
+      subText.innerHTML = `المطلوب تحويله بالكامل: <b class="num" style="color:var(--gold-text);font-weight:700;">${egp(reqAmt)}</b> <span style="font-size:0.82rem;color:var(--muted);">(مجموع اللوحات ${egp(subtotal())} + ${shipStr})</span>`;
+    }
+  }
 }
 $$('input[name="pay"]').forEach(r => r.addEventListener('change', renderPay));
 renderPay();
+
+// مستمعات اختيار طريقة السداد: بالكامل أو عربون مقدماً
+$$('input[name="payType"]').forEach(r => {
+  r.addEventListener('change', () => {
+    updateDepositUI();
+    $('#coTotals').innerHTML = checkoutTotalsHTML();
+    renderPay();
+    updateAmtHint();
+  });
+});
+
+if ($('#fGov')) {
+  $('#fGov').addEventListener('change', () => {
+    $('#coTotals').innerHTML = checkoutTotalsHTML();
+    updateDepositUI();
+    renderPay();
+    updateAmtHint();
+  });
+}
+
+const cardFull = $('#optPayFullCard');
+const cardDep = $('#optPayDepositCard');
+if (cardFull) {
+  cardFull.addEventListener('click', () => {
+    const r = $('#payTypeFull') || cardFull.querySelector('input[type="radio"]');
+    if (r && !r.checked) {
+      r.checked = true;
+      r.dispatchEvent(new Event('change'));
+    }
+  });
+}
+if (cardDep) {
+  cardDep.addEventListener('click', () => {
+    const r = $('#payTypeDeposit') || cardDep.querySelector('input[type="radio"]');
+    if (r && !r.checked) {
+      r.checked = true;
+      r.dispatchEvent(new Event('change'));
+    }
+  });
+}
 
 $('#copyNum').addEventListener('click', () => {
   const t = $('#payNum').textContent;
@@ -630,7 +1092,24 @@ function selectNum() {
 
 function updateAmtHint() {
   const h = $('#amtHint');
-  if (h) h.textContent = cart.length ? `الإجمالي المطلوب: ${egp(total())}` : '';
+  if (!h) return;
+  if (!cart.length) {
+    h.textContent = '';
+    return;
+  }
+  const gov = $('#fGov')?.value;
+  const s = shipping(gov);
+  const sub = subtotal();
+  const isDep = isDepositSelected();
+  const requiredAmt = isDep ? getDepositAmount() : total();
+  const shipText = s ? (gov ? `سعر الشحن لـ ${gov} ${egp(s)}` : `سعر الشحن ${egp(s)}`) : 'شحن مجاني';
+
+  if (isDep) {
+    const rem = getRemainingAmount();
+    h.innerHTML = `العربون المطلوب تحويله الآن: <b style="color:var(--gold,#c9a45c);">${egp(requiredAmt)}</b> <span style="font-size:0.82rem;color:var(--muted);">(شامل ${shipText}، والمتبقي ${egp(rem)} عند الاستلام مع المندوب)</span>`;
+  } else {
+    h.innerHTML = `الإجمالي المطلوب تحويله كاملاً: <b style="color:var(--gold,#c9a45c);">${egp(requiredAmt)}</b> <span style="font-size:0.82rem;color:var(--muted);">(مجموع اللوحات ${egp(sub)} + ${shipText})</span>`;
+  }
 }
 
 let shotFile = null;
@@ -685,13 +1164,24 @@ async function submitOrder() {
   const addr = $('#fAddr').value.trim();
   const amt = parseFloat(toLatin($('#fAmount').value).replace(/[,،]/g, ''));
 
+  const isDep = isDepositSelected();
+  const requiredAmt = isDep ? getDepositAmount() : total();
+  const remAmt = isDep ? getRemainingAmount() : 0;
+
   if (!cart.length) errs.push(['fName', 'السلة فاضية.']);
   if (name.length < 3) errs.push(['fName', 'اكتب الاسم بالكامل (3 حروف على الأقل).']);
   if (!/^01[0125]\d{8}$/.test(phone)) errs.push(['fPhone', 'رقم الموبايل لازم يكون 11 رقم مصري صحيح ويبدأ بـ 01.']);
   if (!gov) errs.push(['fGov', 'اختار المحافظة.']);
   if (addr.length < 6) errs.push(['fAddr', 'اكتب العنوان بالتفصيل (الشارع والمنطقة).']);
-  if (!(amt > 0)) errs.push(['fAmount', 'اكتب المبلغ اللي حوّلته.']);
-  else if (amt < total()) errs.push(['fAmount', `المبلغ أقل من الإجمالي (${egp(total())}).`]);
+  if (!(amt > 0)) {
+    errs.push(['fAmount', 'اكتب المبلغ اللي حوّلته.']);
+  } else if (amt < requiredAmt) {
+    if (isDep) {
+      errs.push(['fAmount', `المبلغ أقل من العربون المطلوب تحويله الآن (${egp(requiredAmt)} شاملاً مصاريف الشحن).`]);
+    } else {
+      errs.push(['fAmount', `المبلغ أقل من الإجمالي المطلوب (${egp(requiredAmt)} شاملاً مصاريف الشحن).`]);
+    }
+  }
   if (!shotFile) errs.push(['fShot', 'ارفع سكرين التحويل.']);
 
   const box = $('#errBox');
@@ -712,6 +1202,7 @@ async function submitOrder() {
   }
 
   /* توليد رقم الطلب ببادئة بوستيرا PST- */
+  const currentShippingCost = shipping(gov);
   const order = {
     no: 'PST-' + String(Math.floor(1000 + Math.random() * 9000)),
     name,
@@ -721,6 +1212,10 @@ async function submitOrder() {
     pay: payMethod(),
     amount: amt,
     total: total(),
+    is_deposit: isDep,
+    deposit_amount: isDep ? amt : 0,
+    remaining_amount: remAmt,
+    shipping_fee: currentShippingCost,
     items: cart.map(i => ({
       title: i.title,
       sub: i.sub,
@@ -767,22 +1262,49 @@ async function submitOrder() {
         ? window.crypto.randomUUID() 
         : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16); });
 
+      const shipDesc = currentShippingCost ? `مصاريف شحن ${gov} (${egp(currentShippingCost)})` : `شحن مجاني لـ ${gov}`;
+      const notesText = (isDep
+        ? `نظام الدفع: عربون مقدماً (${egp(amt)}) - متبقي للاستلام مع المندوب (${egp(remAmt)})`
+        : 'نظام الدفع: سداد كامل المبلغ مقدماً') + ` | ${shipDesc}`;
+
+      const orderPayload = {
+        id: orderDbId,
+        order_number: order.no,
+        customer_name: order.name,
+        customer_phone: order.phone,
+        governorate: order.gov,
+        address: order.addr,
+        payment_method: order.pay,
+        total_amount: order.total,
+        transferred_amount: order.amount,
+        payment_screenshot_url: screenshotPath,
+        status: 'pending',
+        is_deposit: isDep,
+        deposit_amount: isDep ? amt : 0,
+        remaining_amount: remAmt,
+        shipping_fee: currentShippingCost,
+        notes: notesText
+      };
+
       // 3. إدخال الطلب في جدول orders (INSERT فقط مسموح للزائر)
-      const { error: orderErr } = await supabaseClient
+      let { error: orderErr } = await supabaseClient
         .from('orders')
-        .insert([{
-          id: orderDbId,
-          order_number: order.no,
-          customer_name: order.name,
-          customer_phone: order.phone,
-          governorate: order.gov,
-          address: order.addr,
-          payment_method: order.pay,
-          total_amount: order.total,
-          transferred_amount: order.amount,
-          payment_screenshot_url: screenshotPath,
-          status: 'pending'
-        }]);
+        .insert([orderPayload]);
+
+      // Fallback في حال لم تنفّذ أعمدة العربون أو سعر الشحن بعد في Supabase
+      if (orderErr && (orderErr.message?.includes('is_deposit') || orderErr.message?.includes('deposit_amount') || orderErr.message?.includes('remaining_amount') || orderErr.message?.includes('shipping_fee'))) {
+        console.warn('Fallback: إعادة محاولة الحفظ بدون الأعمدة غير المضافة بعد في orders مع الاحتفاظ بالملاحظات:', orderErr.message);
+        delete orderPayload.is_deposit;
+        delete orderPayload.deposit_amount;
+        delete orderPayload.remaining_amount;
+        delete orderPayload.shipping_fee;
+        let retry = await supabaseClient.from('orders').insert([orderPayload]);
+        if (retry.error && retry.error.message?.includes('notes')) {
+          delete orderPayload.notes;
+          retry = await supabaseClient.from('orders').insert([orderPayload]);
+        }
+        orderErr = retry.error;
+      }
 
       // 4. إدخال عناصر الطلب في جدول order_items
       if (!orderErr) {
@@ -816,9 +1338,35 @@ async function submitOrder() {
   // 1. إرسال تنبيه بالبريد الإلكتروني للإدارة
   sendAdminNotification(order);
 
-  // 2. تفعيل زر كلّم خدمة العملاء على واتساب
+  // 2. تحديث ملخص العربون في شاشة التأكيد (#stepDone)
+  const doneDep = $('#doneDepositInfo');
+  if (doneDep) {
+    if (order.is_deposit) {
+      doneDep.style.display = 'block';
+      doneDep.innerHTML = `
+        <div style="font-weight:700;color:var(--gold-text);margin-bottom:6px;font-size:1.05rem;">نظام الدفع: عربون مقدماً</div>
+        <div style="display:flex;justify-content:space-between;font-size:0.9rem;margin-bottom:4px;">
+          <span class="muted">العربون المسدد الآن:</span>
+          <strong class="num">${egp(order.amount)}</strong>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.95rem;color:#6dbb8e;font-weight:700;padding-top:6px;border-top:1px dashed rgba(255,255,255,0.15);margin-top:4px;">
+          <span>المتبقي عند الاستلام مع المندوب:</span>
+          <strong class="num">${egp(order.remaining_amount)}</strong>
+        </div>
+      `;
+    } else {
+      doneDep.style.display = 'none';
+      doneDep.innerHTML = '';
+    }
+  }
+
+  // 3. تفعيل زر كلّم خدمة العملاء على واتساب
   const waBtn = $('#waOrderBtn');
   if (waBtn) {
+    const paySystemDesc = order.is_deposit
+      ? `• نظام الدفع: دفع عربون مقدماً\n• العربون المحوّل: ${egp(order.amount)}\n• المتبقي للدفع عند الاستلام مع المندوب: ${egp(order.remaining_amount)}\n`
+      : `• نظام الدفع: سداد كامل المبلغ مقدماً (${egp(order.amount)})\n`;
+
     const waMsg = encodeURIComponent(
       `مرحباً بوستيرا، قمت بطلب جديد عبر المتجر:\n\n` +
       `رقم الطلب: ${order.no}\n` +
@@ -827,7 +1375,8 @@ async function submitOrder() {
       `المحافظة: ${order.gov}\n` +
       `العنوان: ${order.addr}\n` +
       `طريقة الدفع: ${order.pay === 'instapay' ? 'إنستا باي' : 'محفظة كاش'}\n` +
-      `المبلغ المحوّل: ${egp(order.amount)}\n` +
+      `• مصاريف الشحن لـ ${order.gov}: ${order.shipping_fee ? egp(order.shipping_fee) : 'شحن مجاني'}\n` +
+      paySystemDesc +
       `إجمالي الطلب: ${egp(order.total)}\n\n` +
       `البنود:\n${order.items.map(it => `• ${it.title} (${it.sub}) × ${it.qty}`).join('\n')}\n\n` +
       `تم رفع إيصال التحويل بنجاح في الموقع للمراجعة.`
@@ -853,7 +1402,8 @@ async function sendAdminNotification(order) {
   const apiKey = SHOP.resend_api_key || (window.ADMIN_CONFIG && window.ADMIN_CONFIG.resendApiKey);
   const webhookUrl = SHOP.email_webhook_url || (window.ADMIN_CONFIG && window.ADMIN_CONFIG.emailWebhookUrl);
 
-  const subject = `طلب جديد في بوستيرا: [${order.no}] - ${order.name} (${egp(order.total)})`;
+  const payTitle = order.is_deposit ? `[عربون: ${egp(order.amount)}]` : `[سداد كامل]`;
+  const subject = `طلب جديد في بوستيرا: [${order.no}] ${payTitle} - ${order.name} (${egp(order.total)})`;
   const htmlBody = `
     <div dir="rtl" style="font-family:'Segoe UI',Tahoma,Arial,sans-serif;color:#1c1a17;max-width:620px;margin:20px auto;padding:26px;border:1px solid #e2ddd1;border-radius:14px;background:#faf8f5;">
       <div style="border-bottom:2px solid #c9a45c;padding-bottom:12px;margin-bottom:18px;">
@@ -863,12 +1413,15 @@ async function sendAdminNotification(order) {
 
       <table style="width:100%;border-collapse:collapse;margin:18px 0;font-size:15px;">
         <tr style="border-bottom:1px solid #e2ddd1;"><td style="padding:10px 0;color:#5f5a52;width:140px;">رقم الطلب:</td><td style="padding:10px 0;font-weight:bold;color:#a47e32;font-size:17px;">${order.no}</td></tr>
+        <tr style="border-bottom:1px solid #e2ddd1;"><td style="padding:10px 0;color:#5f5a52;">نظام الدفع:</td><td style="padding:10px 0;font-weight:bold;color:${order.is_deposit ? '#d97706' : '#1f7a48'};">${order.is_deposit ? `عربون مقدماً (متبقي ${egp(order.remaining_amount)} للاستلام مع المندوب)` : 'سداد كامل المبلغ مقدماً'}</td></tr>
         <tr style="border-bottom:1px solid #e2ddd1;"><td style="padding:10px 0;color:#5f5a52;">اسم العميل:</td><td style="padding:10px 0;font-weight:bold;">${order.name}</td></tr>
         <tr style="border-bottom:1px solid #e2ddd1;"><td style="padding:10px 0;color:#5f5a52;">رقم الموبايل:</td><td style="padding:10px 0;"><a href="tel:${order.phone}" style="color:#a47e32;text-decoration:none;font-weight:bold;">${order.phone}</a></td></tr>
         <tr style="border-bottom:1px solid #e2ddd1;"><td style="padding:10px 0;color:#5f5a52;">المحافظة:</td><td style="padding:10px 0;">${order.gov}</td></tr>
+        <tr style="border-bottom:1px solid #e2ddd1;"><td style="padding:10px 0;color:#5f5a52;">مصاريف الشحن (${order.gov}):</td><td style="padding:10px 0;font-weight:bold;color:#a47e32;">${order.shipping_fee ? egp(order.shipping_fee) : 'شحن مجاني ✓'}</td></tr>
         <tr style="border-bottom:1px solid #e2ddd1;"><td style="padding:10px 0;color:#5f5a52;">العنوان:</td><td style="padding:10px 0;">${order.addr}</td></tr>
         <tr style="border-bottom:1px solid #e2ddd1;"><td style="padding:10px 0;color:#5f5a52;">طريقة الدفع:</td><td style="padding:10px 0;">${order.pay === 'instapay' ? 'إنستا باي (InstaPay)' : 'محفظة كاش إلكترونية'}</td></tr>
-        <tr style="border-bottom:1px solid #e2ddd1;"><td style="padding:10px 0;color:#5f5a52;">المبلغ المحوّل:</td><td style="padding:10px 0;font-weight:bold;">${egp(order.amount)}</td></tr>
+        <tr style="border-bottom:1px solid #e2ddd1;"><td style="padding:10px 0;color:#5f5a52;">المبلغ المحوّل الآن:</td><td style="padding:10px 0;font-weight:bold;">${egp(order.amount)}</td></tr>
+        ${order.is_deposit ? `<tr style="border-bottom:1px solid #e2ddd1;background:#eef8f2;"><td style="padding:10px 8px;color:#1f7a48;font-weight:bold;">المتبقي للمندوب عند الاستلام:</td><td style="padding:10px 8px;font-weight:bold;color:#1f7a48;font-size:17px;">${egp(order.remaining_amount)}</td></tr>` : ''}
         <tr style="border-bottom:1px solid #e2ddd1;"><td style="padding:10px 0;color:#5f5a52;">الإجمالي المطلوب:</td><td style="padding:10px 0;font-weight:bold;color:#1f7a48;font-size:18px;">${egp(order.total)}</td></tr>
       </table>
 
@@ -952,6 +1505,31 @@ async function syncWithSupabase() {
       if (sData.email_webhook_url) SHOP.email_webhook_url = sData.email_webhook_url;
       if (sData.shipping_fee !== null && sData.shipping_fee !== undefined) SHOP.shipping = Number(sData.shipping_fee);
       if (sData.free_shipping_threshold !== null && sData.free_shipping_threshold !== undefined) SHOP.freeShippingOver = Number(sData.free_shipping_threshold);
+      if (sData.governorate_shipping) {
+        SHOP.govShipping = typeof sData.governorate_shipping === 'string'
+          ? JSON.parse(sData.governorate_shipping)
+          : sData.governorate_shipping;
+      } else {
+        const localGov = localStorage.getItem('postera_gov_shipping');
+        if (localGov) {
+          try { SHOP.govShipping = JSON.parse(localGov); } catch (e) {}
+        }
+      }
+      if (sData.deposit_enabled !== undefined && sData.deposit_enabled !== null) {
+        SHOP.depositEnabled = sData.deposit_enabled;
+      } else if (localStorage.getItem('postera_deposit_enabled') !== null) {
+        SHOP.depositEnabled = localStorage.getItem('postera_deposit_enabled') === 'true';
+      }
+      if (sData.deposit_type) {
+        SHOP.depositType = sData.deposit_type;
+      } else if (localStorage.getItem('postera_deposit_type')) {
+        SHOP.depositType = localStorage.getItem('postera_deposit_type');
+      }
+      if (sData.deposit_value !== undefined && sData.deposit_value !== null) {
+        SHOP.depositValue = Number(sData.deposit_value);
+      } else if (localStorage.getItem('postera_deposit_value')) {
+        SHOP.depositValue = Number(localStorage.getItem('postera_deposit_value'));
+      }
       if ($('#footWa')) $('#footWa').textContent = SHOP.whatsapp;
       const revBtn = $('#reviewShareWa');
       if (revBtn && SHOP.whatsapp) {
@@ -971,7 +1549,29 @@ async function syncWithSupabase() {
           floatWa.style.display = 'none';
         }
       }
+      if (sData.banners) {
+        try {
+          const fetchedBanners = typeof sData.banners === 'string' ? JSON.parse(sData.banners) : sData.banners;
+          if (Array.isArray(fetchedBanners) && fetchedBanners.length) {
+            BANNERS = fetchedBanners;
+            localStorage.setItem('postera_banners', JSON.stringify(BANNERS));
+            renderHeroSlider();
+          }
+        } catch (e) {}
+      }
+      if (sData.curated_cards) {
+        try {
+          const fetchedCurated = typeof sData.curated_cards === 'string' ? JSON.parse(sData.curated_cards) : sData.curated_cards;
+          if (Array.isArray(fetchedCurated) && fetchedCurated.length) {
+            CURATED = fetchedCurated;
+            localStorage.setItem('postera_curated_cards', JSON.stringify(CURATED));
+            renderCuratedGrid();
+          }
+        } catch (e) {}
+      }
+      renderGovOptions();
       renderPay();
+      updateDepositUI();
       renderCart();
     }
 
@@ -1021,7 +1621,48 @@ async function syncWithSupabase() {
   }
 }
 
+/* ==========================================================================
+   إدارة مظهر ديسبليت (Theme Manager: Displate Dark / Light Mode)
+   ========================================================================== */
+function initTheme() {
+  const saved = localStorage.getItem('postera_theme') || 'dark';
+  setTheme(saved, false);
+}
+
+function setTheme(theme, showToast = true) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('postera_theme', theme);
+  const isDark = theme === 'dark';
+  const icon = isDark ? '☀️' : '🌙';
+  const label = isDark ? 'الوضع الفاتح' : 'وضع ديسبليت الداكن';
+  const tIcon = $('#themeIcon');
+  if (tIcon) tIcon.textContent = icon;
+  const dIcon = $('#drawerThemeIcon');
+  if (dIcon) dIcon.textContent = icon;
+  const dLabel = $('#drawerThemeLabel');
+  if (dLabel) dLabel.textContent = label;
+  if (showToast) {
+    toast(isDark ? 'تم التفعيل: مظهر ديسبليت الداكن 🌙' : 'تم التفعيل: الوضع الفاتح ☀️');
+  }
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') || 'dark';
+  const next = current === 'dark' ? 'light' : 'dark';
+  setTheme(next, true);
+}
+
+const themeBtn = $('#themeToggle');
+if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
+
+const drawerThemeBtn = $('#drawerThemeToggle');
+if (drawerThemeBtn) drawerThemeBtn.addEventListener('click', toggleTheme);
+
 /* ---------- بدء التشغيل (Init) ---------- */
+initTheme();
+renderHeroSlider();
+initSliderInteractions();
+renderCuratedGrid();
 if ($('#footWa')) $('#footWa').textContent = SHOP.whatsapp;
 const initRevBtn = $('#reviewShareWa');
 if (initRevBtn && SHOP.whatsapp) {
