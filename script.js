@@ -446,31 +446,45 @@ function renderFilters() {
 }
 
 function renderGrid() {
-  const list = POSTERS.filter(p => st.filter === 'الكل' || p.cat === st.filter);
+  let list = POSTERS.filter(p => st.filter === 'الكل' || p.cat === st.filter);
+
+  // دعم البحث المباشر
+  const searchInput = $('#storeSearchInput');
+  const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+  if (query) {
+    list = list.filter(p => (p.title && p.title.toLowerCase().includes(query)) || (p.cat && p.cat.toLowerCase().includes(query)));
+  }
+
   const defaultSz = (SHOP.sizes[0] && SHOP.sizes[0].id) || 'm';
   $('#grid').innerHTML = list.map(p => {
     const cur = st.sizes[p.id] || defaultSz;
     const szObj = sizeOf(cur) || SHOP.sizes[0] || { price: 650 };
     const artContent = p.image_url 
-      ? `<img src="${p.image_url}" alt="${esc(p.title)}" style="width:100%;height:100%;object-fit:cover;">` 
+      ? `<img src="${p.image_url}" alt="${esc(p.title)}" class="w-full h-full object-cover">` 
       : (p.kind ? artSvg(p.kind, p.title) : artSvg('moon', p.title));
-    const badgeHtml = p.tag ? `<span class="card-pill-tag">${p.tag}</span>` : '';
-    return `<article class="card card-editorial" data-id="${p.id}">
-      <div class="card-room-preview">
+    const badgeHtml = p.tag ? `<span class="absolute top-2.5 right-2.5 bg-red-600 text-white font-bold text-[10px] px-2 py-0.5 rounded shadow">${p.tag}</span>` : '';
+    return `<article class="card flex flex-col group cursor-pointer bg-white p-3 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition" data-id="${p.id}">
+      <div class="relative w-full aspect-[1/1.4] rounded-lg overflow-hidden bg-neutral-100 poster-shadow mb-3">
         ${badgeHtml}
-        <div class="card-plate-frame">
-          <div class="art">${artContent}</div>
+        <div class="w-full h-full">${artContent}</div>
+        <div class="absolute bottom-2 left-2 bg-black/70 backdrop-blur-sm text-[10px] text-white px-2 py-0.5 rounded font-mono">
+          M / L / XL
         </div>
       </div>
-      <div class="card-editorial-meta">
-        <div class="card-editorial-head">
-          <h3 class="card-editorial-title">${esc(p.title)}</h3>
-          <span class="card-editorial-fav" title="حفظ في المفضلة" aria-label="حفظ"></span>
+      <div class="flex flex-col flex-1 justify-between gap-2">
+        <div>
+          <div class="flex items-center justify-between">
+            <h4 class="text-sm font-bold text-gray-900 truncate group-hover:text-blue-600">${esc(p.title)}</h4>
+            <span class="text-[11px] text-gray-500 font-medium">${esc(p.cat || 'معدن')}</span>
+          </div>
+          <p class="text-[11px] text-gray-400 mt-0.5">ألومنيوم 1.1 مم • حامل مغناطيسي</p>
         </div>
-        <div class="card-spec-note"><span class="spec-dot"></span> ألومنيوم أصلي 1.1 مم • طباعة سينمائية</div>
-        <div class="card-editorial-price num"><span data-p>${egp(szObj.price)}</span></div>
-        <div class="seg card-size-pick" role="group" aria-label="المقاس">${segHTML(SHOP.sizes.map(s => ({ id: s.id, html: `<bdi>${s.label}</bdi>` })), cur, 'data-size')}</div>
-        <button class="btn block hero-cart-btn" type="button" data-add>
+        <div class="flex items-center justify-between mt-1">
+          <span class="text-sm font-extrabold text-blue-600 num" data-p>${egp(szObj.price)}</span>
+          <span class="text-[10px] bg-red-100 text-red-700 font-bold px-1.5 py-0.5 rounded">-25%</span>
+        </div>
+        <div class="seg card-size-pick my-1" role="group" aria-label="المقاس">${segHTML(SHOP.sizes.map(s => ({ id: s.id, html: `<bdi>${s.label}</bdi>` })), cur, 'data-size')}</div>
+        <button class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2 rounded-lg transition duration-200 cursor-pointer shadow-sm" type="button" data-add>
           <span>أضف إلى السلة</span>
         </button>
       </div>
@@ -485,6 +499,14 @@ $('#filters').addEventListener('click', e => {
   renderFilters();
   renderGrid();
 });
+
+const storeSearch = $('#storeSearchInput');
+if (storeSearch && !storeSearch.dataset.bound) {
+  storeSearch.dataset.bound = 'true';
+  storeSearch.addEventListener('input', () => {
+    renderGrid();
+  });
+}
 
 $('#grid').addEventListener('click', e => {
   const card = e.target.closest('.card');
