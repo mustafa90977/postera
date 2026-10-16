@@ -543,125 +543,492 @@ $('#grid').addEventListener('click', e => {
   }
 });
 
-/* ---------- قسم الطباعة المخصصة (اطبع صورتك) ---------- */
-const C = { size: 'm', orient: 'p', fit: 'cover', finish: 'لامع', url: null, w: 0, h: 0, name: '' };
-$('#cSize').innerHTML = segHTML(SHOP.sizes.map(s => ({ id: s.id, html: `<bdi>${s.label}</bdi>` })), C.size, 'data-v');
+/* ---------- قسم الطباعة المخصصة الفاخرة ثلاثية الأبعاد (3D Custom Metal Plate) ---------- */
+const C = {
+  size: 'm',
+  orient: 'p',
+  fit: 'cover',
+  finish: 'مطفي',
+  url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=85',
+  w: 3840,
+  h: 2560,
+  name: 'alpine_sunset_golden_hour.jpg',
+  meta: '3840 × 2560 px · 5.4 MB',
+  file: null,
+  qty: 1
+};
+
+function renderCustomSizes() {
+  const container = $('#size-selector-group');
+  if (!container) return;
+  const sizeNames = { s: 'كومباكت (S)', m: 'كلاسيك (M)', l: 'جاليري (L)', xl: 'ماستر (XL)' };
+  container.innerHTML = SHOP.sizes.map(s => {
+    const isSelected = C.size === s.id;
+    const isPopular = s.id === 'm';
+    const name = sizeNames[s.id] || `مقاس (${s.id.toUpperCase()})`;
+    return `
+      <button class="size-btn relative p-3 rounded-xl border text-right transition-all group focus:outline-none ${
+        isSelected
+          ? 'border-2 border-blue-600 bg-blue-50/50 shadow-xs'
+          : 'border-gray-200 bg-white hover:border-gray-400'
+      }" data-size="${s.id}" type="button">
+        ${isPopular ? '<span class="absolute -top-2.5 left-2 px-1.5 py-0.5 rounded text-[9px] font-bold tracking-wider uppercase bg-blue-600 text-white">الأكثر طلباً</span>' : ''}
+        <span class="block text-xs font-bold ${isSelected ? 'text-blue-700' : 'text-gray-900'}">${name}</span>
+        <span class="block text-[11px] text-gray-500 mt-0.5 font-mono">${s.w} × ${s.h} سم</span>
+        <span class="block text-sm font-bold ${isSelected ? 'text-blue-700' : 'text-gray-900'} mt-1.5">${egp(s.price)}</span>
+      </button>
+    `;
+  }).join('');
+}
 
 function renderCustom() {
-  const sz = sizeOf(C.size), pw = C.orient === 'p' ? sz.w : sz.h, ph = C.orient === 'p' ? sz.h : sz.w;
-  const art = $('#cArt');
-  art.style.aspectRatio = `${pw} / ${ph}`;
-  $('#cPlate').style.setProperty('--pw', C.orient === 'p' ? '340px' : '470px');
-  art.style.setProperty('--fit', C.fit);
+  const sz = sizeOf(C.size) || SHOP.sizes[0] || { w: 30, h: 45, price: 750 };
+  const pw = C.orient === 'p' ? sz.w : sz.h;
+  const ph = C.orient === 'p' ? sz.h : sz.w;
 
-  if (C.url) {
-    if (!art.firstElementChild || art.firstElementChild.tagName !== 'IMG') {
-      art.innerHTML = '<img alt="معاينة صورتك على اللوحة">';
+  // 1. أبعاد اللوحة والنصوص
+  const dimText = $('#selected-dimension-text');
+  if (dimText) dimText.textContent = `${pw} × ${ph} سم`;
+
+  const wLabel = $('#plate-width-label');
+  if (wLabel) wLabel.textContent = `${pw} سم`;
+  const hLabel = $('#plate-height-label');
+  if (hLabel) hLabel.textContent = `${ph} سم`;
+
+  // 2. المحاكي ثلاثي الأبعاد
+  const mockup = $('#metal-poster-mockup');
+  if (mockup) {
+    mockup.style.aspectRatio = `${pw} / ${ph}`;
+    if (C.orient === 'p') {
+      mockup.style.width = 'min(350px, 85vw)';
+    } else {
+      mockup.style.width = 'min(460px, 90vw)';
     }
-    const im = art.firstElementChild;
-    if (im.getAttribute('src') !== C.url) im.src = C.url;
-  } else if (!art.firstElementChild || art.firstElementChild.tagName !== 'svg') {
-    art.innerHTML = artSvg('mountains', 'مثال توضيحي');
   }
 
-  $('#cPrice').textContent = egp(sz.price);
-  $('#cAdd').disabled = !C.url;
-  $('#cTag').textContent = C.url ? `${pw}×${ph} سم — ${C.finish}` : 'مثال توضيحي — صورتك هتظهر هنا بنفس شكل اللوحة.';
-
-  const q = $('#quality'), qt = $('#qText');
-  q.className = 'q';
-  if (!C.url) {
-    qt.textContent = 'ارفع صورة عشان نقيّم جودتها للمقاس.';
-    return;
+  // 3. طبقة الصورة والملء
+  const artLayer = $('#poster-art-layer');
+  const emptyOverlay = $('#empty-state-overlay');
+  if (artLayer) {
+    if (C.url) {
+      artLayer.style.backgroundImage = `url('${C.url}')`;
+      artLayer.style.backgroundSize = C.fit === 'contain' ? 'contain' : 'cover';
+      artLayer.style.backgroundRepeat = 'no-repeat';
+      artLayer.style.backgroundColor = C.fit === 'contain' ? '#0e1013' : 'transparent';
+      if (emptyOverlay) emptyOverlay.classList.add('hidden');
+    } else {
+      artLayer.style.backgroundImage = 'none';
+      artLayer.style.backgroundColor = '#18181b';
+      if (emptyOverlay) emptyOverlay.classList.remove('hidden');
+    }
   }
-  const needW = (pw / 2.54) * 150, needH = (ph / 2.54) * 150, ratio = Math.min(C.w / needW, C.h / needH);
-  if (ratio >= 1) {
-    q.classList.add('ok');
-    qt.textContent = `جودة ممتازة للمقاس ده (${C.w}×${C.h} بكسل).`;
-  } else if (ratio >= 0.6) {
-    q.classList.add('warn');
-    qt.textContent = `جودة مقبولة (${C.w}×${C.h} بكسل). هتبان أحسن في مقاس أصغر.`;
-  } else {
-    q.classList.add('bad');
-    qt.textContent = `الصورة صغيرة للمقاس ده (${C.w}×${C.h} بكسل) وممكن تطلع مش واضحة. جرّب مقاس أصغر أو صورة أكبر.`;
+
+  // 4. السعر والكمية
+  const totalPrice = (sz.price || 0) * (C.qty || 1);
+  const totalDisplay = $('#total-price-display');
+  if (totalDisplay) totalDisplay.textContent = egp(totalPrice);
+
+  const ctaBtn = $('#cta-button-text');
+  if (ctaBtn) {
+    ctaBtn.textContent = C.url ? `أضف اللوحة المخصصة للسلة — ${egp(totalPrice)}` : 'يرجى اختيار صورة أولاً';
+  }
+
+  const addBtn = $('#cAdd');
+  if (addBtn) {
+    addBtn.disabled = !C.url;
+    addBtn.classList.toggle('opacity-50', !C.url);
+    addBtn.classList.toggle('cursor-not-allowed', !C.url);
+  }
+
+  const qtyEl = $('#qty-display');
+  if (qtyEl) qtyEl.textContent = C.qty || 1;
+
+  // 5. فحص جودة الطباعة (DPI Resolution Audit)
+  const dpiChip = $('#dpi-indicator-chip');
+  const dpiText = $('#dpi-text');
+  const resStatus = $('#file-resolution-status');
+
+  if (C.url && C.w && C.h) {
+    const needW = (pw / 2.54) * 150;
+    const needH = (ph / 2.54) * 150;
+    const ratio = Math.min(C.w / needW, C.h / needH);
+
+    if (dpiChip) {
+      if (ratio >= 1) {
+        dpiChip.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200';
+        if (dpiText) dpiText.textContent = 'جاهز للطباعة: 300 DPI';
+        if (resStatus) resStatus.textContent = `دقة ممتازة ومثالية للمقاس (${C.w}×${C.h} بكسل)`;
+      } else if (ratio >= 0.6) {
+        dpiChip.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200';
+        if (dpiText) dpiText.textContent = 'جودة مقبولة للطباعة';
+        if (resStatus) resStatus.textContent = `دقة مقبولة (${C.w}×${C.h} بكسل) — تظهر بوضوح أكبر بمقاس أصغر`;
+      } else {
+        dpiChip.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-red-50 text-red-700 border border-red-200';
+        if (dpiText) dpiText.textContent = 'دقة منخفضة للطباعة';
+        if (resStatus) resStatus.textContent = `الصورة صغيرة للمقاس ده (${C.w}×${C.h} بكسل) — جرّب مقاس أصغر`;
+      }
+    }
+  } else if (dpiChip) {
+    dpiChip.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-gray-100 text-gray-600 border border-gray-200';
+    if (dpiText) dpiText.textContent = 'في انتظار الصورة';
   }
 }
 
-function bindSeg(sel, key) {
-  $(sel).addEventListener('click', e => {
-    const b = e.target.closest('button');
-    if (!b) return;
-    C[key] = b.dataset.v;
-    $$('button', $(sel)).forEach(x => x.setAttribute('aria-pressed', x === b));
-    renderCustom();
+function applyCustomFinish(type) {
+  C.finish = type;
+  const overlay = $('#finish-specular-overlay');
+  const badge = $('#badge-current-finish');
+  const btnMatte = $('#toggle-matte-btn');
+  const btnGloss = $('#toggle-gloss-btn');
+
+  if (type === 'لامع' || type === 'glossy') {
+    if (overlay) overlay.className = 'absolute inset-0 gloss-specular transition-opacity duration-300 pointer-events-none opacity-100';
+    if (badge) badge.textContent = 'لامع سينمائي (Gloss)';
+    if (btnGloss) {
+      btnGloss.className = 'px-3.5 py-1 rounded-md bg-white text-gray-900 shadow-xs transition-all';
+    }
+    if (btnMatte) {
+      btnMatte.className = 'px-3.5 py-1 rounded-md text-gray-600 hover:text-black transition-all';
+    }
+  } else {
+    if (overlay) overlay.className = 'absolute inset-0 matte-diffuse transition-opacity duration-300 pointer-events-none opacity-90';
+    if (badge) badge.textContent = 'مطفي مخملي (Matte)';
+    if (btnMatte) {
+      btnMatte.className = 'px-3.5 py-1 rounded-md bg-white text-gray-900 shadow-xs transition-all';
+    }
+    if (btnGloss) {
+      btnGloss.className = 'px-3.5 py-1 rounded-md text-gray-600 hover:text-black transition-all';
+    }
+  }
+
+  // تحديث أزرار البطاقة السفلية
+  $$('#finish-selector-group .finish-btn').forEach(btn => {
+    const isThis = btn.dataset.finish === type;
+    btn.classList.toggle('border-2', isThis);
+    btn.classList.toggle('border-gray-900', isThis);
+    btn.classList.toggle('bg-gray-50/50', isThis);
+    btn.classList.toggle('border-gray-200', !isThis);
+    btn.classList.toggle('bg-white', !isThis);
+    const dot = btn.querySelector('.finish-radio-dot');
+    if (dot) dot.classList.toggle('hidden', !isThis);
   });
 }
-bindSeg('#cSize', 'size');
-bindSeg('#cOrient', 'orient');
-bindSeg('#cFit', 'fit');
-bindSeg('#cFinish', 'finish');
 
-function loadCustom(file) {
+function loadCustomFile(file) {
   if (!file) return;
-  // التحقق من نوع الملف (صور فقط)
   const allowedMime = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/tiff'];
   const isImage = file.type.startsWith('image/') || /\.(jpe?g|png|webp|heic|tiff?)$/i.test(file.name);
   if (!isImage) {
     toast('نوع الملف غير مدعوم، اختار ملف صورة (JPG, PNG, WebP, TIFF)');
     return;
   }
-  // التحقق من الحجم الأقصى (50 ميجابايت كحد أقصى لدقة الطباعة)
   const MAX_CUSTOM_SIZE = 50 * 1024 * 1024;
   if (file.size > MAX_CUSTOM_SIZE) {
     toast('حجم الصورة كبير جداً (الحد الأقصى 50 ميجابايت)');
     return;
   }
-  if (C.url) {
+
+  if (C.url && C.url.startsWith('blob:')) {
     try { URL.revokeObjectURL(C.url); } catch (e) {}
   }
-  C.file = file; // الاحتفاظ بملف الصورة لرفعه للتخزين الخاص
-  const url = URL.createObjectURL(file), im = new Image();
+
+  C.file = file;
+  const url = URL.createObjectURL(file);
+  const im = new Image();
   im.onload = () => {
     C.url = url;
     C.w = im.naturalWidth;
     C.h = im.naturalHeight;
     C.name = file.name;
-    $('#dropTitle').textContent = file.name;
-    $('#dropSub').textContent = 'اضغط عشان تغيّر الصورة';
+    C.meta = `${im.naturalWidth} × ${im.naturalHeight} px · ${(file.size / (1024 * 1024)).toFixed(1)} MB`;
+
+    // تحديث بطاقة الرفع
+    const emptyState = $('#dropzone-empty-state');
+    const fileState = $('#dropzone-file-state');
+    if (emptyState) emptyState.classList.add('hidden');
+    if (fileState) fileState.classList.remove('hidden');
+
+    const thumb = $('#upload-thumbnail');
+    if (thumb) thumb.style.backgroundImage = `url('${url}')`;
+
+    const nameLabel = $('#file-name-label');
+    if (nameLabel) nameLabel.textContent = file.name;
+
+    const metaLabel = $('#file-meta-label');
+    if (metaLabel) metaLabel.textContent = C.meta;
+
     renderCustom();
+    toast('تم تحميل صورتك بنجاح');
   };
-  im.onerror = () => toast('مقدرناش نفتح الصورة دي، جرّب صورة تانية');
+  im.onerror = () => toast('تعذر فتح الصورة، يرجى تجربة صورة أخرى');
   im.src = url;
 }
 
-$('#customFile').addEventListener('change', e => loadCustom(e.target.files[0]));
-const drop = $('#drop');
-['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
-['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
-drop.addEventListener('drop', e => loadCustom(e.dataTransfer.files[0]));
+// تهيئة تفاعلات قسم الطباعة الخاصة
+function initCustomizerEvents() {
+  // 1. المقاسات
+  const sizeGroup = $('#size-selector-group');
+  if (sizeGroup) {
+    sizeGroup.addEventListener('click', e => {
+      const btn = e.target.closest('.size-btn');
+      if (!btn) return;
+      C.size = btn.dataset.size;
+      renderCustomSizes();
+      renderCustom();
+    });
+  }
 
-$('#cAdd').addEventListener('click', () => {
-  if (!C.url) return;
-  const sz = sizeOf(C.size), pw = C.orient === 'p' ? sz.w : sz.h, ph = C.orient === 'p' ? sz.h : sz.w;
-  addItem({
-    key: 'c-' + Date.now(),
-    title: 'لوحة بصورتك',
-    sub: `${pw}×${ph} سم — ${C.finish}`,
-    price: sz.price,
-    img: C.url,
-    file: C.file,
-    orientation: C.orient,
-    fit: C.fit,
-    finish: C.finish,
-    custom: true
+  // 2. الاتجاه (طولي / عرضي)
+  $$('#orientation-toggle-group .orientation-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const orient = btn.dataset.orientation === 'portrait' ? 'p' : 'l';
+      C.orient = orient;
+      $$('#orientation-toggle-group .orientation-btn').forEach(b => {
+        const active = b === btn;
+        b.classList.toggle('border-2', active);
+        b.classList.toggle('border-blue-600', active);
+        b.classList.toggle('bg-blue-50/50', active);
+        b.classList.toggle('text-blue-700', active);
+        b.classList.toggle('font-bold', active);
+        b.classList.toggle('border-gray-200', !active);
+        b.classList.toggle('bg-white', !active);
+        b.classList.toggle('text-gray-600', !active);
+        b.classList.toggle('font-medium', !active);
+      });
+      renderCustom();
+    });
   });
-});
+
+  // 3. ملء الصورة (Cover / Contain)
+  $$('#fit-toggle-group .fit-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      C.fit = btn.dataset.fit;
+      $$('#fit-toggle-group .fit-btn').forEach(b => {
+        const active = b === btn;
+        b.classList.toggle('border-2', active);
+        b.classList.toggle('border-gray-900', active);
+        b.classList.toggle('bg-gray-50', active);
+        b.classList.toggle('font-bold', active);
+        b.classList.toggle('text-gray-900', active);
+        b.classList.toggle('border-gray-200', !active);
+        b.classList.toggle('bg-white', !active);
+        b.classList.toggle('font-medium', !active);
+        b.classList.toggle('text-gray-600', !active);
+      });
+      renderCustom();
+    });
+  });
+
+  // 4. التشطيب السطحي (مطفي / لامع)
+  $$('#finish-selector-group .finish-btn').forEach(btn => {
+    btn.addEventListener('click', () => applyCustomFinish(btn.dataset.finish));
+  });
+  const tMatte = $('#toggle-matte-btn');
+  if (tMatte) tMatte.addEventListener('click', () => applyCustomFinish('مطفي'));
+  const tGloss = $('#toggle-gloss-btn');
+  if (tGloss) tGloss.addEventListener('click', () => applyCustomFinish('لامع'));
+
+  // 5. عداد الكمية
+  const qMinus = $('#qty-minus');
+  if (qMinus) {
+    qMinus.addEventListener('click', () => {
+      if (C.qty > 1) {
+        C.qty--;
+        renderCustom();
+      }
+    });
+  }
+  const qPlus = $('#qty-plus');
+  if (qPlus) {
+    qPlus.addEventListener('click', () => {
+      if (C.qty < 50) {
+        C.qty++;
+        renderCustom();
+      }
+    });
+  }
+
+  // 6. رفع الملفات والسحب والإفلات
+  const fileInput = $('#customFile');
+  const dropArea = $('#dropzone-area');
+  const triggerBtn = $('#btn-trigger-upload');
+  const browseEmpty = $('#btn-browse-empty');
+
+  if (fileInput) {
+    fileInput.addEventListener('change', e => {
+      if (e.target.files && e.target.files[0]) loadCustomFile(e.target.files[0]);
+    });
+  }
+  if (triggerBtn && fileInput) {
+    triggerBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      fileInput.click();
+    });
+  }
+  if (browseEmpty && fileInput) {
+    browseEmpty.addEventListener('click', e => {
+      e.stopPropagation();
+      fileInput.click();
+    });
+  }
+  if (dropArea && fileInput) {
+    dropArea.addEventListener('click', e => {
+      if (!e.target.closest('#btn-trigger-upload') && !e.target.closest('#btn-browse-empty')) {
+        fileInput.click();
+      }
+    });
+    ['dragenter', 'dragover'].forEach(ev => {
+      dropArea.addEventListener(ev, e => {
+        e.preventDefault();
+        dropArea.classList.add('dragover');
+      });
+    });
+    ['dragleave', 'drop'].forEach(ev => {
+      dropArea.addEventListener(ev, e => {
+        e.preventDefault();
+        dropArea.classList.remove('dragover');
+      });
+    });
+    dropArea.addEventListener('drop', e => {
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+        loadCustomFile(e.dataTransfer.files[0]);
+      }
+    });
+  }
+
+  // 7. نماذج المعاينة السريعة (Demo State Pills)
+  $$('#demo-state-pills .state-pill').forEach(pill => {
+    pill.addEventListener('click', e => {
+      e.stopPropagation();
+      $$('#demo-state-pills .state-pill').forEach(p => {
+        p.classList.remove('bg-gray-900', 'text-white');
+        p.classList.add('bg-gray-100', 'text-gray-700');
+      });
+      pill.classList.add('bg-gray-900', 'text-white');
+      pill.classList.remove('bg-gray-100', 'text-gray-700');
+
+      const st = pill.dataset.state;
+      if (st === 'sample') {
+        C.url = 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=85';
+        C.w = 3840;
+        C.h = 2560;
+        C.name = 'alpine_sunset_golden_hour.jpg';
+        C.meta = '3840 × 2560 px · 5.4 MB';
+        C.file = null;
+        $('#dropzone-empty-state')?.classList.add('hidden');
+        $('#dropzone-file-state')?.classList.remove('hidden');
+        if ($('#upload-thumbnail')) $('#upload-thumbnail').style.backgroundImage = `url('${C.url}')`;
+        if ($('#file-name-label')) $('#file-name-label').textContent = C.name;
+        if ($('#file-meta-label')) $('#file-meta-label').textContent = C.meta;
+      } else if (st === 'minimal') {
+        C.url = 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=85';
+        C.w = 4096;
+        C.h = 2800;
+        C.name = 'abstract_bauhaus_geometry.png';
+        C.meta = '4096 × 2800 px · 3.8 MB';
+        C.file = null;
+        $('#dropzone-empty-state')?.classList.add('hidden');
+        $('#dropzone-file-state')?.classList.remove('hidden');
+        if ($('#upload-thumbnail')) $('#upload-thumbnail').style.backgroundImage = `url('${C.url}')`;
+        if ($('#file-name-label')) $('#file-name-label').textContent = C.name;
+        if ($('#file-meta-label')) $('#file-meta-label').textContent = C.meta;
+      } else {
+        C.url = null;
+        C.w = 0;
+        C.h = 0;
+        C.name = '';
+        C.file = null;
+        $('#dropzone-empty-state')?.classList.remove('hidden');
+        $('#dropzone-file-state')?.classList.add('hidden');
+      }
+      renderCustom();
+    });
+  });
+
+  // 8. محاكاة التمايل ثلاثي الأبعاد والانعكاس (3D Tilt Parallax)
+  const mockup = $('#metal-poster-mockup');
+  const specular = $('#finish-specular-overlay');
+  if (mockup) {
+    const handleMove = (clientX, clientY) => {
+      const rect = mockup.getBoundingClientRect();
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      const rotateX = ((y - centerY) / centerY) * -7;
+      const rotateY = ((x - centerX) / centerX) * 7;
+
+      mockup.style.transform = `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.015)`;
+
+      if (C.finish === 'لامع' && specular) {
+        const percentX = (x / rect.width) * 100;
+        const percentY = (y / rect.height) * 100;
+        specular.style.background = `linear-gradient(${percentX + 45}deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.45) ${percentY}%, rgba(255,255,255,0) 100%)`;
+      }
+    };
+
+    mockup.addEventListener('mousemove', e => handleMove(e.clientX, e.clientY));
+    mockup.addEventListener('mouseleave', () => {
+      mockup.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg) scale(1)';
+      if (C.finish === 'لامع' && specular) {
+        specular.className = 'absolute inset-0 gloss-specular transition-opacity duration-300 pointer-events-none opacity-100';
+        specular.style.background = '';
+      }
+    });
+
+    // لمس الشاشة للموبايل
+    mockup.addEventListener('touchmove', e => {
+      if (e.touches && e.touches[0]) {
+        handleMove(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    }, { passive: true });
+    mockup.addEventListener('touchend', () => {
+      mockup.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg) scale(1)';
+    });
+  }
+
+  // 9. إضافة اللوحة المخصصة للسلة
+  const cAddBtn = $('#cAdd');
+  if (cAddBtn) {
+    cAddBtn.addEventListener('click', () => {
+      if (!C.url) {
+        toast('يرجى اختيار صورة أولاً');
+        return;
+      }
+      const sz = sizeOf(C.size) || SHOP.sizes[0] || { w: 30, h: 45, price: 750 };
+      const pw = C.orient === 'p' ? sz.w : sz.h;
+      const ph = C.orient === 'p' ? sz.h : sz.w;
+      addItem({
+        key: 'c-' + Date.now(),
+        title: 'لوحة معدنية مخصصة (صورتك الخاصة)',
+        sub: `${pw}×${ph} سم — تشطيب ${C.finish}`,
+        price: sz.price,
+        qty: C.qty || 1,
+        img: C.url,
+        file: C.file,
+        orientation: C.orient,
+        fit: C.fit,
+        finish: C.finish,
+        custom: true
+      });
+      setStep('cart');
+      openDrawer();
+    });
+  }
+}
+
+// تشغيل التهيئة
+renderCustomSizes();
+renderCustom();
+initCustomizerEvents();
 
 /* ---------- إدارة السلة (Shopping Cart) ---------- */
 function addItem(it) {
+  const addCount = it.qty || 1;
   const ex = cart.find(c => c.key === it.key);
-  if (ex) ex.qty++;
-  else cart.push({ ...it, qty: 1 });
+  if (ex) ex.qty += addCount;
+  else cart.push({ ...it, qty: addCount });
   renderCart();
   toast('اتضافت للسلة');
   const b = $('#badge');
@@ -1620,7 +1987,8 @@ async function syncWithSupabase() {
         price: Number(s.price)
       }));
       if (!sizeOf(C.size)) C.size = SHOP.sizes[0].id;
-      $('#cSize').innerHTML = segHTML(SHOP.sizes.map(s => ({ id: s.id, html: `<bdi>${s.label}</bdi>` })), C.size, 'data-v');
+      if ($('#cSize')) $('#cSize').innerHTML = segHTML(SHOP.sizes.map(s => ({ id: s.id, html: `<bdi>${s.label}</bdi>` })), C.size, 'data-v');
+      renderCustomSizes();
       renderCustom();
       renderGrid();
     }
@@ -1713,6 +2081,7 @@ if (initFloatWa) {
 }
 renderFilters();
 renderGrid();
+renderCustomSizes();
 renderCustom();
 renderCart();
 setStep('cart');

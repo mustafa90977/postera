@@ -11,7 +11,7 @@
   <!-- Google Fonts: IBM Plex Sans Arabic -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700;800&display=swap">
   <!-- Core Store Styles for Drawers, Checkout, Custom Printing & Popups -->
-  <link rel="stylesheet" href="style.css?v=20261016-displate-clean">
+  <link rel="stylesheet" href="style.css?v=20261016-customizer-3d">
 
   <script>
     tailwind.config = {
@@ -332,66 +332,377 @@
 </section>
 <!-- END: ProductGallerySection -->
 
-<!-- قسم الطباعة الخاصة (صورتك على معدن) -->
-<section class="block custom max-w-[1440px] mx-auto px-4 lg:px-8 py-12" id="custom">
-  <div class="wrap bg-white rounded-2xl p-6 sm:p-10 border border-gray-200 shadow-sm">
-    <div>
-      <p class="eyebrow text-blue-600 font-bold uppercase text-xs tracking-wider mb-1">طباعة خاصة</p>
-      <h2 class="text-2xl sm:text-3xl font-black text-gray-900 mb-3">صورتك، على لوح معدن أصلي.</h2>
-      <p class="muted text-sm text-gray-600 mb-6">ارفع صورة من موبايلك أو الكاميرا، واختار المقاس. هنقولك لو جودة الصورة مناسبة للمقاس ده قبل ما تطلب.</p>
-      <div class="ctl">
-        <div>
-          <span class="lab font-bold text-xs text-gray-700 block mb-2">الصورة</span>
-          <label class="drop border-2 border-dashed border-gray-300 rounded-xl p-6 text-center cursor-pointer block hover:border-blue-500 transition" id="drop">
-            <input class="vh" type="file" id="customFile" accept="image/*">
-            <strong id="dropTitle" class="block text-sm font-bold text-gray-800">اضغط لاختيار صورة أو اسحبها هنا</strong>
-            <small id="dropSub" class="text-xs text-gray-500">JPG أو PNG — كل ما كانت أكبر كل ما كانت أوضح للطباعة</small>
-          </label>
+<!-- BEGIN: MainCustomizerSection (قسم الطباعة المخصصة الفاخرة) -->
+<section class="max-w-[1440px] mx-auto px-4 lg:px-8 py-10 lg:py-16" id="custom">
+  <!-- Section Title & Narrative Eyebrow -->
+  <div class="text-center max-w-3xl mx-auto mb-10 lg:mb-14" data-purpose="section-header">
+    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-xs font-bold uppercase tracking-wider text-blue-700 mb-3 shadow-xs">
+      <i class="fa-solid fa-wand-magic-sparkles text-amber-500"></i>
+      <span>صمم لوحتك المعدنية الخاصة بنفسك</span>
+    </div>
+    <h2 class="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-gray-900 leading-tight">
+      حوّل صورتك المفضلة إلى لوحة معدن أصلي.
+    </h2>
+    <p class="mt-3.5 text-sm sm:text-base text-gray-600 max-w-2xl mx-auto leading-relaxed">
+      طباعة UV صناعية فائقة الدقة مباشرة على ألواح صلب مصفّح بسمك 1.2 مم مع نظام تعليق مغناطيسي مبتكر بدون أي مسامير. ألوان حية ومحمية مدى الحياة ضد الماء والخدوش.
+    </p>
+
+    <!-- Trust Mini Badges -->
+    <div class="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-medium text-gray-600">
+      <span class="flex items-center gap-1.5 bg-white px-3 py-1 rounded-full border border-gray-200 shadow-2xs">
+        <i class="fa-solid fa-shield-halved text-emerald-600"></i>
+        <span>ألواح صلب مصفّح 1.2 مم</span>
+      </span>
+      <span class="flex items-center gap-1.5 bg-white px-3 py-1 rounded-full border border-gray-200 shadow-2xs">
+        <i class="fa-solid fa-magnet text-blue-600"></i>
+        <span>بدون مسامير / تثبيت مغناطيسي في 20 ثانية مجاناً</span>
+      </span>
+      <span class="flex items-center gap-1.5 bg-white px-3 py-1 rounded-full border border-gray-200 shadow-2xs">
+        <i class="fa-solid fa-certificate text-amber-500"></i>
+        <span>أحبار UV مقاومة للشمس والبهتان</span>
+      </span>
+    </div>
+  </div>
+
+  <!-- WORKSPACE GRID: Controls / Live 3D Canvas -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start" data-purpose="customizer-workspace">
+    
+    <!-- ============================================================== -->
+    <!-- RIGHT COLUMN IN RTL: CONTROLS & UPLOAD WORKFLOW (5 Col)         -->
+    <!-- ============================================================== -->
+    <div class="lg:col-span-5 space-y-6 order-2 lg:order-1" aria-label="أدوات تخصيص اللوحة">
+      
+      <!-- Card 1: Interactive Upload Dropzone -->
+      <div class="bg-white rounded-2xl border border-gray-200 p-5 sm:p-6 shadow-sm transition-all">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-sm font-bold tracking-wide text-gray-900">1. اختار صورتك أو تصميمك</h3>
+            <p class="text-xs text-gray-500">صور شخصية، تصوير فوتوغرافي، رسم رقمي أو ذكريات عائلية</p>
+          </div>
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200" id="dpi-indicator-chip">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span id="dpi-text">جاهز للطباعة: 300 DPI</span>
+          </span>
         </div>
-        <div class="mt-4"><span class="lab font-bold text-xs text-gray-700 block mb-1">المقاس (سم)</span><div class="seg" id="cSize" role="group" aria-label="المقاس"></div></div>
-        <div class="mt-4"><span class="lab font-bold text-xs text-gray-700 block mb-1">الاتجاه</span>
-          <div class="seg" id="cOrient" role="group" aria-label="الاتجاه">
-            <button type="button" data-v="p" aria-pressed="true">طولي</button>
-            <button type="button" data-v="l" aria-pressed="false">عرضي</button>
+
+        <!-- Hidden Actual File Input -->
+        <input accept="image/png, image/jpeg, image/webp, image/heic, image/tiff" class="hidden" id="customFile" type="file"/>
+
+        <!-- Interactive Dropzone Canvas -->
+        <div class="dropzone-dashed rounded-2xl p-6 text-center cursor-pointer transition-all duration-200 bg-gray-50/70 hover:bg-gray-100/70 group" id="dropzone-area">
+          <!-- Dropzone Default/Empty State Content -->
+          <div class="hidden" id="dropzone-empty-state">
+            <div class="w-12 h-12 mx-auto rounded-full bg-white shadow-xs border border-gray-200 flex items-center justify-center text-blue-600 group-hover:scale-105 transition-transform mb-3">
+              <i class="fa-solid fa-cloud-arrow-up text-lg"></i>
+            </div>
+            <p class="text-sm font-bold text-gray-900">اسحب وأفلت صورتك هنا</p>
+            <p class="text-xs text-gray-500 mt-1">أو تصفح الملفات من موبايلك أو الكمبيوتر</p>
+            <button class="mt-4 px-4 py-2 rounded-xl bg-gray-900 text-white text-xs font-bold tracking-wider hover:bg-black transition-colors shadow-xs" type="button" id="btn-browse-empty">
+              اختار صورة من جهازك
+            </button>
+            <p class="text-[11px] text-gray-400 mt-3 font-mono">JPG, PNG, WebP · حتى 50 ميجابايت</p>
+          </div>
+
+          <!-- Uploaded Active File State Card -->
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-right" id="dropzone-file-state">
+            <div class="flex items-center gap-3.5 w-full">
+              <div class="relative w-14 h-14 rounded-xl overflow-hidden bg-gray-900 flex-shrink-0 border border-gray-200 shadow-xs">
+                <!-- Thumbnail preview -->
+                <div class="w-full h-full bg-cover bg-center" id="upload-thumbnail" style="background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=85');"></div>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2">
+                  <p class="text-xs font-bold text-gray-900 truncate max-w-[180px] sm:max-w-[220px]" id="file-name-label">alpine_sunset_golden_hour.jpg</p>
+                  <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">HD 4K</span>
+                </div>
+                <p class="text-[11px] text-gray-500 mt-0.5 font-mono" id="file-meta-label">3840 × 2560 px · 5.4 MB</p>
+                <div class="flex items-center gap-1 mt-1 text-[11px] text-emerald-600 font-medium">
+                  <i class="fa-solid fa-circle-check text-xs"></i>
+                  <span id="file-resolution-status">دقة فائقة ومثالية للطباعة على المقاسات الكبيرة</span>
+                </div>
+              </div>
+            </div>
+            <div class="flex-shrink-0 w-full sm:w-auto">
+              <button class="w-full sm:w-auto px-3.5 py-1.5 text-xs font-bold text-gray-700 bg-white border border-gray-300 rounded-lg hover:border-gray-900 hover:text-black transition-colors shadow-xs text-center" id="btn-trigger-upload" type="button">
+                تغيير الصورة
+              </button>
+            </div>
           </div>
         </div>
-        <div class="mt-4"><span class="lab font-bold text-xs text-gray-700 block mb-1">ظبط الصورة</span>
-          <div class="seg" id="cFit" role="group" aria-label="ظبط الصورة">
-            <button type="button" data-v="cover" aria-pressed="true">تملا اللوحة</button>
-            <button type="button" data-v="contain" aria-pressed="false">الصورة كاملة</button>
+
+        <!-- State Quick Switcher Pills (Demo Convenience) -->
+        <div class="mt-3.5 pt-3 border-t border-gray-100 flex items-center justify-between">
+          <span class="text-[11px] font-mono text-gray-400">معاينة تجريبية سريعة:</span>
+          <div class="flex items-center gap-1.5" id="demo-state-pills">
+            <button class="state-pill px-2.5 py-0.5 text-[11px] font-bold rounded bg-gray-900 text-white transition-colors" data-state="sample" type="button">نموذج 1</button>
+            <button class="state-pill px-2.5 py-0.5 text-[11px] font-bold rounded bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors" data-state="minimal" type="button">نموذج 2</button>
+            <button class="state-pill px-2.5 py-0.5 text-[11px] font-bold rounded bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors" data-state="empty" type="button">تفريغ</button>
           </div>
-        </div>
-        <div class="mt-4"><span class="lab font-bold text-xs text-gray-700 block mb-1">التشطيب</span>
-          <div class="seg" id="cFinish" role="group" aria-label="التشطيب">
-            <button type="button" data-v="لامع" aria-pressed="true">لامع</button>
-            <button type="button" data-v="مطفي" aria-pressed="false">مطفي</button>
-          </div>
-        </div>
-        <div class="q mt-4" id="quality" aria-live="polite"><span class="dot"></span><span id="qText">ارفع صورة عشان نقيّم جودتها للمقاس.</span></div>
-        <div class="buyrow mt-6 flex items-center justify-between">
-          <div class="price num font-extrabold text-xl text-blue-600" id="cPrice"></div>
-          <button class="btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow transition" id="cAdd" type="button" disabled>ضيف للسلة</button>
         </div>
       </div>
-    </div>
-    <div class="preview flex flex-col items-center justify-center mt-8 lg:mt-0">
-      <div class="plate poster-shadow rounded-lg overflow-hidden" id="cPlate"><div class="art" id="cArt"></div></div>
-      <p class="tag text-xs text-gray-500 mt-3 text-center" id="cTag">مثال توضيحي — صورتك هتظهر هنا بنفس شكل اللوحة.</p>
-    </div>
-  </div>
-</section>
 
-<!-- قسم خطوات الطلب وطريقة التعليق -->
-<section class="max-w-[1440px] mx-auto px-4 lg:px-8 py-10" id="how">
-  <div class="text-center mb-8">
-    <h2 class="text-2xl sm:text-3xl font-black uppercase text-gray-900">طريقة الطلب والتعليق في 3 خطوات</h2>
+      <!-- Card 2: Size & Dimension Selectors -->
+      <div class="bg-white rounded-2xl border border-gray-200 p-5 sm:p-6 shadow-sm space-y-5">
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="text-sm font-bold tracking-wide text-gray-900">2. حدد مقاس اللوحة</label>
+            <span class="text-xs font-mono font-bold text-blue-600" id="selected-dimension-text">30 × 45 سم</span>
+          </div>
+          <p class="text-xs text-gray-500">كل لوحة تشمل حوامل مغناطيسية نيونيديوم قوية جداً مجاناً</p>
+        </div>
+
+        <!-- Size Options Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5" id="size-selector-group">
+          <!-- Dynamically populated from SHOP.sizes or defaults -->
+        </div>
+
+        <!-- Orientation & Aspect Ratio -->
+        <div class="pt-2 border-t border-gray-100">
+          <label class="block text-xs font-bold text-gray-700 mb-2">اتجاه اللوحة</label>
+          <div class="grid grid-cols-2 gap-3" id="orientation-toggle-group">
+            <button class="orientation-btn py-2.5 px-3 rounded-xl border-2 border-blue-600 bg-blue-50/50 flex items-center justify-center gap-2 text-xs font-bold text-blue-700 transition-all" data-orientation="portrait" type="button">
+              <div class="w-3.5 h-5 border-2 border-current rounded-xs"></div>
+              <span>طولي (رأسي)</span>
+            </button>
+            <button class="orientation-btn py-2.5 px-3 rounded-xl border border-gray-200 bg-white hover:border-gray-400 flex items-center justify-center gap-2 text-xs font-medium text-gray-600 transition-all" data-orientation="landscape" type="button">
+              <div class="w-5 h-3.5 border border-current rounded-xs"></div>
+              <span>عرضي (أفقي)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Image Fit Toggle -->
+        <div class="pt-2 border-t border-gray-100">
+          <label class="block text-xs font-bold text-gray-700 mb-2">ملء الصورة على اللوحة</label>
+          <div class="grid grid-cols-2 gap-3" id="fit-toggle-group">
+            <button class="fit-btn py-2 px-3 rounded-xl border-2 border-gray-900 bg-gray-50 text-xs font-bold text-gray-900 transition-all" data-fit="cover" type="button">
+              <span>تملا اللوحة بالكامل</span>
+            </button>
+            <button class="fit-btn py-2 px-3 rounded-xl border border-gray-200 bg-white hover:border-gray-400 text-xs font-medium text-gray-600 transition-all" data-fit="contain" type="button">
+              <span>الصورة كاملة بهوامش</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Metal Surface Finish Selector -->
+      <div class="bg-white rounded-2xl border border-gray-200 p-5 sm:p-6 shadow-sm space-y-4">
+        <div>
+          <label class="text-sm font-bold tracking-wide text-gray-900">3. نوع التشطيب السطحي للمعدن</label>
+          <p class="text-xs text-gray-500">تحكم في انعكاسات الإضاءة والمظهر الجمالي للسطح</p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5" id="finish-selector-group">
+          <!-- Matte Finish -->
+          <button class="finish-btn text-right p-3.5 rounded-xl border-2 border-gray-900 bg-gray-50/50 relative transition-all focus:outline-none" data-finish="مطفي" type="button">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-gray-900">مطفي مخملي (Matte)</span>
+              <div class="w-3.5 h-3.5 rounded-full border-2 border-gray-900 flex items-center justify-center">
+                <span class="w-1.5 h-1.5 rounded-full bg-gray-900 finish-radio-dot"></span>
+              </div>
+            </div>
+            <p class="text-[11px] text-gray-600 mt-2 leading-relaxed">سطح ساتان مضاد للانعكاس والتوهج. ظلال عميقة ومظهر هادئ حتى أمام النوافذ المشمسة.</p>
+            <div class="mt-2.5 flex items-center gap-1.5 text-[10px] font-mono text-gray-500">
+              <span class="w-2 h-2 rounded bg-stone-400"></span> تشتيت ضوئي مخملي
+            </div>
+          </button>
+          <!-- Glossy Finish -->
+          <button class="finish-btn text-right p-3.5 rounded-xl border border-gray-200 bg-white hover:border-gray-300 relative transition-all focus:outline-none" data-finish="لامع" type="button">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-gray-700">لامع سينمائي (Gloss)</span>
+              <div class="w-3.5 h-3.5 rounded-full border border-gray-300 flex items-center justify-center">
+                <span class="w-1.5 h-1.5 rounded-full bg-gray-900 finish-radio-dot hidden"></span>
+              </div>
+            </div>
+            <p class="text-[11px] text-gray-500 mt-2 leading-relaxed">بريق زجاجي عميق ولمعان معدني بارز يعزز تشبع الألوان وتباين التفاصيل الداكنة.</p>
+            <div class="mt-2.5 flex items-center gap-1.5 text-[10px] font-mono text-gray-500">
+              <span class="w-2 h-2 rounded bg-gradient-to-tr from-stone-400 to-white border border-stone-200"></span> انعكاس وبريق معدني
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Card 4: Checkout CTA & Dynamic Price Summary -->
+      <div class="bg-gray-950 text-white rounded-2xl p-6 shadow-xl space-y-5">
+        <div class="flex items-baseline justify-between border-b border-gray-800 pb-4">
+          <div>
+            <p class="text-xs uppercase font-mono tracking-wider text-gray-400">إجمالي السعر</p>
+            <div class="flex items-baseline gap-2 mt-1">
+              <span class="text-3xl font-black tracking-tight text-white" id="total-price-display">750 ج.م</span>
+              <span class="text-xs text-gray-400 font-normal">شامل الحامل المغناطيسي</span>
+            </div>
+          </div>
+          <!-- Quantity Selector -->
+          <div class="flex items-center bg-gray-900 border border-gray-700 rounded-xl p-1">
+            <button class="w-8 h-8 flex items-center justify-center text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-colors text-base font-bold" id="qty-minus" type="button" aria-label="تقليل الكمية">−</button>
+            <span class="w-8 text-center font-mono text-sm font-bold text-white" id="qty-display">1</span>
+            <button class="w-8 h-8 flex items-center justify-center text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-colors text-base font-bold" id="qty-plus" type="button" aria-label="زيادة الكمية">+</button>
+          </div>
+        </div>
+
+        <!-- Primary Action Button -->
+        <button class="w-full py-4 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-base font-bold tracking-wide transition-all flex items-center justify-center gap-3 shadow-lg active:scale-[0.99]" id="cAdd" type="button">
+          <i class="fa-solid fa-cart-shopping"></i>
+          <span id="cta-button-text">أضف اللوحة المخصصة للسلة — 750 ج.م</span>
+        </button>
+
+        <!-- Shipping & Guarantee Micro-copy -->
+        <div class="grid grid-cols-2 gap-2 text-[11px] text-gray-400 pt-1">
+          <div class="flex items-center gap-1.5">
+            <i class="fa-solid fa-truck-fast text-emerald-400 flex-shrink-0"></i>
+            <span>شحن سريع وآمن للمحافظات</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <i class="fa-solid fa-medal text-amber-400 flex-shrink-0"></i>
+            <span>ضمان جودة واستبدال 100 يوم</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- LEFT COLUMN IN RTL: INTERACTIVE 3D METAL POSTER MOCKUP (7 Col)  -->
+    <!-- ============================================================== -->
+    <div class="lg:col-span-7 sticky top-24 order-1 lg:order-2" aria-label="المعاينة المباشرة للوحة المعدنية">
+      <div class="gallery-grid-bg rounded-3xl border border-gray-200/90 p-6 sm:p-10 lg:p-12 relative overflow-hidden shadow-subtle-lift">
+        
+        <!-- Live Simulation Overhead Bar -->
+        <div class="flex items-center justify-between mb-8 z-10 relative">
+          <div class="flex items-center gap-2">
+            <span class="flex h-2.5 w-2.5 relative">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+            </span>
+            <span class="text-xs font-mono uppercase tracking-wider text-gray-700 font-bold">معاينة تفاعلية 3D حية</span>
+          </div>
+          
+          <!-- Interactive Mode Tools -->
+          <div class="flex items-center gap-2 bg-white/95 backdrop-blur-sm border border-gray-200 rounded-full px-3 py-1 shadow-xs">
+            <span class="text-[11px] text-gray-500">التشطيب:</span>
+            <span class="text-xs font-bold text-gray-900" id="badge-current-finish">مطفي مخملي</span>
+          </div>
+        </div>
+
+        <!-- Architectural Stage / Mockup Presentation Wall -->
+        <div class="relative min-h-[460px] sm:min-h-[560px] flex items-center justify-center py-4">
+          <!-- Wall ambient shadow under plate -->
+          <div class="absolute w-72 sm:w-88 h-96 bg-black/25 blur-3xl rounded-full transform -translate-y-4 pointer-events-none" id="ambient-wall-shadow"></div>
+
+          <!-- THE 3D METAL POSTER CANVAS COMPONENT -->
+          <div class="metal-edge-bevel relative transition-all duration-300 rounded-md overflow-hidden bg-gray-950 flex flex-col justify-end w-[280px] sm:w-[350px] aspect-[2/3] cursor-grab active:cursor-grabbing select-none group" data-purpose="metal-poster-element" id="metal-poster-mockup">
+            
+            <!-- Front UV Artwork Image Layer -->
+            <div class="absolute inset-0 bg-cover bg-center transition-all duration-300" id="poster-art-layer" style="background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=85'); background-size: cover; background-position: center;">
+              <!-- Empty Artwork Watermark -->
+              <div class="hidden absolute inset-0 bg-gray-900/90 flex flex-col items-center justify-center p-6 text-center text-white" id="empty-state-overlay">
+                <div class="w-14 h-14 rounded-2xl border-2 border-dashed border-white/40 flex items-center justify-center mb-3 text-white/60">
+                  <i class="fa-solid fa-image text-2xl"></i>
+                </div>
+                <p class="text-sm font-bold tracking-wide">صورتك هتتعرض هنا</p>
+                <p class="text-xs text-white/60 mt-1">ارفع أي صورة من اللوحة المجاورة لمعاينتها</p>
+              </div>
+            </div>
+
+            <!-- Surface Optical Overlay (Toggled between Matte & Glossy) -->
+            <div class="absolute inset-0 matte-diffuse transition-opacity duration-300 pointer-events-none" id="finish-specular-overlay"></div>
+
+            <!-- 1.2mm Chamfered Steel Edge Inner Stroke -->
+            <div class="absolute inset-0 border border-white/30 rounded-md pointer-events-none"></div>
+            <div class="absolute inset-0 shadow-[inset_0_0_12px_rgba(0,0,0,0.4)] pointer-events-none"></div>
+
+            <!-- POSTERA Laser Authentication Hologram / Seal (Discreet Bottom Corner) -->
+            <div class="relative z-10 m-3 px-2.5 py-1 rounded bg-black/50 backdrop-blur-md border border-white/20 flex items-center justify-between text-[10px] font-mono text-white/90 self-start">
+              <span class="flex items-center gap-1.5 tracking-wider font-bold">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                POSTERA STEEL
+              </span>
+              <span class="mr-2 text-white/50" id="plate-id-badge">#8402-A</span>
+            </div>
+
+            <!-- Floating dimension badge on right border -->
+            <div class="absolute -right-12 top-1/2 -translate-y-1/2 hidden sm:flex flex-col items-center gap-1 pointer-events-none">
+              <span class="h-14 w-px bg-gray-300"></span>
+              <span class="text-[11px] font-mono font-bold text-gray-500 whitespace-nowrap rotate-90" id="plate-height-label">45 سم</span>
+              <span class="h-14 w-px bg-gray-300"></span>
+            </div>
+
+            <!-- Floating dimension badge on bottom border -->
+            <div class="absolute -bottom-8 left-1/2 -translate-y-0 -translate-x-1/2 hidden sm:flex items-center gap-2 pointer-events-none">
+              <span class="w-12 h-px bg-gray-300"></span>
+              <span class="text-[11px] font-mono font-bold text-gray-500 whitespace-nowrap" id="plate-width-label">30 سم</span>
+              <span class="w-12 h-px bg-gray-300"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Perspective Hint & Quick Finish Toggle Bar -->
+        <div class="mt-8 pt-6 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div class="flex items-center gap-2 text-xs text-gray-600">
+            <i class="fa-solid fa-arrows-up-down-left-right text-blue-600"></i>
+            <span>حرك الماوس أو المس اللوحة المعدنية لمعاينة انعكاس الضوء والزوايا ثلاثية الأبعاد</span>
+          </div>
+          <!-- Quick Clickable Material Toggle -->
+          <div class="inline-flex rounded-lg bg-gray-200/80 p-1 text-xs font-bold">
+            <button class="px-3.5 py-1 rounded-md bg-white text-gray-900 shadow-xs transition-all" id="toggle-matte-btn" type="button">مطفي</button>
+            <button class="px-3.5 py-1 rounded-md text-gray-600 hover:text-black transition-all" id="toggle-gloss-btn" type="button">لامع</button>
+          </div>
+        </div>
+
+        <!-- Wall Mounting System Highlight Banner -->
+        <div class="mt-6 rounded-2xl bg-white border border-gray-200 p-4 flex items-center justify-between shadow-xs">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-700 flex-shrink-0 text-lg">
+              <i class="fa-solid fa-magnet"></i>
+            </div>
+            <div>
+              <h4 class="text-xs font-bold uppercase tracking-wider text-gray-900">نظام التعليق المغناطيسي المبتكر</h4>
+              <p class="text-[11px] text-gray-500">حامل مغناطيسي فائق القوة مرفق مجاناً مع كل لوحة. تعليق في 20 ثانية بدون أي خرم في الجدار.</p>
+            </div>
+          </div>
+          <span class="text-xs font-mono font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">مشمول مجاناً (0 ج.م)</span>
+        </div>
+
+      </div>
+    </div>
+
   </div>
-  <ol class="steps3 grid grid-cols-1 md:grid-cols-3 gap-6">
-    <li class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm"><div class="n text-blue-600 font-extrabold text-2xl mb-2">1</div><h3 class="font-bold text-lg mb-2">اختار لوحتك</h3><p class="text-sm text-gray-600">من التشكيلة أو ارفع صورتك الخاصة، وحدد المقاس وضيفها لسلتك.</p></li>
-    <li class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm"><div class="n text-blue-600 font-extrabold text-2xl mb-2">2</div><h3 class="font-bold text-lg mb-2">حوّل المبلغ أو العربون</h3><p class="text-sm text-gray-600">حوّل عبر إنستا باي أو محفظة كاش، ومتاح دفع عربون 50% فقط والباقي عند الاستلام.</p></li>
-    <li class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm"><div class="n text-blue-600 font-extrabold text-2xl mb-2">3</div><h3 class="font-bold text-lg mb-2">تعليق مغناطيسي في 20 ثانية</h3><p class="text-sm text-gray-600">استلم لوحتك مع الحامل المغناطيسي المرفق، ثبّتها بضغطة واحدة بدون أي مسامير.</p></li>
-  </ol>
 </section>
+<!-- END: MainCustomizerSection -->
+
+<!-- BEGIN: ThreeStepExplainerSection (قسم خطوات الطلب والتعليق) -->
+<section class="max-w-[1440px] mx-auto px-4 lg:px-8 py-14 border-t border-gray-200/80" id="how">
+  <div class="text-center max-w-2xl mx-auto mb-12">
+    <span class="text-xs font-bold font-mono uppercase tracking-widest text-blue-600">سهل وسريع وبدون أي تعقيد</span>
+    <h3 class="text-2xl sm:text-3xl font-black tracking-tight text-gray-900 mt-1">طريقة طلب لوحتك وتعليقها في 3 خطوات</h3>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+    <!-- Step 1 -->
+    <div class="bg-white rounded-2xl p-7 border border-gray-200 shadow-sm relative">
+      <span class="text-3xl font-black font-mono text-blue-600 block mb-3">01</span>
+      <h4 class="text-lg font-bold text-gray-900 mb-2">اختار لوحتك أو ارفع صورتك</h4>
+      <p class="text-xs text-gray-600 leading-relaxed">
+        اختار تصميماً من كتالوج المعرض أو ارفع صورتك الخاصة مع فحص فوري لدقة وجودة الطباعة للتأكد من خروجها بأعلى وضوح.
+      </p>
+    </div>
+    <!-- Step 2 -->
+    <div class="bg-white rounded-2xl p-7 border border-gray-200 shadow-sm relative">
+      <span class="text-3xl font-black font-mono text-blue-600 block mb-3">02</span>
+      <h4 class="text-lg font-bold text-gray-900 mb-2">حوّل المبلغ أو ادفع عربون</h4>
+      <p class="text-xs text-gray-600 leading-relaxed">
+        ادفع بسهولة عبر إنستا باي أو محفظة كاش مع إمكانية دفع عربون 50% فقط والباقي عند الاستلام عند باب بيتك.
+      </p>
+    </div>
+    <!-- Step 3 -->
+    <div class="bg-white rounded-2xl p-7 border border-gray-200 shadow-sm relative">
+      <span class="text-3xl font-black font-mono text-blue-600 block mb-3">03</span>
+      <h4 class="text-lg font-bold text-gray-900 mb-2">تعليق مغناطيسي في 20 ثانية</h4>
+      <p class="text-xs text-gray-600 leading-relaxed">
+        شيل شريط الحماية، الصق المغناطيس على الحائط، وعلق لوحتك المعدنية بضغطة واحدة. استبدل وبدّل لوحاتك وقتما تحب بدون أي خرم.
+      </p>
+    </div>
+  </div>
+</section>
+<!-- END: ThreeStepExplainerSection -->
 
 <!-- BEGIN: SiteFooter -->
 <footer class="mt-auto bg-neutral-950 text-neutral-400 text-xs border-t border-neutral-800">
@@ -606,6 +917,6 @@
 <!-- ملف الإعدادات المشترك ومكتبة Supabase وملف السكريبت -->
 <script src="config.js?v=20261016-displate-clean"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="script.js?v=20261016-displate-clean"></script>
+<script src="script.js?v=20261016-customizer-3d"></script>
 </body>
 </html>
