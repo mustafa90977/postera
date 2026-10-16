@@ -1625,7 +1625,7 @@ async function syncWithSupabase() {
    إدارة مظهر ديسبليت (Theme Manager: Displate Dark / Light Mode)
    ========================================================================== */
 function initTheme() {
-  const saved = localStorage.getItem('postera_theme') || 'dark';
+  const saved = localStorage.getItem('postera_theme') || 'light';
   setTheme(saved, false);
 }
 

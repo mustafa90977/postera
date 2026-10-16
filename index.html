@@ -8,11 +8,11 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="style.css?v=20261013-8">
   <script>
-    /* تطبيق فوري لثيم ديسبليت الداكن أو تفضيل المستخدم قبل اكتمال الريندر لمنع الوميض */
+    /* تطبيق الوضع الفاتح الافتراضي للمتجر */
     (function() {
       try {
         var saved = localStorage.getItem('postera_theme');
-        var theme = saved || 'dark';
+        var theme = saved || 'light';
         document.documentElement.setAttribute('data-theme', theme);
       } catch(e) {}
     })();
