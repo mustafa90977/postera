@@ -484,7 +484,7 @@ function renderGrid() {
             <h4 class="text-sm font-bold text-gray-900 truncate group-hover:text-blue-600">${esc(p.title)}</h4>
             <span class="text-[11px] text-gray-500 font-medium">${esc(p.cat || 'معدن')}</span>
           </div>
-          <p class="text-[11px] text-gray-400 mt-0.5">ألومنيوم 1.1 مم • حامل مغناطيسي</p>
+          <p class="text-[11px] text-gray-400 mt-0.5">ألومنيوم صلب 1.2 مم • جاهزة للتعليق</p>
         </div>
         <div class="flex items-center justify-between mt-1">
           <span class="text-sm font-extrabold text-blue-600 num" data-p>${egp(szObj.price)}</span>
