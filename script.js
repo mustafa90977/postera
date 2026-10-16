@@ -448,7 +448,14 @@ function segHTML(items, cur, attr) {
 
 function renderFilters() {
   if ($('#filters')) {
-    $('#filters').innerHTML = CATS.map(c => `<button type="button" data-cat="${c}" aria-pressed="${c === st.filter}">${c}</button>`).join('');
+    $('#filters').innerHTML = CATS.map(c => {
+      const isSel = c === st.filter;
+      return `<button class="px-4 py-2 rounded text-xs font-bold transition-all shadow-sm ${
+        isSel 
+          ? 'bg-primary text-on-primary' 
+          : 'bg-surface-container text-on-surface hover:bg-surface-container-high'
+      }" type="button" data-cat="${c}" aria-pressed="${isSel}">${c}</button>`;
+    }).join('');
   }
 }
 
@@ -465,35 +472,36 @@ function renderGrid() {
   const defaultSz = (SHOP.sizes[0] && SHOP.sizes[0].id) || 'm';
   $('#grid').innerHTML = list.map(p => {
     const cur = st.sizes[p.id] || defaultSz;
-    const szObj = sizeOf(cur) || SHOP.sizes[0] || { price: 650 };
+    const szObj = sizeOf(cur) || SHOP.sizes[0] || { price: 650, label: '30×45' };
     const artContent = p.image_url 
-      ? `<img src="${p.image_url}" alt="${esc(p.title)}" class="w-full h-full object-cover">` 
+      ? `<img src="${p.image_url}" alt="${esc(p.title)}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">` 
       : (p.kind ? artSvg(p.kind, p.title) : artSvg('moon', p.title));
-    const badgeHtml = p.tag ? `<span class="absolute top-2.5 right-2.5 bg-red-600 text-white font-bold text-[10px] px-2 py-0.5 rounded shadow">${p.tag}</span>` : '';
-    return `<article class="card flex flex-col group cursor-pointer bg-white p-3 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition" data-id="${p.id}">
-      <div class="relative w-full aspect-[1/1.4] rounded-lg overflow-hidden bg-neutral-100 poster-shadow mb-3">
+    const badgeHtml = p.tag ? `<span class="absolute top-3 right-3 bg-primary text-on-primary font-bold text-[10px] px-2.5 py-0.5 rounded shadow-sm z-10">${p.tag}</span>` : '';
+    return `<article class="card group bg-surface-container-lowest rounded-xl border border-warm-gray overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col cursor-pointer" data-id="${p.id}">
+      <div class="relative w-full aspect-[3/4] bg-surface-container overflow-hidden">
         ${badgeHtml}
         <div class="w-full h-full">${artContent}</div>
-        <div class="absolute bottom-2 left-2 bg-black/70 backdrop-blur-sm text-[10px] text-white px-2 py-0.5 rounded font-mono">
-          M / L / XL
-        </div>
+        <div class="absolute inset-0 bg-gradient-to-tr from-pure-black/10 via-transparent to-canvas-white/20 pointer-events-none"></div>
+        <span class="absolute bottom-3 right-3 px-2 py-0.5 bg-pure-black/80 text-canvas-white font-mono text-[10px] rounded backdrop-blur-sm z-10">
+          ${szObj.label} سم
+        </span>
       </div>
-      <div class="flex flex-col flex-1 justify-between gap-2">
+      <div class="p-4 sm:p-5 flex flex-col flex-1 justify-between text-right">
         <div>
+          <span class="font-label-sm text-label-sm text-outline uppercase tracking-wider block">${esc(p.cat || 'معدن')}</span>
+          <h3 class="font-title-md text-title-md text-primary font-bold mt-1 line-clamp-1 group-hover:text-on-surface-variant transition-colors">${esc(p.title)}</h3>
+          <p class="text-[11px] text-outline mt-1">ألواح صلب 1.2 مم • جاهزة للتعليق</p>
+        </div>
+        <div class="pt-3 mt-3 border-t border-surface-container flex flex-col gap-2.5">
           <div class="flex items-center justify-between">
-            <h4 class="text-sm font-bold text-gray-900 truncate group-hover:text-blue-600">${esc(p.title)}</h4>
-            <span class="text-[11px] text-gray-500 font-medium">${esc(p.cat || 'معدن')}</span>
+            <span class="font-headline-sm text-headline-sm text-primary font-bold" data-p>${egp(szObj.price)}</span>
+            <div class="seg card-size-pick" role="group" aria-label="المقاس">${segHTML(SHOP.sizes.map(s => ({ id: s.id, html: `<bdi>${s.label}</bdi>` })), cur, 'data-size')}</div>
           </div>
-          <p class="text-[11px] text-gray-400 mt-0.5">ألومنيوم صلب 1.2 مم • جاهزة للتعليق</p>
+          <button class="w-full py-2.5 px-4 bg-primary hover:bg-pure-black text-on-primary font-label-md text-label-md rounded flex items-center justify-center gap-2 shadow-sm transition-all" type="button" data-add>
+            <span class="material-symbols-outlined text-[16px]">add_shopping_cart</span>
+            <span>أضف للسلة</span>
+          </button>
         </div>
-        <div class="flex items-center justify-between mt-1">
-          <span class="text-sm font-extrabold text-blue-600 num" data-p>${egp(szObj.price)}</span>
-          <span class="text-[10px] bg-red-100 text-red-700 font-bold px-1.5 py-0.5 rounded">-25%</span>
-        </div>
-        <div class="seg card-size-pick my-1" role="group" aria-label="المقاس">${segHTML(SHOP.sizes.map(s => ({ id: s.id, html: `<bdi>${s.label}</bdi>` })), cur, 'data-size')}</div>
-        <button class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2 rounded-lg transition duration-200 cursor-pointer shadow-sm" type="button" data-add>
-          <span>أضف إلى السلة</span>
-        </button>
       </div>
     </article>`;
   }).join('');
