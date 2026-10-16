@@ -401,16 +401,23 @@ function renderCuratedGrid() {
   const gridEl = $('#curatedGrid');
   if (!gridEl) return;
   gridEl.innerHTML = CURATED.map(c => `
-    <div class="curated-card" data-cat="${esc(c.cat || '')}">
-      <div class="curated-card-bg" style="background-image: url('${esc(c.img || '')}');"></div>
-      <div class="curated-card-overlay"></div>
-      <div class="curated-card-content">
-        <h3 class="curated-card-title">${esc(c.title || '')}</h3>
-        <p class="curated-card-sub">${esc(c.sub || '')}</p>
-        <span class="curated-card-pill">
-          <span>استكشف المجموعة</span>
-          <span aria-hidden="true">←</span>
-        </span>
+    <div class="relative bg-neutral-900 rounded-xl overflow-hidden group shadow-md hover:shadow-xl transition flex flex-col h-[380px] cursor-pointer curated-card" data-cat-filter="${esc(c.cat || '')}">
+      <div class="absolute inset-0 z-0">
+        <img alt="${esc(c.title || '')}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 opacity-75" src="${esc(c.img || '')}"/>
+        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-black/60"></div>
+      </div>
+      <div class="relative z-10 p-5 flex flex-col justify-between h-full text-center">
+        <div>
+          <h3 class="text-white font-extrabold uppercase tracking-wide text-sm bg-black/40 backdrop-blur-sm py-1.5 px-3 rounded inline-block">
+            ${esc(c.title || '')}
+          </h3>
+          <p class="text-xs text-neutral-300 mt-2 font-normal">${esc(c.sub || '')}</p>
+        </div>
+        <div>
+          <span class="inline-block bg-neutral-900/90 group-hover:bg-blue-600 text-white text-xs font-bold uppercase tracking-wider py-2.5 px-6 rounded transition duration-200 border border-neutral-700 group-hover:border-transparent">
+            استكشف المزيد
+          </span>
+        </div>
       </div>
     </div>
   `).join('');
