@@ -499,7 +499,7 @@ function renderGrid() {
       ? `<img src="${p.image_url}" alt="${esc(p.title)}" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 select-none">` 
       : (p.kind ? artSvg(p.kind, p.title) : artSvg('moon', p.title));
     
-    return `<a href="product.html?id=${encodeURIComponent(p.id)}" class="poster-card group relative aspect-[2/3] w-full rounded-lg overflow-hidden poster-shadow cursor-pointer select-none transition-all duration-300 bg-surface-container block" data-id="${p.id}" title="${esc(p.title)}">
+    return `<a href="product?id=${encodeURIComponent(p.id)}" class="poster-card group relative aspect-[2/3] w-full rounded-lg overflow-hidden poster-shadow cursor-pointer select-none transition-all duration-300 bg-surface-container block" data-id="${p.id}" title="${esc(p.title)}">
       <!-- Metal Poster Image (صور فقط كما في ديسبليت) -->
       <div class="w-full h-full">
         ${artContent}

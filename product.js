@@ -170,7 +170,7 @@ function renderPDPRelated() {
       : (p.kind ? artSvg(p.kind, p.title) : artSvg('moon', p.title));
     
     return `
-      <a href="product.html?id=${p.id}" class="poster-card group relative aspect-[2/3] w-full rounded-lg overflow-hidden poster-shadow cursor-pointer select-none transition-all duration-300 bg-surface-container block" title="${esc(p.title)}">
+      <a href="product?id=${p.id}" class="poster-card group relative aspect-[2/3] w-full rounded-lg overflow-hidden poster-shadow cursor-pointer select-none transition-all duration-300 bg-surface-container block" title="${esc(p.title)}">
         <div class="w-full h-full">${artContent}</div>
         <div class="absolute inset-0 pointer-events-none shadow-[inset_0_1px_2px_rgba(255,255,255,0.7),inset_-1px_-1px_2px_rgba(0,0,0,0.5)] rounded-lg"></div>
         <div class="absolute inset-0 bg-gradient-to-tr from-pure-black/35 via-transparent to-canvas-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
