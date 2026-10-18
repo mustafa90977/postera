@@ -438,8 +438,24 @@ function renderCuratedGrid() {
   `).join('');
 }
 
-/* فلترة التصنيفات من شريط الهيدر وبطاقات المجموعات المختارة (Curated) */
+/* فلترة التصنيفات من شريط الهيدر وبطاقات المجموعات وبطاقات الفاندومز (Fandoms) */
 document.addEventListener('click', e => {
+  const fandomCard = e.target.closest('.fandom-card');
+  if (fandomCard) {
+    const fKeyword = fandomCard.dataset.fandomFilter;
+    const fCat = fandomCard.dataset.catFilter;
+    if (fCat && CATS.includes(fCat)) st.filter = fCat;
+    const searchInput = $('#storeSearchInput');
+    if (searchInput && fKeyword) {
+      searchInput.value = fKeyword;
+    }
+    renderFilters();
+    renderGrid();
+    const gal = document.getElementById('gallery');
+    if (gal) gal.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return;
+  }
+
   const catBtn = e.target.closest('[data-cat-filter], .cat-card, .curated-card');
   if (!catBtn) return;
   const targetCat = catBtn.dataset.catFilter || catBtn.dataset.cat;

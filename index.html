@@ -305,37 +305,281 @@
       </div>
     </section>
 
-    <!-- World & Fandoms Marquee Strip (Displate Style) -->
-    <section class="w-full bg-primary text-on-primary py-5 overflow-hidden border-y border-neutral-800 text-center">
-      <div class="max-w-7xl mx-auto px-6 mb-3">
-        <span class="text-[11px] sm:text-xs tracking-[0.25em] text-silver-metallic uppercase font-bold block">
-          OFFICIAL METAL POSTERS FROM 200+ FANDOMS • بوسترات وتصميمات لأكثر من 200+ عالم مفضل
-        </span>
+    <!-- World & Fandoms Logos Carousel (Displate Exact Style) -->
+    <section class="w-full py-10 lg:py-14 bg-surface-container-low border-y border-warm-gray overflow-hidden">
+      <div class="max-w-7xl mx-auto px-6 text-center mb-8">
+        <h2 class="text-2xl sm:text-4xl font-black tracking-tight text-primary uppercase">
+          OFFICIAL METAL POSTERS FROM 200+ FANDOMS
+        </h2>
+        <p class="text-xs sm:text-sm text-outline mt-2 font-medium">
+          بوسترات وتصميمات معدنية أصلية لأشهر عوالم السينما، الألعاب، الأنمي، والرياضة
+        </p>
       </div>
-      <div class="flex items-center gap-12 whitespace-nowrap animate-marquee select-none font-mono text-sm tracking-widest opacity-85">
-        <span>ELDEN RING</span>
-        <span>•</span>
-        <span>CYBERPUNK 2077</span>
-        <span>•</span>
-        <span>ATTACK ON TITAN</span>
-        <span>•</span>
-        <span>DARK SOULS</span>
-        <span>•</span>
-        <span>INTERSTELLAR</span>
-        <span>•</span>
-        <span>DEMON SLAYER</span>
-        <span>•</span>
-        <span>PORSCHE MOTORSPORT</span>
-        <span>•</span>
-        <span>THE DARK KNIGHT</span>
-        <span>•</span>
-        <span>STUDIO GHIBLI</span>
-        <span>•</span>
-        <span>STAR WARS</span>
-        <span>•</span>
-        <span>MARVEL</span>
-        <span>•</span>
-        <span>BATMAN</span>
+
+      <!-- Marquee Track Container (LTR to ensure smooth infinite loop) -->
+      <div class="w-full overflow-hidden relative select-none py-2" dir="ltr">
+        <!-- Subtle edge gradient masks for high-end editorial look -->
+        <div class="absolute left-0 top-0 bottom-0 w-12 sm:w-24 bg-gradient-to-r from-surface-container-low to-transparent z-10 pointer-events-none"></div>
+        <div class="absolute right-0 top-0 bottom-0 w-12 sm:w-24 bg-gradient-to-l from-surface-container-low to-transparent z-10 pointer-events-none"></div>
+
+        <div class="fandoms-marquee-track">
+          <!-- ==================== SET 1 ==================== -->
+          <!-- Star Wars -->
+          <div class="fandom-card flex-shrink-0 w-28 h-28 sm:w-32 sm:h-32 bg-white rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border border-neutral-200/90 shadow-sm" data-fandom-filter="ستار وورز" data-cat-filter="أفلام ومسلسلات" title="Star Wars">
+            <svg viewBox="0 0 100 44" class="w-20 sm:w-24 h-auto fill-black">
+              <path d="M12 4 L2 4 L0 10 L4 10 C5 7 8 6 10 6 C13 6 14 7 14 9 C14 11 12 12 8 14 C3 16 0 19 0 24 C0 30 5 34 11 34 C18 34 22 29 22 24 L18 24 C18 27 15 31 11 31 C8 31 4 29 4 25 C4 22 6 20 10 18 C15 16 18 13 18 9 C18 4 14 4 12 4 Z M26 4 L20 34 L25 34 L27 24 L35 24 L37 34 L42 34 L36 4 L26 4 Z M31 10 L34 20 L28 20 Z M46 4 L46 8 L54 8 L54 34 L59 34 L59 8 L67 8 L67 4 Z M74 4 L68 34 L73 34 L75 24 L83 24 L85 34 L90 34 L84 4 L74 4 Z M79 10 L82 20 L76 20 Z"/>
+            </svg>
+            <span class="text-[9px] font-black tracking-widest text-neutral-900 uppercase mt-1">STAR WARS</span>
+          </div>
+
+          <!-- Cyberpunk 2077 -->
+          <div class="fandom-card flex-shrink-0 w-28 h-28 sm:w-32 sm:h-32 bg-black rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border border-neutral-800 shadow-sm" data-fandom-filter="سايبربانك" data-cat-filter="ألعاب" title="Cyberpunk 2077">
+            <div class="text-[#FCEE09] font-black italic text-base sm:text-lg tracking-tighter" style="font-family:'Impact',sans-serif;transform:skewX(-12deg);">
+              CYBERPUNK
+            </div>
+            <div class="text-[#00F0FF] text-[10px] font-mono font-bold tracking-[0.25em] mt-0.5">
+              2 0 7 7
+            </div>
+          </div>
+
+          <!-- Fallout -->
+          <div class="fandom-card flex-shrink-0 w-28 h-28 sm:w-32 sm:h-32 bg-[#0E1015] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border border-neutral-800 shadow-sm" data-fandom-filter="فول أوت" data-cat-filter="ألعاب" title="Fallout">
+            <div class="text-white font-black italic text-lg sm:text-xl tracking-tight flex items-center justify-center" style="font-family:'Impact',sans-serif;transform:skewX(-8deg);">
+              <span>Fall</span><span class="text-[#FFCC00] text-sm mx-0.5">⚡</span><span>ut</span>
+            </div>
+            <span class="text-[8px] font-mono text-neutral-400 uppercase tracking-widest mt-1">VAULT-TEC</span>
+          </div>
+
+          <!-- Warhammer -->
+          <div class="fandom-card flex-shrink-0 w-28 h-28 sm:w-32 sm:h-32 bg-white rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border border-neutral-200/90 shadow-sm text-black" data-fandom-filter="وارهامر" data-cat-filter="ألعاب" title="Warhammer">
+            <svg viewBox="0 0 64 50" class="w-12 h-auto fill-black">
+              <path d="M32 4 L22 14 L26 18 L29 15 L29 32 L20 28 L16 34 L32 46 L48 34 L44 28 L35 32 L35 15 L38 18 L42 14 Z M10 18 L18 24 L14 28 L6 22 Z M54 18 L46 24 L50 28 L58 22 Z"/>
+            </svg>
+            <span class="text-[9px] font-black tracking-wider uppercase mt-1">WARHAMMER</span>
+          </div>
+
+          <!-- Marvel -->
+          <div class="fandom-card flex-shrink-0 w-28 h-28 sm:w-32 sm:h-32 bg-black rounded-2xl flex items-center justify-center p-3 cursor-pointer border border-neutral-800 shadow-sm" data-fandom-filter="مارفل" data-cat-filter="أفلام ومسلسلات" title="Marvel">
+            <div class="bg-[#E23636] px-3.5 py-1.5 rounded shadow-sm">
+              <span class="text-white font-black tracking-tighter text-base sm:text-lg block" style="font-family:'Arial Black',Impact,sans-serif;letter-spacing:-0.07em;line-height:1;">MARVEL</span>
+            </div>
+          </div>
+
+          <!-- Middle-Earth / LOTR -->
+          <div class="fandom-card flex-shrink-0 w-28 h-28 sm:w-32 sm:h-32 bg-[#14110E] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border border-[#2D241C] shadow-sm text-center" data-fandom-filter="سيد الخواتم" data-cat-filter="أفلام ومسلسلات" title="Middle-Earth">
+            <svg viewBox="0 0 60 60" class="w-8 h-8 fill-none stroke-[#D4AF37] mb-0.5">
+              <circle cx="30" cy="30" r="22" stroke-width="2" stroke-dasharray="4 2"/>
+              <circle cx="30" cy="30" r="16" stroke-width="1.5"/>
+            </svg>
+            <span class="text-[8px] font-serif font-black tracking-widest text-[#E5C158] uppercase block">MIDDLE-EARTH</span>
+            <span class="text-[7px] text-[#A88938] font-serif tracking-tight block">LORD OF THE RINGS</span>
+          </div>
+
+          <!-- Elden Ring -->
+          <div class="fandom-card flex-shrink-0 w-28 h-28 sm:w-32 sm:h-32 bg-[#060608] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border border-neutral-800 shadow-sm text-center" data-fandom-filter="إلدن رينج" data-cat-filter="ألعاب" title="Elden Ring">
+            <svg viewBox="0 0 64 54" class="w-10 h-auto stroke-[#E5B842] fill-none" stroke-width="2">
+              <circle cx="32" cy="24" r="14"/>
+              <circle cx="32" cy="32" r="14"/>
+              <path d="M 14 28 Q 32 14 50 28"/>
+              <path d="M 14 36 Q 32 50 50 36"/>
+              <line x1="32" y1="4" x2="32" y2="52"/>
+            </svg>
+            <span class="text-[8px] font-serif font-black tracking-[0.2em] text-[#F3CB62] uppercase block mt-1">ELDEN RING</span>
+          </div>
+
+          <!-- DC Comics -->
+          <div class="fandom-card flex-shrink-0 w-28 h-28 sm:w-32 sm:h-32 bg-white rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border border-neutral-200/90 shadow-sm" data-fandom-filter="باتمان" data-cat-filter="أفلام ومسلسلات" title="DC Comics">
+            <div class="w-12 h-12 rounded-full bg-[#0078F0] flex items-center justify-center text-white font-black text-xl tracking-tighter shadow-md" style="font-family:'Arial Black',sans-serif;">
+              DC
+            </div>
+            <span class="text-[8px] font-black tracking-widest text-neutral-800 uppercase mt-1">COMICS</span>
+          </div>
+
+          <!-- NBA -->
+          <div class="fandom-card flex-shrink-0 w-28 h-28 sm:w-32 sm:h-32 bg-black rounded-2xl flex items-center justify-center gap-2 p-3 cursor-pointer border border-neutral-800 shadow-sm" data-fandom-filter="رياضة" data-cat-filter="الكل" title="NBA">
+            <div class="w-6 h-10 rounded-sm overflow-hidden flex relative shadow-sm border border-neutral-700">
+              <div class="w-1/2 bg-[#1D428A] h-full"></div>
+              <div class="w-1/2 bg-[#C8102E] h-full"></div>
+              <svg viewBox="0 0 24 40" class="absolute inset-0 w-full h-full fill-white">
+                <path d="M12 6 C13.5 6 15 7.5 15 9 C15 10.5 13.5 12 12 12 C10.5 12 9 10.5 9 9 C9 7.5 10.5 6 12 6 Z M11 13 L14 18 L16 26 L14 27 L12 22 L10 30 L8 29 L10 18 Z"/>
+              </svg>
+            </div>
+            <span class="text-white font-black text-sm tracking-widest font-mono">NBA</span>
+          </div>
+
+          <!-- PlayStation -->
+          <div class="fandom-card flex-shrink-0 w-28 h-28 sm:w-32 sm:h-32 bg-[#090A0E] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border border-neutral-800 shadow-sm text-center" data-fandom-filter="بلايستيشن" data-cat-filter="ألعاب" title="PlayStation">
+            <svg viewBox="0 0 60 45" class="w-11 h-auto mx-auto" fill="none">
+              <path d="M26 4 L26 34 L32 30 L32 10 L26 4 Z" fill="#003791"/>
+              <path d="M32 10 C38 6 46 9 46 16 C46 22 40 25 32 25 L32 19 C36 19 40 18 40 15 C40 12 36 11 32 13 Z" fill="#E4002B"/>
+              <path d="M26 34 C18 34 10 36 6 39 C14 38 22 38 26 34 Z" fill="#F3C300"/>
+              <path d="M32 30 C38 30 48 32 54 35 C46 34 38 34 32 30 Z" fill="#009639"/>
+            </svg>
+            <span class="text-[8px] text-neutral-300 font-bold tracking-widest block mt-1 font-mono uppercase">PLAYSTATION</span>
+          </div>
+
+          <!-- Batman -->
+          <div class="fandom-card flex-shrink-0 w-28 h-28 sm:w-32 sm:h-32 bg-black rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border border-neutral-800 shadow-sm text-center" data-fandom-filter="باتمان" data-cat-filter="أفلام ومسلسلات" title="Batman">
+            <div class="w-14 h-8 bg-[#FFD700] rounded-full flex items-center justify-center p-1 shadow-md border border-neutral-700">
+              <svg viewBox="0 0 64 32" class="w-12 h-6 fill-black">
+                <path d="M32 4 C28 10 22 8 16 4 C18 10 12 12 4 10 C8 18 18 24 32 28 C46 24 56 18 60 10 C52 12 46 10 48 4 C42 8 36 10 32 4 Z"/>
+              </svg>
+            </div>
+            <span class="text-[8px] text-neutral-300 font-bold tracking-wider block mt-1 font-mono uppercase">BATMAN</span>
+          </div>
+
+          <!-- Attack on Titan -->
+          <div class="fandom-card flex-shrink-0 w-28 h-28 sm:w-32 sm:h-32 bg-[#0C1017] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border border-neutral-800 shadow-sm text-center" data-fandom-filter="هجوم العمالقة" data-cat-filter="أنمي" title="Attack on Titan">
+            <svg viewBox="0 0 64 54" class="w-10 h-auto mx-auto" fill="none">
+              <path d="M18 10 Q32 22 24 46 Q32 30 38 20 Z" fill="#0052CC"/>
+              <path d="M28 14 Q42 24 34 50 Q44 34 48 22 Z" fill="#FFFFFF"/>
+            </svg>
+            <span class="text-[8px] text-neutral-300 font-bold tracking-wider block mt-1 font-mono uppercase">ATTACK ON TITAN</span>
+          </div>
+
+          <!-- Ferrari -->
+          <div class="fandom-card flex-shrink-0 w-28 h-28 sm:w-32 sm:h-32 bg-black rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border border-neutral-800 shadow-sm text-center" data-fandom-filter="فيراري" data-cat-filter="سيارات" title="Ferrari">
+            <div class="w-8 h-10 bg-[#FFE000] rounded-b-xl border border-neutral-700 mx-auto flex flex-col items-center justify-between p-0.5 shadow-md overflow-hidden">
+              <div class="w-full h-1 flex">
+                <div class="w-1/3 bg-green-600 h-full"></div>
+                <div class="w-1/3 bg-white h-full"></div>
+                <div class="w-1/3 bg-red-600 h-full"></div>
+              </div>
+              <span class="text-black font-black text-xs leading-none">🐎</span>
+              <span class="text-[6px] font-black tracking-tighter text-black uppercase leading-none mb-0.5">FERRARI</span>
+            </div>
+            <span class="text-[8px] text-neutral-300 font-bold tracking-wider block mt-1 font-mono uppercase">MOTORSPORT</span>
+          </div>
+
+          <!-- ==================== SET 2 (CLONE FOR SEAMLESS LOOP) ==================== -->
+          <!-- Star Wars -->
+          <div class="fandom-card flex-shrink-0 w-28 h-28 sm:w-32 sm:h-32 bg-white rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border border-neutral-200/90 shadow-sm" data-fandom-filter="ستار وورز" data-cat-filter="أفلام ومسلسلات" title="Star Wars">
+            <svg viewBox="0 0 100 44" class="w-20 sm:w-24 h-auto fill-black">
+              <path d="M12 4 L2 4 L0 10 L4 10 C5 7 8 6 10 6 C13 6 14 7 14 9 C14 11 12 12 8 14 C3 16 0 19 0 24 C0 30 5 34 11 34 C18 34 22 29 22 24 L18 24 C18 27 15 31 11 31 C8 31 4 29 4 25 C4 22 6 20 10 18 C15 16 18 13 18 9 C18 4 14 4 12 4 Z M26 4 L20 34 L25 34 L27 24 L35 24 L37 34 L42 34 L36 4 L26 4 Z M31 10 L34 20 L28 20 Z M46 4 L46 8 L54 8 L54 34 L59 34 L59 8 L67 8 L67 4 Z M74 4 L68 34 L73 34 L75 24 L83 24 L85 34 L90 34 L84 4 L74 4 Z M79 10 L82 20 L76 20 Z"/>
+            </svg>
+            <span class="text-[9px] font-black tracking-widest text-neutral-900 uppercase mt-1">STAR WARS</span>
+          </div>
+
+          <!-- Cyberpunk 2077 -->
+          <div class="fandom-card flex-shrink-0 w-28 h-28 sm:w-32 sm:h-32 bg-black rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border border-neutral-800 shadow-sm" data-fandom-filter="سايبربانك" data-cat-filter="ألعاب" title="Cyberpunk 2077">
+            <div class="text-[#FCEE09] font-black italic text-base sm:text-lg tracking-tighter" style="font-family:'Impact',sans-serif;transform:skewX(-12deg);">
+              CYBERPUNK
+            </div>
+            <div class="text-[#00F0FF] text-[10px] font-mono font-bold tracking-[0.25em] mt-0.5">
+              2 0 7 7
+            </div>
+          </div>
+
+          <!-- Fallout -->
+          <div class="fandom-card flex-shrink-0 w-28 h-28 sm:w-32 sm:h-32 bg-[#0E1015] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border border-neutral-800 shadow-sm" data-fandom-filter="فول أوت" data-cat-filter="ألعاب" title="Fallout">
+            <div class="text-white font-black italic text-lg sm:text-xl tracking-tight flex items-center justify-center" style="font-family:'Impact',sans-serif;transform:skewX(-8deg);">
+              <span>Fall</span><span class="text-[#FFCC00] text-sm mx-0.5">⚡</span><span>ut</span>
+            </div>
+            <span class="text-[8px] font-mono text-neutral-400 uppercase tracking-widest mt-1">VAULT-TEC</span>
+          </div>
+
+          <!-- Warhammer -->
+          <div class="fandom-card flex-shrink-0 w-28 h-28 sm:w-32 sm:h-32 bg-white rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border border-neutral-200/90 shadow-sm text-black" data-fandom-filter="وارهامر" data-cat-filter="ألعاب" title="Warhammer">
+            <svg viewBox="0 0 64 50" class="w-12 h-auto fill-black">
+              <path d="M32 4 L22 14 L26 18 L29 15 L29 32 L20 28 L16 34 L32 46 L48 34 L44 28 L35 32 L35 15 L38 18 L42 14 Z M10 18 L18 24 L14 28 L6 22 Z M54 18 L46 24 L50 28 L58 22 Z"/>
+            </svg>
+            <span class="text-[9px] font-black tracking-wider uppercase mt-1">WARHAMMER</span>
+          </div>
+
+          <!-- Marvel -->
+          <div class="fandom-card flex-shrink-0 w-28 h-28 sm:w-32 sm:h-32 bg-black rounded-2xl flex items-center justify-center p-3 cursor-pointer border border-neutral-800 shadow-sm" data-fandom-filter="مارفل" data-cat-filter="أفلام ومسلسلات" title="Marvel">
+            <div class="bg-[#E23636] px-3.5 py-1.5 rounded shadow-sm">
+              <span class="text-white font-black tracking-tighter text-base sm:text-lg block" style="font-family:'Arial Black',Impact,sans-serif;letter-spacing:-0.07em;line-height:1;">MARVEL</span>
+            </div>
+          </div>
+
+          <!-- Middle-Earth / LOTR -->
+          <div class="fandom-card flex-shrink-0 w-28 h-28 sm:w-32 sm:h-32 bg-[#14110E] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border border-[#2D241C] shadow-sm text-center" data-fandom-filter="سيد الخواتم" data-cat-filter="أفلام ومسلسلات" title="Middle-Earth">
+            <svg viewBox="0 0 60 60" class="w-8 h-8 fill-none stroke-[#D4AF37] mb-0.5">
+              <circle cx="30" cy="30" r="22" stroke-width="2" stroke-dasharray="4 2"/>
+              <circle cx="30" cy="30" r="16" stroke-width="1.5"/>
+            </svg>
+            <span class="text-[8px] font-serif font-black tracking-widest text-[#E5C158] uppercase block">MIDDLE-EARTH</span>
+            <span class="text-[7px] text-[#A88938] font-serif tracking-tight block">LORD OF THE RINGS</span>
+          </div>
+
+          <!-- Elden Ring -->
+          <div class="fandom-card flex-shrink-0 w-28 h-28 sm:w-32 sm:h-32 bg-[#060608] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border border-neutral-800 shadow-sm text-center" data-fandom-filter="إلدن رينج" data-cat-filter="ألعاب" title="Elden Ring">
+            <svg viewBox="0 0 64 54" class="w-10 h-auto stroke-[#E5B842] fill-none" stroke-width="2">
+              <circle cx="32" cy="24" r="14"/>
+              <circle cx="32" cy="32" r="14"/>
+              <path d="M 14 28 Q 32 14 50 28"/>
+              <path d="M 14 36 Q 32 50 50 36"/>
+              <line x1="32" y1="4" x2="32" y2="52"/>
+            </svg>
+            <span class="text-[8px] font-serif font-black tracking-[0.2em] text-[#F3CB62] uppercase block mt-1">ELDEN RING</span>
+          </div>
+
+          <!-- DC Comics -->
+          <div class="fandom-card flex-shrink-0 w-28 h-28 sm:w-32 sm:h-32 bg-white rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border border-neutral-200/90 shadow-sm" data-fandom-filter="باتمان" data-cat-filter="أفلام ومسلسلات" title="DC Comics">
+            <div class="w-12 h-12 rounded-full bg-[#0078F0] flex items-center justify-center text-white font-black text-xl tracking-tighter shadow-md" style="font-family:'Arial Black',sans-serif;">
+              DC
+            </div>
+            <span class="text-[8px] font-black tracking-widest text-neutral-800 uppercase mt-1">COMICS</span>
+          </div>
+
+          <!-- NBA -->
+          <div class="fandom-card flex-shrink-0 w-28 h-28 sm:w-32 sm:h-32 bg-black rounded-2xl flex items-center justify-center gap-2 p-3 cursor-pointer border border-neutral-800 shadow-sm" data-fandom-filter="رياضة" data-cat-filter="الكل" title="NBA">
+            <div class="w-6 h-10 rounded-sm overflow-hidden flex relative shadow-sm border border-neutral-700">
+              <div class="w-1/2 bg-[#1D428A] h-full"></div>
+              <div class="w-1/2 bg-[#C8102E] h-full"></div>
+              <svg viewBox="0 0 24 40" class="absolute inset-0 w-full h-full fill-white">
+                <path d="M12 6 C13.5 6 15 7.5 15 9 C15 10.5 13.5 12 12 12 C10.5 12 9 10.5 9 9 C9 7.5 10.5 6 12 6 Z M11 13 L14 18 L16 26 L14 27 L12 22 L10 30 L8 29 L10 18 Z"/>
+              </svg>
+            </div>
+            <span class="text-white font-black text-sm tracking-widest font-mono">NBA</span>
+          </div>
+
+          <!-- PlayStation -->
+          <div class="fandom-card flex-shrink-0 w-28 h-28 sm:w-32 sm:h-32 bg-[#090A0E] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border border-neutral-800 shadow-sm text-center" data-fandom-filter="بلايستيشن" data-cat-filter="ألعاب" title="PlayStation">
+            <svg viewBox="0 0 60 45" class="w-11 h-auto mx-auto" fill="none">
+              <path d="M26 4 L26 34 L32 30 L32 10 L26 4 Z" fill="#003791"/>
+              <path d="M32 10 C38 6 46 9 46 16 C46 22 40 25 32 25 L32 19 C36 19 40 18 40 15 C40 12 36 11 32 13 Z" fill="#E4002B"/>
+              <path d="M26 34 C18 34 10 36 6 39 C14 38 22 38 26 34 Z" fill="#F3C300"/>
+              <path d="M32 30 C38 30 48 32 54 35 C46 34 38 34 32 30 Z" fill="#009639"/>
+            </svg>
+            <span class="text-[8px] text-neutral-300 font-bold tracking-widest block mt-1 font-mono uppercase">PLAYSTATION</span>
+          </div>
+
+          <!-- Batman -->
+          <div class="fandom-card flex-shrink-0 w-28 h-28 sm:w-32 sm:h-32 bg-black rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border border-neutral-800 shadow-sm text-center" data-fandom-filter="باتمان" data-cat-filter="أفلام ومسلسلات" title="Batman">
+            <div class="w-14 h-8 bg-[#FFD700] rounded-full flex items-center justify-center p-1 shadow-md border border-neutral-700">
+              <svg viewBox="0 0 64 32" class="w-12 h-6 fill-black">
+                <path d="M32 4 C28 10 22 8 16 4 C18 10 12 12 4 10 C8 18 18 24 32 28 C46 24 56 18 60 10 C52 12 46 10 48 4 C42 8 36 10 32 4 Z"/>
+              </svg>
+            </div>
+            <span class="text-[8px] text-neutral-300 font-bold tracking-wider block mt-1 font-mono uppercase">BATMAN</span>
+          </div>
+
+          <!-- Attack on Titan -->
+          <div class="fandom-card flex-shrink-0 w-28 h-28 sm:w-32 sm:h-32 bg-[#0C1017] rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border border-neutral-800 shadow-sm text-center" data-fandom-filter="هجوم العمالقة" data-cat-filter="أنمي" title="Attack on Titan">
+            <svg viewBox="0 0 64 54" class="w-10 h-auto mx-auto" fill="none">
+              <path d="M18 10 Q32 22 24 46 Q32 30 38 20 Z" fill="#0052CC"/>
+              <path d="M28 14 Q42 24 34 50 Q44 34 48 22 Z" fill="#FFFFFF"/>
+            </svg>
+            <span class="text-[8px] text-neutral-300 font-bold tracking-wider block mt-1 font-mono uppercase">ATTACK ON TITAN</span>
+          </div>
+
+          <!-- Ferrari -->
+          <div class="fandom-card flex-shrink-0 w-28 h-28 sm:w-32 sm:h-32 bg-black rounded-2xl flex flex-col items-center justify-center p-3 cursor-pointer border border-neutral-800 shadow-sm text-center" data-fandom-filter="فيراري" data-cat-filter="سيارات" title="Ferrari">
+            <div class="w-8 h-10 bg-[#FFE000] rounded-b-xl border border-neutral-700 mx-auto flex flex-col items-center justify-between p-0.5 shadow-md overflow-hidden">
+              <div class="w-full h-1 flex">
+                <div class="w-1/3 bg-green-600 h-full"></div>
+                <div class="w-1/3 bg-white h-full"></div>
+                <div class="w-1/3 bg-red-600 h-full"></div>
+              </div>
+              <span class="text-black font-black text-xs leading-none">🐎</span>
+              <span class="text-[6px] font-black tracking-tighter text-black uppercase leading-none mb-0.5">FERRARI</span>
+            </div>
+            <span class="text-[8px] text-neutral-300 font-bold tracking-wider block mt-1 font-mono uppercase">MOTORSPORT</span>
+          </div>
+
+        </div>
       </div>
     </section>
 

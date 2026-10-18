@@ -2541,6 +2541,11 @@ footer .wrap {
   100% { transform: translateX(50%); }
 }
 
+@keyframes fandomsMarquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(calc(-50% - 0.75rem)); }
+}
+
 .animate-marquee {
   display: inline-flex;
   animation: marqueeRTL 30s linear infinite;
@@ -2548,6 +2553,28 @@ footer .wrap {
 
 .animate-marquee:hover {
   animation-play-state: paused;
+}
+
+.fandoms-marquee-track {
+  display: flex;
+  width: max-content;
+  gap: 1.5rem;
+  animation: fandomsMarquee 38s linear infinite;
+  will-change: transform;
+}
+
+.fandoms-marquee-track:hover {
+  animation-play-state: paused;
+}
+
+.fandom-card {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.fandom-card:hover {
+  transform: translateY(-6px) scale(1.04);
+  box-shadow: 0 16px 30px -8px rgba(0, 0, 0, 0.16), 0 4px 8px rgba(0, 0, 0, 0.06);
 }
 .poster-shadow {
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.22), 0 8px 10px -6px rgba(0, 0, 0, 0.15);
