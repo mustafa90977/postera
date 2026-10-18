@@ -8,11 +8,11 @@
     },
     {
       "source": "/product/:id",
-      "destination": "/product.html?id=:id"
+      "destination": "/product.html"
     },
     {
       "source": "/displate/:id",
-      "destination": "/product.html?id=:id"
+      "destination": "/product.html"
     }
   ],
   "headers": [
