@@ -152,8 +152,23 @@ let POSTERS = [
 ];
 let CATS = ['الكل', 'أفلام ومسلسلات', 'ألعاب', 'أنمي', 'سيارات'];
 
-/* ---------- إدارة الحالة (State) ---------- */
-let cart = [];
+/* ---------- إدارة الحالة والسلة (State & Cart Storage) ---------- */
+function loadCart() {
+  try {
+    const raw = localStorage.getItem('postera_cart');
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveCart() {
+  try {
+    localStorage.setItem('postera_cart', JSON.stringify(cart));
+  } catch (e) {}
+}
+
+let cart = loadCart();
 const st = { filter: 'الكل', sizes: {} };
 
 /* ---------- نظام الإشعارات السريعة (Toast) ---------- */
@@ -429,6 +444,14 @@ document.addEventListener('click', e => {
   if (!catBtn) return;
   const targetCat = catBtn.dataset.catFilter || catBtn.dataset.cat;
   if (!targetCat) return;
+
+  const galleryEl = document.getElementById('gallery');
+  if (!galleryEl) {
+    // إذا كان المستخدم في صفحة تفاصيل المنتج أو صفحة أخرى، توجه إلى المعرض في الصفحة الرئيسية مع التصنيف المختار
+    window.location.href = `index.html?cat=${encodeURIComponent(targetCat)}#gallery`;
+    return;
+  }
+
   e.preventDefault();
   st.filter = targetCat;
   document.querySelectorAll('.header-nav-link').forEach(l => {
@@ -436,11 +459,10 @@ document.addEventListener('click', e => {
   });
   renderFilters();
   renderGrid();
-  const galleryEl = document.getElementById('gallery');
-  if (galleryEl) galleryEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  galleryEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 
-$('#footWa').textContent = SHOP.whatsapp;
+if ($('#footWa')) $('#footWa').textContent = SHOP.whatsapp;
 
 function segHTML(items, cur, attr) {
   return items.map(i => `<button type="button" ${attr}="${i.id}" aria-pressed="${i.id === cur}">${i.html}</button>`).join('');
@@ -460,6 +482,9 @@ function renderFilters() {
 }
 
 function renderGrid() {
+  const grid = $('#grid');
+  if (!grid) return;
+
   let list = POSTERS.filter(p => st.filter === 'الكل' || p.cat === st.filter);
 
   // دعم البحث المباشر
@@ -469,12 +494,12 @@ function renderGrid() {
     list = list.filter(p => (p.title && p.title.toLowerCase().includes(query)) || (p.cat && p.cat.toLowerCase().includes(query)));
   }
 
-  $('#grid').innerHTML = list.map(p => {
+  grid.innerHTML = list.map(p => {
     const artContent = p.image_url 
       ? `<img src="${p.image_url}" alt="${esc(p.title)}" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 select-none">` 
       : (p.kind ? artSvg(p.kind, p.title) : artSvg('moon', p.title));
     
-    return `<div class="poster-card group relative aspect-[2/3] w-full rounded-lg overflow-hidden poster-shadow cursor-pointer select-none transition-all duration-300 bg-surface-container" data-id="${p.id}" title="${esc(p.title)}">
+    return `<a href="product.html?id=${encodeURIComponent(p.id)}" class="poster-card group relative aspect-[2/3] w-full rounded-lg overflow-hidden poster-shadow cursor-pointer select-none transition-all duration-300 bg-surface-container block" data-id="${p.id}" title="${esc(p.title)}">
       <!-- Metal Poster Image (صور فقط كما في ديسبليت) -->
       <div class="w-full h-full">
         ${artContent}
@@ -490,10 +515,10 @@ function renderGrid() {
       <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 bg-pure-black/20 backdrop-blur-[2px]">
         <span class="px-4 py-2 bg-pure-black/90 text-canvas-white text-xs font-bold rounded-full shadow-lg border border-white/20 flex items-center gap-1.5 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
           <span class="material-symbols-outlined text-[16px]">visibility</span>
-          <span>عرض اللوحة</span>
+          <span>عرض التفاصيل</span>
         </span>
       </div>
-    </div>`;
+    </a>`;
   }).join('');
 }
 
@@ -679,12 +704,7 @@ $('#pmAddToCart')?.addEventListener('click', () => {
   openCart();
 });
 
-// فتح المودال عند النقر على أي بوستر بالمعرض
-$('#grid')?.addEventListener('click', e => {
-  const card = e.target.closest('[data-id]');
-  if (!card) return;
-  openProductModal(card.dataset.id);
-});
+// النقر على بطاقة البوستر يفتح صفحة المنتج المخصصة تلقائياً عبر رابط <a>
 
 $('#filters')?.addEventListener('click', e => {
   const b = e.target.closest('[data-cat]');
@@ -1188,10 +1208,11 @@ function addItem(it) {
   const ex = cart.find(c => c.key === it.key);
   if (ex) ex.qty += addCount;
   else cart.push({ ...it, qty: addCount });
+  saveCart();
   renderCart();
   toast('اتضافت للسلة');
   const b = $('#badge');
-  if (b.animate) {
+  if (b && b.animate) {
     b.animate([{ transform: 'scale(1.35)' }, { transform: 'scale(1)' }], { duration: 260 });
   }
 }
@@ -1344,11 +1365,14 @@ function updateDepositUI() {
 }
 
 function renderCart() {
-  $('#badge').textContent = cart.reduce((a, i) => a + i.qty, 0);
+  if ($('#badge')) $('#badge').textContent = cart.reduce((a, i) => a + i.qty, 0);
+  if ($('#headerCartTotal')) $('#headerCartTotal').textContent = egp(subtotal());
   const list = $('#cartList');
+  if (!list) return;
+
   if (!cart.length) {
     list.innerHTML = '<div class="empty"><p>السلة فاضية لسه.</p><button class="btn ghost sm" type="button" id="emptyGo">شوف التشكيلة</button></div>';
-    $('#cartTotals').innerHTML = '';
+    if ($('#cartTotals')) $('#cartTotals').innerHTML = '';
   } else {
     list.innerHTML = cart.map(i => `
       <div class="item" data-key="${i.key}">
@@ -1367,20 +1391,25 @@ function renderCart() {
         <div class="price num">${egp(i.price * i.qty)}</div>
       </div>
     `).join('');
-    $('#cartTotals').innerHTML = totalsHTML();
+    if ($('#cartTotals')) $('#cartTotals').innerHTML = totalsHTML();
   }
   renderGovOptions();
-  $('#coTotals').innerHTML = checkoutTotalsHTML();
+  if ($('#coTotals')) $('#coTotals').innerHTML = checkoutTotalsHTML();
   updateDepositUI();
   renderPay();
   updateAmtHint();
   renderFoot();
 }
 
-$('#cartList').addEventListener('click', e => {
+$('#cartList')?.addEventListener('click', e => {
   if (e.target.id === 'emptyGo') {
     closeDrawer();
-    document.getElementById('gallery').scrollIntoView({ behavior: 'smooth' });
+    const gal = document.getElementById('gallery');
+    if (gal) {
+      gal.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      window.location.href = 'index.html#gallery';
+    }
     return;
   }
   const row = e.target.closest('.item'), b = e.target.closest('[data-act]');
@@ -1394,6 +1423,7 @@ $('#cartList').addEventListener('click', e => {
   } else {
     cart = cart.filter(c => c !== it);
   }
+  saveCart();
   renderCart();
 });
 
@@ -1402,12 +1432,19 @@ let step = 'cart', lastFocus = null;
 
 function openDrawer() {
   lastFocus = document.activeElement;
+  if (!$('#drawer') || !$('#scrim')) return;
   $('#drawer').inert = false;
   $('#drawer').setAttribute('aria-hidden', 'false');
   $('#drawer').classList.add('open');
   $('#scrim').classList.add('open');
   document.body.style.overflow = 'hidden';
-  setTimeout(() => $('#closeCart').focus(), 50);
+  setTimeout(() => $('#closeCart')?.focus(), 50);
+}
+
+function openCart() {
+  if ($('#navDrawer') && $('#navDrawer').classList.contains('open')) closeNavMenu();
+  setStep(step === 'done' ? 'cart' : step);
+  openDrawer();
 }
 
 function closeDrawer() {
@@ -1506,13 +1543,13 @@ $$('#navDrawer .nav-item').forEach(item => {
   });
 });
 
-$('#openCart').addEventListener('click', () => {
+$('#openCart')?.addEventListener('click', () => {
   if ($('#navDrawer') && $('#navDrawer').classList.contains('open')) closeNavMenu();
   setStep(step === 'done' ? 'cart' : step);
   openDrawer();
 });
-$('#closeCart').addEventListener('click', closeDrawer);
-$('#scrim').addEventListener('click', closeDrawer);
+$('#closeCart')?.addEventListener('click', closeDrawer);
+$('#scrim')?.addEventListener('click', closeDrawer);
 
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
@@ -1521,8 +1558,9 @@ document.addEventListener('keydown', e => {
   }
 });
 
-$('#backShop').addEventListener('click', () => {
+$('#backShop')?.addEventListener('click', () => {
   cart = [];
+  saveCart();
   renderCart();
   setStep('cart');
   closeDrawer();
@@ -1945,8 +1983,9 @@ async function submitOrder() {
     sessionStorage.setItem('postera_last_order', String(Date.now()));
   } catch (e) {}
   cart = [];
+  saveCart();
   renderCart();
-  $('#ordNo').textContent = order.no;
+  if ($('#ordNo')) $('#ordNo').textContent = order.no;
   setStep('done');
 }
 
@@ -2171,6 +2210,9 @@ async function syncWithSupabase() {
       if (!CATS.includes(st.filter)) st.filter = 'الكل';
       renderFilters();
       renderGrid();
+      try {
+        window.dispatchEvent(new CustomEvent('postera:products-synced'));
+      } catch (e) {}
     }
   } catch (e) {
     console.warn('تنبيه المزامنة مع Supabase (سيتم استخدام البيانات المحلية):', e);
@@ -2238,6 +2280,19 @@ if (initFloatWa) {
     initFloatWa.style.display = 'none';
   }
 }
+try {
+  const urlParams = new URLSearchParams(window.location.search);
+  const catParam = urlParams.get('cat');
+  if (catParam) {
+    st.filter = decodeURIComponent(catParam);
+  }
+  const qParam = urlParams.get('q');
+  const searchInput = $('#storeSearchInput');
+  if (qParam && searchInput) {
+    searchInput.value = decodeURIComponent(qParam);
+  }
+} catch (e) {}
+
 renderFilters();
 renderGrid();
 renderCustomSizes();
