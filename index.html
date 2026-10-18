@@ -140,9 +140,10 @@
       </button>
 
       <!-- Brand Identity Wordmark (Displate Style) -->
-      <a class="flex items-center gap-2.5 group" href="#" title="POSTERA | بوستيرا">
-        <img src="logo.svg" alt="POSTERA Metal Posters" class="h-9 w-auto text-primary" style="display:inline-block;"/>
-        <span class="text-xs text-outline font-normal border-r border-warm-gray pr-2 hidden sm:inline-block">بوستيرا</span>
+      <a class="flex items-center gap-1.5 group select-none" href="#">
+        <span class="text-2xl font-black tracking-tighter text-primary uppercase">POSTERA</span>
+        <span class="inline-block w-2.5 h-2.5 rounded-full bg-blue-600 mb-1.5"></span>
+        <span class="text-xs text-outline font-normal border-r border-warm-gray pr-2 mr-1 hidden sm:inline-block">بوستيرا</span>
       </a>
 
       <!-- Desktop Navigation Links -->
@@ -159,11 +160,11 @@
       </nav>
     </div>
 
-    <!-- Search Input -->
-    <div class="flex-1 max-w-xs hidden md:block">
+    <!-- Search Input (Displate Center Bar) -->
+    <div class="flex-1 max-w-sm lg:max-w-md hidden md:block">
       <div class="relative flex items-center">
-        <input id="storeSearchInput" class="w-full h-10 pr-9 pl-4 bg-surface-container-lowest border border-outline-variant rounded-full text-xs text-on-surface placeholder:text-outline focus:outline-none focus:border-primary transition-colors" placeholder="ابحث عن فيلم، لعبة، أو فنان..." type="text"/>
-        <span class="material-symbols-outlined absolute right-3 text-outline text-[18px]">search</span>
+        <input id="storeSearchInput" class="w-full h-11 pr-10 pl-4 bg-surface-container-lowest border border-outline-variant rounded-full text-xs text-on-surface placeholder:text-outline focus:outline-none focus:border-primary transition-colors shadow-inner" placeholder="🔍 ابحث في آلاف اللوحات الفنية (أفلام، ألعاب، أنمي، سيارات)..." type="text"/>
+        <span class="material-symbols-outlined absolute right-3.5 text-outline text-[18px]">search</span>
       </div>
     </div>
 
@@ -304,8 +305,13 @@
       </div>
     </section>
 
-    <!-- World Marquee Strip -->
-    <section class="w-full bg-primary text-on-primary py-4 overflow-hidden border-y border-neutral-800">
+    <!-- World & Fandoms Marquee Strip (Displate Style) -->
+    <section class="w-full bg-primary text-on-primary py-5 overflow-hidden border-y border-neutral-800 text-center">
+      <div class="max-w-7xl mx-auto px-6 mb-3">
+        <span class="text-[11px] sm:text-xs tracking-[0.25em] text-silver-metallic uppercase font-bold block">
+          OFFICIAL METAL POSTERS FROM 200+ FANDOMS • بوسترات وتصميمات لأكثر من 200+ عالم مفضل
+        </span>
+      </div>
       <div class="flex items-center gap-12 whitespace-nowrap animate-marquee select-none font-mono text-sm tracking-widest opacity-85">
         <span>ELDEN RING</span>
         <span>•</span>
@@ -324,33 +330,41 @@
         <span>THE DARK KNIGHT</span>
         <span>•</span>
         <span>STUDIO GHIBLI</span>
+        <span>•</span>
+        <span>STAR WARS</span>
+        <span>•</span>
+        <span>MARVEL</span>
+        <span>•</span>
+        <span>BATMAN</span>
       </div>
     </section>
 
-    <!-- 2. Shop by Category (تسوق حسب التصنيف الفني) -->
+    <!-- 2. Show Off What Makes You, You (عبّر عما يميزك في مساحتك) -->
     <section class="w-full py-16 lg:py-24 bg-surface-container-low" id="categoriesBlock">
-      <div class="max-w-7xl mx-auto px-6 lg:px-12">
-        <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 text-right">
-          <div>
-            <span class="text-xs font-semibold text-outline uppercase tracking-wider block mb-2">المجموعات المختارة</span>
-            <h2 class="text-2xl sm:text-3xl lg:text-4xl text-primary font-bold">تسوق حسب التصنيف الفني</h2>
-          </div>
-          <p class="text-sm text-on-surface-variant max-w-md mt-4 md:mt-0 leading-relaxed">
-            اكتشف مجموعات منسقة بعناية تلائم غرف الألعاب، استوديوهات التصميم، وغرف المعيشة العصرية.
-          </p>
-        </div>
+      <div class="max-w-7xl mx-auto px-6 lg:px-12 text-center mb-12">
+        <span class="text-xs font-bold text-outline uppercase tracking-[0.2em] block mb-2 font-mono">
+          SHOW OFF WHAT MAKES YOU, YOU
+        </span>
+        <h2 class="text-2xl sm:text-4xl text-primary font-bold">
+          عبّر عما يميّزك في مساحتك الخاصة
+        </h2>
+        <p class="text-sm text-on-surface-variant max-w-xl mx-auto mt-3 leading-relaxed">
+          مجموعات فنية منسقة بعناية تلائم غرف الألعاب، السينما المنزلية، واستوديوهات التصميم العصري.
+        </p>
+      </div>
 
+      <div class="max-w-7xl mx-auto px-6 lg:px-12">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="curatedGrid">
           <!-- Category 1: Gaming -->
           <div class="group relative aspect-[3/4] rounded-xl overflow-hidden shadow-md flex flex-col justify-end p-6 bg-surface-container transition-all duration-300 hover:shadow-xl cursor-pointer" data-cat-filter="ألعاب">
             <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCiyhELUUbbJZCMR7V1nZbU2sYZNK9TdyUFA4nJtjfWQ68K3-eQ-xoXpk2gKsR3ehbCvYmCNXobVmXShKJaMy1xZSU-g4hNKlz5Jl45hq5AxvH7lN3o_ISx6qkp4S20iOkfT2Y6AWwoOgxWSCrqoglMHrOvinGYZDzxxJKobijaPD8N8AIr7HAoS-uiuu-g6jyHrJXF9UgoNg53mT_5NDR8gAz8OAmZiGsIeNalq2M')"></div>
-            <div class="absolute inset-0 bg-gradient-to-t from-pure-black/90 via-pure-black/40 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-pure-black/95 via-pure-black/45 to-transparent"></div>
             <div class="relative z-10 text-right flex flex-col">
-              <span class="text-[10px] text-silver-metallic uppercase tracking-wider mb-1">تصميمات الألعاب والبطولات</span>
-              <h3 class="text-xl text-canvas-white font-bold mb-2">ألعاب وجيمنج</h3>
-              <span class="inline-flex items-center gap-1.5 text-xs text-silver-metallic group-hover:text-canvas-white transition-colors">
-                <span>استكشف المجموعة</span>
-                <span class="material-symbols-outlined text-[16px]">arrow_left</span>
+              <span class="text-[10px] text-silver-metallic uppercase tracking-wider mb-1 font-mono">GAMING DESIGNS</span>
+              <h3 class="text-xl text-canvas-white font-bold mb-3">ألعاب وجيمنج</h3>
+              <span class="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-canvas-white/20 hover:bg-canvas-white text-canvas-white hover:text-pure-black backdrop-blur-md rounded-md text-xs font-bold transition-all w-fit">
+                <span>تصفح التصميمات</span>
+                <span class="material-symbols-outlined text-[14px]">arrow_left</span>
               </span>
             </div>
           </div>
@@ -358,13 +372,13 @@
           <!-- Category 2: Cinema & Movies -->
           <div class="group relative aspect-[3/4] rounded-xl overflow-hidden shadow-md flex flex-col justify-end p-6 bg-surface-container transition-all duration-300 hover:shadow-xl cursor-pointer" data-cat-filter="أفلام ومسلسلات">
             <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBa6p-ivT93GOwZYKdpU8OTwRkZEGKoJjYqZGOwnxcYciKJZ8UhK_VYvWZOc4hdAI7OoWPfQfgOcivr-cJwrZUQIXRzauWg8CnQgd10cCnNJvdCjfB4PTyxBIVYDQz6umE6pG5jA5R5tYLAZY8VJ6PTi-di-Hm_hTWT-xcNAtB3KrIbTdiHysrlTqSD_ySt490F_obLfCC71fFhsrQ0X7zWHJOxC7CCyqXSijH9Yx4')"></div>
-            <div class="absolute inset-0 bg-gradient-to-t from-pure-black/90 via-pure-black/40 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-pure-black/95 via-pure-black/45 to-transparent"></div>
             <div class="relative z-10 text-right flex flex-col">
-              <span class="text-[10px] text-silver-metallic uppercase tracking-wider mb-1">أفلام هوليوود والكلاسيكيات</span>
-              <h3 class="text-xl text-canvas-white font-bold mb-2">سينما وأفلام</h3>
-              <span class="inline-flex items-center gap-1.5 text-xs text-silver-metallic group-hover:text-canvas-white transition-colors">
-                <span>استكشف المجموعة</span>
-                <span class="material-symbols-outlined text-[16px]">arrow_left</span>
+              <span class="text-[10px] text-silver-metallic uppercase tracking-wider mb-1 font-mono">CINEMA & MOVIES</span>
+              <h3 class="text-xl text-canvas-white font-bold mb-3">سينما وأفلام</h3>
+              <span class="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-canvas-white/20 hover:bg-canvas-white text-canvas-white hover:text-pure-black backdrop-blur-md rounded-md text-xs font-bold transition-all w-fit">
+                <span>تصفح التصميمات</span>
+                <span class="material-symbols-outlined text-[14px]">arrow_left</span>
               </span>
             </div>
           </div>
@@ -372,13 +386,13 @@
           <!-- Category 3: Anime -->
           <div class="group relative aspect-[3/4] rounded-xl overflow-hidden shadow-md flex flex-col justify-end p-6 bg-surface-container transition-all duration-300 hover:shadow-xl cursor-pointer" data-cat-filter="أنمي">
             <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC06lnKSPuudLbHbFTuZ5RI6Dqq8cqepJtG6qcgbzX3uJiatMhZzynS1weEPeVnTjH8Qt1Lzz3NfhhA9I7p-VYanEFERNBgSRpzKo4e75pj29vtna_UO-QeDIOccXzD5TjXu3ZJVjwAzSopPKLzwKqvF6nsGe6fm6d5wX2NNLlKNRl_fwzgw4uK13dVnWv49DHUJjHsgmeXvCZKthfpBO2FmRl9ARRbLhIHXaw5Cbs')"></div>
-            <div class="absolute inset-0 bg-gradient-to-t from-pure-black/90 via-pure-black/40 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-pure-black/95 via-pure-black/45 to-transparent"></div>
             <div class="relative z-10 text-right flex flex-col">
-              <span class="text-[10px] text-silver-metallic uppercase tracking-wider mb-1">مانجا وأنيميشن ياباني</span>
-              <h3 class="text-xl text-canvas-white font-bold mb-2">عالم الأنمي</h3>
-              <span class="inline-flex items-center gap-1.5 text-xs text-silver-metallic group-hover:text-canvas-white transition-colors">
-                <span>استكشف المجموعة</span>
-                <span class="material-symbols-outlined text-[16px]">arrow_left</span>
+              <span class="text-[10px] text-silver-metallic uppercase tracking-wider mb-1 font-mono">ANIME & MANGA</span>
+              <h3 class="text-xl text-canvas-white font-bold mb-3">عالم الأنمي</h3>
+              <span class="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-canvas-white/20 hover:bg-canvas-white text-canvas-white hover:text-pure-black backdrop-blur-md rounded-md text-xs font-bold transition-all w-fit">
+                <span>تصفح التصميمات</span>
+                <span class="material-symbols-outlined text-[14px]">arrow_left</span>
               </span>
             </div>
           </div>
@@ -386,13 +400,13 @@
           <!-- Category 4: Cars & Speed -->
           <div class="group relative aspect-[3/4] rounded-xl overflow-hidden shadow-md flex flex-col justify-end p-6 bg-surface-container transition-all duration-300 hover:shadow-xl cursor-pointer" data-cat-filter="سيارات">
             <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAnt-rm093C11cXoklaZUVfxuBOsLzxtj0WHzjY_xRfuepeXdOkeLys-Jui9QqZiUTPMYgn6scV8T6FRBrmxQlqBmyUJh0eXvUSE9rZd4gvwn3Tt8GjAO9P6BfDPf3MEYKAjyPNMSWV15zPEihgpZ-fhozKz9uB9KPnJVtdDEil5Bfkw3gPx45hY-w0M9DrSc9TKJd5wIVbUzhT3NF2oJxsGVK5F8Nt2-3jJjMSERo')"></div>
-            <div class="absolute inset-0 bg-gradient-to-t from-pure-black/90 via-pure-black/40 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-pure-black/95 via-pure-black/45 to-transparent"></div>
             <div class="relative z-10 text-right flex flex-col">
-              <span class="text-[10px] text-silver-metallic uppercase tracking-wider mb-1">السيارات الرياضية الفاخرة</span>
-              <h3 class="text-xl text-canvas-white font-bold mb-2">سيارات وسرعة</h3>
-              <span class="inline-flex items-center gap-1.5 text-xs text-silver-metallic group-hover:text-canvas-white transition-colors">
-                <span>استكشف المجموعة</span>
-                <span class="material-symbols-outlined text-[16px]">arrow_left</span>
+              <span class="text-[10px] text-silver-metallic uppercase tracking-wider mb-1 font-mono">CARS & SPEED</span>
+              <h3 class="text-xl text-canvas-white font-bold mb-3">سيارات وسرعة</h3>
+              <span class="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-canvas-white/20 hover:bg-canvas-white text-canvas-white hover:text-pure-black backdrop-blur-md rounded-md text-xs font-bold transition-all w-fit">
+                <span>تصفح التصميمات</span>
+                <span class="material-symbols-outlined text-[14px]">arrow_left</span>
               </span>
             </div>
           </div>
@@ -400,25 +414,32 @@
       </div>
     </section>
 
-    <!-- 3. Featured Metal Posters Gallery (معرض البوسترات المميزة) -->
+    <!-- 3. Browse Posters You'll Love (استكشف بوسترات ستعشقها - صور فقط مع نافذة تفاصيل) -->
     <section class="w-full py-16 lg:py-24 bg-surface scroll-mt-24" id="gallery">
       <div class="max-w-7xl mx-auto px-6 lg:px-12">
-        <!-- Section Header and Filter Pills -->
+        <!-- Section Header and Filter Pills (Displate Style) -->
         <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 text-right">
           <div>
-            <span class="text-xs font-semibold text-outline uppercase tracking-wider block mb-2">كتالوج الإصدارات</span>
-            <h2 class="text-2xl sm:text-3xl lg:text-4xl text-primary font-bold">تصفح البوسترات المفضلة لك</h2>
+            <span class="text-xs font-bold text-outline uppercase tracking-[0.2em] block mb-2 font-mono">
+              BROWSE POSTERS YOU'LL LOVE
+            </span>
+            <h2 class="text-2xl sm:text-4xl text-primary font-bold">
+              استكشف بوسترات ستعشقها
+            </h2>
+            <p class="text-xs sm:text-sm text-outline mt-1.5">
+              انقر على أي بوستر لمعاينة المقاسات، اللمسة النهائية (مطفي / لامع) وتفاصيل الطلب.
+            </p>
           </div>
 
           <!-- Dynamic Filter Pills -->
           <div class="flex flex-wrap items-center gap-2" id="filters" role="group" aria-label="تصنيف اللوحات">
-            <!-- ديناميكي من script.js -->
+            <!-- يتم التعبئة ديناميكياً من script.js -->
           </div>
         </div>
 
-        <!-- Real Products Grid (Rendered dynamically from script.js / Supabase) -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8" id="grid">
-          <!-- ديناميكي من script.js -->
+        <!-- Real Products Grid: صور بوسترات معدنية فقط بدون نصوص سفلية مشتتة -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8" id="grid">
+          <!-- يتم التعبئة ديناميكياً من script.js -->
         </div>
       </div>
     </section>
@@ -839,8 +860,8 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8 pb-12 border-b border-warm-gray text-right">
       
       <div class="lg:col-span-2 flex flex-col gap-4">
-        <div class="flex items-center gap-2.5">
-          <img src="logo.svg" alt="POSTERA Metal Posters" class="h-9 w-auto text-primary" style="display:inline-block;"/>
+        <div class="flex items-center gap-2">
+          <span class="text-2xl font-bold tracking-tight text-primary uppercase">POSTERA</span>
           <span class="text-xs text-outline pr-2 border-r border-warm-gray">أتيليه اللوحات المعدنية</span>
         </div>
         <p class="text-sm text-on-surface-variant max-w-sm leading-relaxed">
@@ -920,9 +941,8 @@
 <div class="scrim" id="navScrim"></div>
 <aside class="nav-drawer" id="navDrawer" aria-hidden="true" inert dir="rtl" lang="ar" aria-labelledby="navDrawerTitle">
   <div class="dhead">
-    <div class="brand" style="margin: 0; display:flex; align-items:center; gap:8px;">
-      <img src="logo.svg" alt="POSTERA" style="height:28px;width:auto;display:inline-block;"/>
-      <span style="font-size:0.85rem;color:var(--muted);border-right:1px solid var(--line);padding-right:8px;">بوستيرا</span>
+    <div class="brand" style="margin: 0;">
+      <b style="font-size: 1.4rem;">بوستيرا</b><span>POSTERA</span>
     </div>
     <button class="iconbtn" id="closeMenu" type="button" aria-label="إغلاق القائمة">✕</button>
   </div>
@@ -959,6 +979,138 @@
     </a>
   </div>
 </aside>
+
+<!-- نافذة تفاصيل اللوحة الفنية الكاملة (Product Details Modal - Displate Style) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-pure-black/80 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300" id="productModal" role="dialog" aria-modal="true" aria-labelledby="pmTitle">
+  <div class="relative w-full max-w-5xl max-h-[92vh] bg-surface rounded-2xl border border-warm-gray shadow-2xl overflow-hidden flex flex-col my-auto transition-transform duration-300 scale-95" id="productModalCard">
+    <!-- Close Button -->
+    <button class="absolute top-4 left-4 z-30 w-10 h-10 rounded-full bg-surface-container-low hover:bg-surface-container text-primary flex items-center justify-center transition-colors border border-warm-gray shadow-sm cursor-pointer" id="closeProductModal" type="button" aria-label="إغلاق النافذة">
+      <span class="material-symbols-outlined text-[20px]">close</span>
+    </button>
+
+    <!-- Modal Scrollable Content -->
+    <div class="overflow-y-auto flex-1 p-5 sm:p-8 lg:p-10">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+        
+        <!-- Left Column: 3D Metal Plate Preview & Finish Switcher (6 Cols) -->
+        <div class="lg:col-span-6 flex flex-col items-center">
+          <div class="relative w-full max-w-[320px] sm:max-w-[340px] aspect-[2/3] rounded-lg overflow-hidden metal-edge-bevel select-none" id="pmPlateWrap">
+            <!-- Poster Art Image -->
+            <img class="w-full h-full object-cover select-none" id="pmImg" src="" alt="معاينة اللوحة المعدنية"/>
+            
+            <!-- Metallic Sheen Overlays -->
+            <div class="absolute inset-0 gloss-specular transition-opacity duration-300 pointer-events-none opacity-0" id="pmGlossOverlay"></div>
+            <div class="absolute inset-0 matte-diffuse transition-opacity duration-300 pointer-events-none opacity-100" id="pmMatteOverlay"></div>
+            
+            <!-- Chamfer Bevel Inset Highlight -->
+            <div class="absolute inset-0 pointer-events-none shadow-[inset_0_1px_2px_rgba(255,255,255,0.7),inset_-1px_-1px_2px_rgba(0,0,0,0.5)] rounded-lg"></div>
+            
+            <!-- Corner Plate Spec Badge -->
+            <span class="absolute bottom-3 right-3 px-2 py-0.5 bg-pure-black/80 text-canvas-white font-mono text-[10px] rounded backdrop-blur-sm z-10" id="pmSizeBadge">
+              30×45 سم
+            </span>
+          </div>
+
+          <!-- Finish Switcher Controls -->
+          <div class="flex items-center gap-3 mt-6">
+            <span class="text-xs text-outline font-medium">اللمسة النهائية:</span>
+            <div class="inline-flex p-1 bg-surface-container-low rounded-full border border-warm-gray text-xs" role="group" aria-label="اللمسة النهائية">
+              <button class="px-4 py-1.5 rounded-full font-bold transition-all bg-primary text-on-primary cursor-pointer shadow-sm" id="pmFinishMatte" type="button">مطفي (Matte)</button>
+              <button class="px-4 py-1.5 rounded-full font-medium transition-all text-on-surface-variant hover:text-primary cursor-pointer" id="pmFinishGloss" type="button">لامع (Gloss)</button>
+            </div>
+          </div>
+          <p class="text-[11px] text-outline mt-2 text-center" id="pmFinishDesc">مطفي هادئ بدون انعكاسات إضاءة، مثالي للإضاءة المباشرة</p>
+        </div>
+
+        <!-- Right Column: Product Info, Size Selector, Price & Purchase (6 Cols) -->
+        <div class="lg:col-span-6 flex flex-col text-right">
+          <!-- Category & Tag -->
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-patina-copper" id="pmCat">سينما وأفلام</span>
+            <span class="text-xs text-outline">•</span>
+            <span class="text-xs text-outline" id="pmTag">إصدار أصلي 2026</span>
+          </div>
+
+          <!-- Title -->
+          <h2 class="text-2xl sm:text-3xl font-bold text-primary tracking-tight mb-3" id="pmTitle">اسم اللوحة</h2>
+
+          <!-- Authentic Badges -->
+          <div class="flex flex-wrap items-center gap-2 mb-6">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-surface-container-low text-primary text-xs font-semibold rounded-full border border-warm-gray">
+              <span class="material-symbols-outlined text-[15px]">verified</span>
+              <span>صلب مصفّح 1.2 مم</span>
+            </span>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-surface-container-low text-primary text-xs font-semibold rounded-full border border-warm-gray">
+              <span class="material-symbols-outlined text-[15px]">check_circle</span>
+              <span>جاهزة للتعليق الفوري</span>
+            </span>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-surface-container-low text-primary text-xs font-semibold rounded-full border border-warm-gray">
+              <span class="material-symbols-outlined text-[15px]">water_drop</span>
+              <span>أحبار UV مقاومة للماء والخدش</span>
+            </span>
+          </div>
+
+          <!-- Dynamic Price Display -->
+          <div class="flex items-baseline gap-3 pb-6 mb-6 border-b border-warm-gray">
+            <span class="text-3xl sm:text-4xl font-bold text-primary tracking-tight font-headline" id="pmPrice">750 ج.م</span>
+            <span class="text-xs text-outline">شامل الضريبة وتجهيز اللوحة للتعليق</span>
+          </div>
+
+          <!-- Size Selection Grid -->
+          <div class="mb-6">
+            <div class="flex items-center justify-between mb-3">
+              <label class="text-xs font-bold text-primary uppercase tracking-wider">اختر المقاس المطلوب:</label>
+              <span class="text-xs text-outline font-mono" id="pmSizeDims">30 × 45 سم</span>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5" id="pmSizeGrid">
+              <!-- يتم تعبئة المقاسات ديناميكياً من script.js -->
+            </div>
+          </div>
+
+          <!-- Quantity Selector -->
+          <div class="flex items-center justify-between mb-8">
+            <span class="text-xs font-bold text-primary uppercase tracking-wider">الكمية:</span>
+            <div class="inline-flex items-center border border-warm-gray rounded-full bg-surface-container-lowest p-1 shadow-sm">
+              <button class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-surface-container text-primary transition-colors cursor-pointer" id="pmQtyMinus" type="button" aria-label="تقليل الكمية">
+                <span class="material-symbols-outlined text-[16px]">remove</span>
+              </button>
+              <span class="w-10 text-center font-bold text-sm text-primary font-mono" id="pmQtyVal">1</span>
+              <button class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-surface-container text-primary transition-colors cursor-pointer" id="pmQtyPlus" type="button" aria-label="زيادة الكمية">
+                <span class="material-symbols-outlined text-[16px]">add</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-col sm:flex-row items-center gap-3 mb-6">
+            <button class="w-full sm:flex-1 py-4 px-6 bg-primary hover:bg-pure-black text-on-primary font-bold text-sm rounded-xl flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all cursor-pointer" id="pmAddToCart" type="button">
+              <span class="material-symbols-outlined text-[20px]">shopping_bag</span>
+              <span>أضف إلى السلة</span>
+              <span class="text-xs opacity-80 mr-1" id="pmBtnPrice"></span>
+            </button>
+            <a class="w-full sm:w-auto py-4 px-6 bg-surface-container-low hover:bg-surface-container text-primary font-bold text-sm rounded-xl flex items-center justify-center gap-2 border border-warm-gray transition-colors text-center" id="pmWhatsAppBtn" href="#" target="_blank" rel="noopener">
+              <i class="fa-brands fa-whatsapp text-emerald-600 text-[18px]"></i>
+              <span class="whitespace-nowrap">طلب واتساب</span>
+            </a>
+          </div>
+
+          <!-- Trust & Shipping Guarantee Strip -->
+          <div class="p-4 bg-surface-container-low rounded-xl border border-warm-gray text-xs text-on-surface-variant space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[16px] text-primary">local_shipping</span>
+              <span>توصيل سريع لجميع المحافظات مع تغليف كرتوني مقوى ضد الصدمات.</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[16px] text-primary">payments</span>
+              <span>متاح الدفع عبر إنستا باي، فودافون كاش، أو دفع 50% عربون واستلام كاش.</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- نافذة السلة وإنهاء الطلب (Drawer) -->
 <div class="scrim" id="scrim"></div>

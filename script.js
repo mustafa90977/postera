@@ -139,18 +139,18 @@ function artSvg(kind, label) {
   return `<svg viewBox="0 0 200 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${esc(label || '')}" xmlns="http://www.w3.org/2000/svg">${ART[kind](u)}</svg>`;
 }
 
-// قائمة اللوحات الجاهزة المطابقة للمرجع
+// قائمة اللوحات الجاهزة المطابقة للمرجع (Displate Artworks)
 let POSTERS = [
-  { id: 1, kind: 'deco',      title: 'توازن الألوان', cat: 'فن تجريدي', tag: 'الأكثر مبيعاً' },
-  { id: 2, kind: 'city',      title: 'خط النهاية',   cat: 'سيارات' },
-  { id: 3, kind: 'desert',    title: 'وادي الغروب',  cat: 'سينما' },
-  { id: 4, kind: 'waves',     title: 'موجة هادئة',   cat: 'فن تجريدي', tag: 'الأكثر مبيعاً' },
-  { id: 5, kind: 'moon',      title: 'القمر الأسطوري', cat: 'أنمي' },
-  { id: 6, kind: 'mountains', title: 'قمم الصمت',    cat: 'سينما' },
-  { id: 7, kind: 'pyramids',  title: 'ليل الأهرامات', cat: 'مصر' },
-  { id: 8, kind: 'calli',     title: 'جمال',         cat: 'مصر' }
+  { id: 1, title: 'إنترستيلار: ثقب جارغانتوا الأسود', cat: 'أفلام ومسلسلات', tag: 'الأكثر مبيعاً', image_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD3IJjbnItpSdF9haCU_FngEABSkFOcRsQU1JGXiCHbeeOAQ1Lm8grXhd7ZY-4_Dqo974MQXPSYzF1XFhcuYc0qvQFQV3ZiGr8m3h6fDBSN6H6AokyzAPj_nTdfg2qxgPyzMsU4MFC3tFaE_f2dwubSuXvGcQbkpg5qUWSlTEwZx1YN3tC8KLtLTP3ampmJS2DWxPHkCwaZhlQB3hU_icvtrIr0DkR3ACsJuQwTi3o' },
+  { id: 2, title: 'إلدن رينج: شجرة الظلال', cat: 'ألعاب', tag: 'تريند', image_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCiyhELUUbbJZCMR7V1nZbU2sYZNK9TdyUFA4nJtjfWQ68K3-eQ-xoXpk2gKsR3ehbCvYmCNXobVmXShKJaMy1xZSU-g4hNKlz5Jl45hq5AxvH7lN3o_ISx6qkp4S20iOkfT2Y6AWwoOgxWSCrqoglMHrOvinGYZDzxxJKobijaPD8N8AIr7HAoS-uiuu-g6jyHrJXF9UgoNg53mT_5NDR8gAz8OAmZiGsIeNalq2M' },
+  { id: 3, title: 'سايبربانك 2077: نايت سيتي', cat: 'ألعاب', tag: 'إصدار حصري', image_url: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800&auto=format&fit=crop&q=80' },
+  { id: 4, title: 'هجوم العمالقة: إيرين ييغر', cat: 'أنمي', tag: 'الأكثر طلباً', image_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC06lnKSPuudLbHbFTuZ5RI6Dqq8cqepJtG6qcgbzX3uJiatMhZzynS1weEPeVnTjH8Qt1Lzz3NfhhA9I7p-VYanEFERNBgSRpzKo4e75pj29vtna_UO-QeDIOccXzD5TjXu3ZJVjwAzSopPKLzwKqvF6nsGe6fm6d5wX2NNLlKNRl_fwzgw4uK13dVnWv49DHUJjHsgmeXvCZKthfpBO2FmRl9ARRbLhIHXaw5Cbs' },
+  { id: 5, title: 'قاتل الشياطين: هينوكامي كاجورا', cat: 'أنمي', tag: 'تريند', image_url: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=800&auto=format&fit=crop&q=80' },
+  { id: 6, title: 'بورشه 911 GT3 RS موتورسبورت', cat: 'سيارات', tag: 'إصدار فاخر', image_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAnt-rm093C11cXoklaZUVfxuBOsLzxtj0WHzjY_xRfuepeXdOkeLys-Jui9QqZiUTPMYgn6scV8T6FRBrmxQlqBmyUJh0eXvUSE9rZd4gvwn3Tt8GjAO9P6BfDPf3MEYKAjyPNMSWV15zPEihgpZ-fhozKz9uB9KPnJVtdDEil5Bfkw3gPx45hY-w0M9DrSc9TKJd5wIVbUzhT3NF2oJxsGVK5F8Nt2-3jJjMSERo' },
+  { id: 7, title: 'باتمان: فارس الظلام', cat: 'أفلام ومسلسلات', tag: 'كلاسيكيات', image_url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBa6p-ivT93GOwZYKdpU8OTwRkZEGKoJjYqZGOwnxcYciKJZ8UhK_VYvWZOc4hdAI7OoWPfQfgOcivr-cJwrZUQIXRzauWg8CnQgd10cCnNJvdCjfB4PTyxBIVYDQz6umE6pG5jA5R5tYLAZY8VJ6PTi-di-Hm_hTWT-xcNAtB3KrIbTdiHysrlTqSD_ySt490F_obLfCC71fFhsrQ0X7zWHJOxC7CCyqXSijH9Yx4' },
+  { id: 8, title: 'فيراري دايتونا SP3 أسطورة السرعة', cat: 'سيارات', tag: 'جديد', image_url: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=800&auto=format&fit=crop&q=80' }
 ];
-let CATS = ['الكل', ...new Set(POSTERS.map(p => p.cat))];
+let CATS = ['الكل', 'أفلام ومسلسلات', 'ألعاب', 'أنمي', 'سيارات'];
 
 /* ---------- إدارة الحالة (State) ---------- */
 let cart = [];
@@ -469,45 +469,224 @@ function renderGrid() {
     list = list.filter(p => (p.title && p.title.toLowerCase().includes(query)) || (p.cat && p.cat.toLowerCase().includes(query)));
   }
 
-  const defaultSz = (SHOP.sizes[0] && SHOP.sizes[0].id) || 'm';
   $('#grid').innerHTML = list.map(p => {
-    const cur = st.sizes[p.id] || defaultSz;
-    const szObj = sizeOf(cur) || SHOP.sizes[0] || { price: 650, label: '30×45' };
     const artContent = p.image_url 
-      ? `<img src="${p.image_url}" alt="${esc(p.title)}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">` 
+      ? `<img src="${p.image_url}" alt="${esc(p.title)}" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 select-none">` 
       : (p.kind ? artSvg(p.kind, p.title) : artSvg('moon', p.title));
-    const badgeHtml = p.tag ? `<span class="absolute top-3 right-3 bg-primary text-on-primary font-bold text-[10px] px-2.5 py-0.5 rounded shadow-sm z-10">${p.tag}</span>` : '';
-    return `<article class="card group bg-surface-container-lowest rounded-xl border border-warm-gray overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col cursor-pointer" data-id="${p.id}">
-      <div class="relative w-full aspect-[3/4] bg-surface-container overflow-hidden">
-        ${badgeHtml}
-        <div class="w-full h-full">${artContent}</div>
-        <div class="absolute inset-0 bg-gradient-to-tr from-pure-black/10 via-transparent to-canvas-white/20 pointer-events-none"></div>
-        <span class="absolute bottom-3 right-3 px-2 py-0.5 bg-pure-black/80 text-canvas-white font-mono text-[10px] rounded backdrop-blur-sm z-10">
-          ${szObj.label} سم
+    
+    return `<div class="poster-card group relative aspect-[2/3] w-full rounded-lg overflow-hidden poster-shadow cursor-pointer select-none transition-all duration-300 bg-surface-container" data-id="${p.id}" title="${esc(p.title)}">
+      <!-- Metal Poster Image (صور فقط كما في ديسبليت) -->
+      <div class="w-full h-full">
+        ${artContent}
+      </div>
+
+      <!-- Real Metal Chamfer Bevel Inset Highlight -->
+      <div class="absolute inset-0 pointer-events-none shadow-[inset_0_1px_2px_rgba(255,255,255,0.7),inset_-1px_-1px_2px_rgba(0,0,0,0.5)] rounded-lg"></div>
+
+      <!-- Subtle Specular Reflection on Hover -->
+      <div class="absolute inset-0 bg-gradient-to-tr from-pure-black/35 via-transparent to-canvas-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+
+      <!-- Hover Quick View Pill Button -->
+      <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 bg-pure-black/20 backdrop-blur-[2px]">
+        <span class="px-4 py-2 bg-pure-black/90 text-canvas-white text-xs font-bold rounded-full shadow-lg border border-white/20 flex items-center gap-1.5 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+          <span class="material-symbols-outlined text-[16px]">visibility</span>
+          <span>عرض اللوحة</span>
         </span>
       </div>
-      <div class="p-4 sm:p-5 flex flex-col flex-1 justify-between text-right">
-        <div>
-          <span class="font-label-sm text-label-sm text-outline uppercase tracking-wider block">${esc(p.cat || 'معدن')}</span>
-          <h3 class="font-title-md text-title-md text-primary font-bold mt-1 line-clamp-1 group-hover:text-on-surface-variant transition-colors">${esc(p.title)}</h3>
-          <p class="text-[11px] text-outline mt-1">ألواح صلب 1.2 مم • جاهزة للتعليق</p>
-        </div>
-        <div class="pt-3 mt-3 border-t border-surface-container flex flex-col gap-2.5">
-          <div class="flex items-center justify-between">
-            <span class="font-headline-sm text-headline-sm text-primary font-bold" data-p>${egp(szObj.price)}</span>
-            <div class="seg card-size-pick" role="group" aria-label="المقاس">${segHTML(SHOP.sizes.map(s => ({ id: s.id, html: `<bdi>${s.label}</bdi>` })), cur, 'data-size')}</div>
-          </div>
-          <button class="w-full py-2.5 px-4 bg-primary hover:bg-pure-black text-on-primary font-label-md text-label-md rounded flex items-center justify-center gap-2 shadow-sm transition-all" type="button" data-add>
-            <span class="material-symbols-outlined text-[16px]">add_shopping_cart</span>
-            <span>أضف للسلة</span>
-          </button>
-        </div>
-      </div>
-    </article>`;
+    </div>`;
   }).join('');
 }
 
-$('#filters').addEventListener('click', e => {
+/* ==========================================================================
+   نافذة تفاصيل اللوحة الفنية التفاعلية (Product Details Modal - Displate Grade)
+   ========================================================================== */
+let currentProductModal = null;
+let currentPmSize = 'm';
+let currentPmFinish = 'مطفي';
+let currentPmQty = 1;
+
+function openProductModal(id) {
+  const p = POSTERS.find(x => String(x.id) === String(id));
+  if (!p) return;
+  currentProductModal = p;
+  currentPmSize = (SHOP.sizes[0] && SHOP.sizes[0].id) || 'm';
+  currentPmFinish = 'مطفي';
+  currentPmQty = 1;
+
+  // تعيين صورة المعاينة الكبيرة
+  const modalImg = $('#pmImg');
+  if (modalImg) {
+    if (p.image_url) {
+      modalImg.src = p.image_url;
+      modalImg.alt = p.title;
+      modalImg.style.display = 'block';
+    } else {
+      modalImg.src = 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=800&auto=format&fit=crop&q=80';
+      modalImg.alt = p.title;
+    }
+  }
+
+  // تعيين النصوص والتصنيف
+  if ($('#pmTitle')) $('#pmTitle').textContent = p.title || 'بوستر معدني فاخر';
+  if ($('#pmCat')) $('#pmCat').textContent = p.cat || 'مجموعة خاصة';
+  if ($('#pmTag')) $('#pmTag').textContent = p.tag || 'إصدار أصلي جاهز للتعليق';
+
+  // توليد أزرار المقاسات وتحديث السعر
+  renderModalSizes();
+  setModalFinish(currentPmFinish);
+  updateModalPrice();
+
+  // فتح المودال مع تأثير انتقال ناعم
+  const modal = $('#productModal');
+  const card = $('#productModalCard');
+  if (modal && card) {
+    modal.classList.remove('opacity-0', 'pointer-events-none');
+    modal.classList.add('opacity-100', 'pointer-events-auto');
+    card.classList.remove('scale-95');
+    card.classList.add('scale-100');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function closeProductModal() {
+  const modal = $('#productModal');
+  const card = $('#productModalCard');
+  if (modal && card) {
+    modal.classList.add('opacity-0', 'pointer-events-none');
+    modal.classList.remove('opacity-100', 'pointer-events-auto');
+    card.classList.add('scale-95');
+    card.classList.remove('scale-100');
+    document.body.style.overflow = '';
+  }
+}
+
+function renderModalSizes() {
+  const grid = $('#pmSizeGrid');
+  if (!grid) return;
+  grid.innerHTML = SHOP.sizes.map(s => {
+    const isSel = s.id === currentPmSize;
+    return `<button type="button" class="p-3 rounded-xl border text-center transition-all cursor-pointer ${
+      isSel 
+        ? 'border-primary bg-primary text-on-primary shadow-sm font-bold' 
+        : 'border-warm-gray bg-surface-container-lowest text-primary hover:border-primary font-medium'
+    }" data-msize="${s.id}">
+      <span class="block text-xs uppercase tracking-wider font-mono">${s.id.toUpperCase()}</span>
+      <span class="block text-sm font-bold mt-0.5"><bdi>${s.label}</bdi> سم</span>
+      <span class="block text-[11px] mt-1 ${isSel ? 'text-on-primary/90' : 'text-outline'}">${egp(s.price)}</span>
+    </button>`;
+  }).join('');
+}
+
+function updateModalPrice() {
+  const sz = sizeOf(currentPmSize) || SHOP.sizes[0] || { price: 750, label: '30×45', w: 30, h: 45 };
+  const unitPrice = sz.price;
+  const totalPrice = unitPrice * currentPmQty;
+
+  if ($('#pmPrice')) $('#pmPrice').textContent = egp(totalPrice);
+  if ($('#pmBtnPrice')) $('#pmBtnPrice').textContent = `(${egp(totalPrice)})`;
+  if ($('#pmSizeBadge')) $('#pmSizeBadge').textContent = `${sz.label} سم`;
+  if ($('#pmSizeDims')) $('#pmSizeDims').textContent = `${sz.w || 30} × ${sz.h || 45} سم`;
+  if ($('#pmQtyVal')) $('#pmQtyVal').textContent = currentPmQty;
+
+  // رابط واتساب السريع
+  if ($('#pmWhatsAppBtn') && currentProductModal) {
+    const p = currentProductModal;
+    const msg = `مرحباً بوستيرا، أود طلب بوستر "${p.title}" المعدني المصفح:\n- المقاس: ${sz.label} سم (${currentPmSize.toUpperCase()})\n- اللمسة: ${currentPmFinish}\n- الكمية: ${currentPmQty}\n- الإجمالي: ${egp(totalPrice)}`;
+    const phone = SHOP.whatsapp || '01000000000';
+    const waNum = phone.startsWith('0') ? '2' + phone : phone;
+    $('#pmWhatsAppBtn').href = `https://wa.me/${waNum}?text=${encodeURIComponent(msg)}`;
+  }
+}
+
+function setModalFinish(finish) {
+  currentPmFinish = finish;
+  const isGloss = finish === 'لامع';
+  const glossOverlay = $('#pmGlossOverlay');
+  const matteOverlay = $('#pmMatteOverlay');
+  const btnMatte = $('#pmFinishMatte');
+  const btnGloss = $('#pmFinishGloss');
+  const desc = $('#pmFinishDesc');
+
+  if (glossOverlay) glossOverlay.style.opacity = isGloss ? '0.85' : '0';
+  if (matteOverlay) matteOverlay.style.opacity = isGloss ? '0' : '1';
+
+  if (btnMatte && btnGloss) {
+    if (isGloss) {
+      btnGloss.className = 'px-4 py-1.5 rounded-full font-bold transition-all bg-primary text-on-primary cursor-pointer shadow-sm';
+      btnMatte.className = 'px-4 py-1.5 rounded-full font-medium transition-all text-on-surface-variant hover:text-primary cursor-pointer';
+      if (desc) desc.textContent = 'لمعان فائق وانعكاسات سينمائية تبرز عمق الألوان والمعدن';
+    } else {
+      btnMatte.className = 'px-4 py-1.5 rounded-full font-bold transition-all bg-primary text-on-primary cursor-pointer shadow-sm';
+      btnGloss.className = 'px-4 py-1.5 rounded-full font-medium transition-all text-on-surface-variant hover:text-primary cursor-pointer';
+      if (desc) desc.textContent = 'مطفي هادئ بدون انعكاسات إضاءة، مثالي للإضاءة المباشرة';
+    }
+  }
+
+  updateModalPrice();
+}
+
+// مستمعي أحداث المودال
+$('#closeProductModal')?.addEventListener('click', closeProductModal);
+$('#productModal')?.addEventListener('click', e => {
+  if (e.target === $('#productModal')) closeProductModal();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeProductModal();
+});
+
+$('#pmFinishMatte')?.addEventListener('click', () => setModalFinish('مطفي'));
+$('#pmFinishGloss')?.addEventListener('click', () => setModalFinish('لامع'));
+
+$('#pmSizeGrid')?.addEventListener('click', e => {
+  const btn = e.target.closest('[data-msize]');
+  if (!btn) return;
+  currentPmSize = btn.dataset.msize;
+  renderModalSizes();
+  updateModalPrice();
+});
+
+$('#pmQtyMinus')?.addEventListener('click', () => {
+  if (currentPmQty > 1) {
+    currentPmQty--;
+    updateModalPrice();
+  }
+});
+
+$('#pmQtyPlus')?.addEventListener('click', () => {
+  currentPmQty++;
+  updateModalPrice();
+});
+
+$('#pmAddToCart')?.addEventListener('click', () => {
+  if (!currentProductModal) return;
+  const p = currentProductModal;
+  const sz = sizeOf(currentPmSize) || SHOP.sizes[0] || { id: 'm', label: '30×45', price: 750 };
+  
+  for (let i = 0; i < currentPmQty; i++) {
+    addItem({
+      key: `g-${p.id}-${sz.id}-${currentPmFinish}`,
+      title: p.title,
+      sub: `${sz.label} سم • ${currentPmFinish}`,
+      price: sz.price,
+      kind: p.kind,
+      img: p.image_url,
+      custom: false
+    });
+  }
+
+  closeProductModal();
+  toast(`تمت إضافة "${p.title}" إلى سلتك بنجاح ✨`);
+  openCart();
+});
+
+// فتح المودال عند النقر على أي بوستر بالمعرض
+$('#grid')?.addEventListener('click', e => {
+  const card = e.target.closest('[data-id]');
+  if (!card) return;
+  openProductModal(card.dataset.id);
+});
+
+$('#filters')?.addEventListener('click', e => {
   const b = e.target.closest('[data-cat]');
   if (!b) return;
   st.filter = b.dataset.cat;
@@ -522,34 +701,6 @@ if (storeSearch && !storeSearch.dataset.bound) {
     renderGrid();
   });
 }
-
-$('#grid').addEventListener('click', e => {
-  const card = e.target.closest('.card');
-  if (!card) return;
-  const id = card.dataset.id, p = POSTERS.find(x => String(x.id) === String(id));
-  if (!p) return;
-  const sb = e.target.closest('[data-size]');
-  if (sb) {
-    st.sizes[id] = sb.dataset.size;
-    $$('[data-size]', card).forEach(b => b.setAttribute('aria-pressed', b === sb));
-    const szObj = sizeOf(sb.dataset.size) || SHOP.sizes[0];
-    $('[data-p]', card).textContent = egp(szObj ? szObj.price : 0);
-    return;
-  }
-  if (e.target.closest('[data-add]')) {
-    const defaultSz = (SHOP.sizes[0] && SHOP.sizes[0].id) || 'm';
-    const sz = sizeOf(st.sizes[id] || defaultSz) || SHOP.sizes[0];
-    addItem({
-      key: `g-${id}-${sz.id}`,
-      title: p.title,
-      sub: `${sz.label} سم`,
-      price: sz.price,
-      kind: p.kind,
-      img: p.image_url,
-      custom: false
-    });
-  }
-});
 
 /* ---------- قسم الطباعة المخصصة الفاخرة ثلاثية الأبعاد (3D Custom Metal Plate) ---------- */
 const C = {
