@@ -13,14 +13,21 @@ var SHOP = window.SHOP || {
   shipping: 60,                       // سعر الشحن الافتراضي لجميع المحافظات (جنيه)
   freeShippingOver: 2500,             // الشحن مجاناً لو الطلب تخطى هذا المبلغ
   govShipping: {},                    // أسعار الشحن المخصصة لكل محافظة { 'القاهرة': 50, ... }
-  // المقاسات بالسنتيمتر والأسعار بالجنيه المصري
+  // المقاسات بالسنتيمتر والأسعار بالجنيه المصري (النشطة حالياً)
   sizes: [
-    { id: 's',  label: '20×30', w: 20, h: 30, price: 450 },
     { id: 'm',  label: '30×45', w: 30, h: 45, price: 750 },
-    { id: 'l',  label: '40×60', w: 40, h: 60, price: 1200 },
-    { id: 'xl', label: '50×75', w: 50, h: 75, price: 1800 }
+    { id: 'l',  label: '40×60', w: 40, h: 60, price: 1200 }
   ]
 };
+
+// استرجاع المقاسات المحفوظة محلياً لمنع أي وميض أو تغير بالأسعار
+try {
+  const localSizesInit = localStorage.getItem('postera_sizes');
+  if (localSizesInit) {
+    const parsedSizes = JSON.parse(localSizesInit);
+    if (Array.isArray(parsedSizes) && parsedSizes.length) SHOP.sizes = parsedSizes;
+  }
+} catch (e) {}
 
 // تهيئة أسعار المحافظات المحفوظة محلياً مبدئياً
 try {
@@ -497,6 +504,34 @@ function renderFilters() {
   }
 }
 
+function getWishlist() {
+  try {
+    const raw = localStorage.getItem('postera_wishlist');
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function toggleWishlist(id) {
+  let list = getWishlist();
+  const sId = String(id);
+  const idx = list.indexOf(sId);
+  const p = POSTERS.find(x => String(x.id) === sId);
+  const name = p ? p.title : 'البوستر';
+  if (idx > -1) {
+    list.splice(idx, 1);
+    toast(`تمت إزالة "${name}" من المفضلة`);
+  } else {
+    list.push(sId);
+    toast(`تمت إضافة "${name}" إلى مفضلتك ❤️`);
+  }
+  try {
+    localStorage.setItem('postera_wishlist', JSON.stringify(list));
+  } catch (e) {}
+  renderGrid();
+}
+
 function renderGrid() {
   const grid = $('#grid');
   if (!grid) return;
@@ -510,11 +545,15 @@ function renderGrid() {
     list = list.filter(p => (p.title && p.title.toLowerCase().includes(query)) || (p.cat && p.cat.toLowerCase().includes(query)));
   }
 
+  const favList = getWishlist();
+
   grid.innerHTML = list.map(p => {
     const artContent = p.image_url 
       ? `<img src="${p.image_url}" alt="${esc(p.title)}" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 select-none">` 
       : (p.kind ? artSvg(p.kind, p.title) : artSvg('moon', p.title));
     
+    const isFav = favList.includes(String(p.id));
+
     return `<a href="product?id=${encodeURIComponent(p.id)}" class="poster-card group relative aspect-[2/3] w-full rounded-lg overflow-hidden poster-shadow cursor-pointer select-none transition-all duration-300 bg-surface-container block" data-id="${p.id}" title="${esc(p.title)}">
       <!-- Metal Poster Image (صور فقط كما في ديسبليت) -->
       <div class="w-full h-full">
@@ -526,6 +565,11 @@ function renderGrid() {
 
       <!-- Subtle Specular Reflection on Hover -->
       <div class="absolute inset-0 bg-gradient-to-tr from-pure-black/35 via-transparent to-canvas-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+
+      <!-- Wishlist / Favorite Heart Button -->
+      <button type="button" class="wishlist-btn absolute top-2.5 right-2.5 z-20 w-8 h-8 rounded-full bg-pure-black/60 hover:bg-pure-black text-white flex items-center justify-center transition-all ${isFav ? '!text-red-500 opacity-100 bg-pure-black/80' : 'opacity-80 hover:opacity-100'} hover:scale-110 shadow-md cursor-pointer" data-fav-id="${p.id}" aria-label="${isFav ? 'إزالة من المفضلة' : 'إضافة للمفضلة'}" title="${isFav ? 'إزالة من المفضلة' : 'إضافة للمفضلة'}">
+        <span class="material-symbols-outlined text-[17px] pointer-events-none">${isFav ? 'favorite' : 'favorite_border'}</span>
+      </button>
 
       <!-- Hover Quick View Pill Button -->
       <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 bg-pure-black/20 backdrop-blur-[2px]">
@@ -720,7 +764,83 @@ $('#pmAddToCart')?.addEventListener('click', () => {
   openCart();
 });
 
-// النقر على بطاقة البوستر يفتح صفحة المنتج المخصصة تلقائياً عبر رابط <a>
+// التفاعل مع زر المفضلة (Wishlist) على الكروت
+document.addEventListener('click', e => {
+  const wishBtn = e.target.closest('.wishlist-btn');
+  if (wishBtn) {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleWishlist(wishBtn.dataset.favId);
+    return;
+  }
+});
+
+/* ==========================================================================
+   إدارة نافذة السياسات والأسئلة الشائعة (Policy & FAQ Modal)
+   ========================================================================== */
+function openPolicyModal(tabKey = 'tabShipping') {
+  const modal = $('#policyModal');
+  const card = $('#policyModalCard');
+  if (!modal || !card) return;
+
+  // تنشيط التبويب المطلوب
+  $$('.policy-tab-btn').forEach(btn => {
+    const isAct = btn.dataset.tab === tabKey;
+    btn.classList.toggle('active', isAct);
+    btn.classList.toggle('border-primary', isAct);
+    btn.classList.toggle('text-primary', isAct);
+    btn.classList.toggle('border-transparent', !isAct);
+  });
+  $$('.policy-pane').forEach(pane => {
+    pane.classList.toggle('hidden', pane.id !== tabKey);
+  });
+
+  modal.classList.remove('opacity-0', 'pointer-events-none');
+  modal.classList.add('opacity-100', 'pointer-events-auto');
+  card.classList.remove('scale-95');
+  card.classList.add('scale-100');
+  document.body.style.overflow = 'hidden';
+}
+
+function closePolicyModal() {
+  const modal = $('#policyModal');
+  const card = $('#policyModalCard');
+  if (!modal || !card) return;
+  modal.classList.add('opacity-0', 'pointer-events-none');
+  modal.classList.remove('opacity-100', 'pointer-events-auto');
+  card.classList.add('scale-95');
+  card.classList.remove('scale-100');
+  document.body.style.overflow = '';
+}
+
+$('#closePolicyModal')?.addEventListener('click', closePolicyModal);
+$('#okPolicyModal')?.addEventListener('click', closePolicyModal);
+$('#policyModal')?.addEventListener('click', e => {
+  if (e.target === $('#policyModal')) closePolicyModal();
+});
+
+document.addEventListener('click', e => {
+  const trigger = e.target.closest('.policy-trigger');
+  if (trigger) {
+    e.preventDefault();
+    openPolicyModal(trigger.dataset.policy || 'tabShipping');
+    return;
+  }
+  const tabBtn = e.target.closest('.policy-tab-btn');
+  if (tabBtn) {
+    const targetTab = tabBtn.dataset.tab;
+    $$('.policy-tab-btn').forEach(btn => {
+      const isAct = btn === tabBtn;
+      btn.classList.toggle('active', isAct);
+      btn.classList.toggle('border-primary', isAct);
+      btn.classList.toggle('text-primary', isAct);
+      btn.classList.toggle('border-transparent', !isAct);
+    });
+    $$('.policy-pane').forEach(pane => {
+      pane.classList.toggle('hidden', pane.id !== targetTab);
+    });
+  }
+});
 
 $('#filters')?.addEventListener('click', e => {
   const b = e.target.closest('[data-cat]');
@@ -2200,6 +2320,9 @@ async function syncWithSupabase() {
         h: Number(s.height_cm),
         price: Number(s.price)
       }));
+      try {
+        localStorage.setItem('postera_sizes', JSON.stringify(SHOP.sizes));
+      } catch (e) {}
       if (!sizeOf(C.size)) C.size = SHOP.sizes[0].id;
       if ($('#cSize')) $('#cSize').innerHTML = segHTML(SHOP.sizes.map(s => ({ id: s.id, html: `<bdi>${s.label}</bdi>` })), C.size, 'data-v');
       renderCustomSizes();
@@ -2215,15 +2338,18 @@ async function syncWithSupabase() {
       .order('sort_order', { ascending: true });
 
     if (pData && pData.length) {
-      POSTERS = pData.map(p => ({
-        id: p.id,
-        kind: p.kind,
-        title: p.title,
-        cat: p.category,
-        image_url: p.image_url
-      }));
-      CATS = ['الكل', ...new Set(POSTERS.map(p => p.cat))];
-      if (!CATS.includes(st.filter)) st.filter = 'الكل';
+      const hasRealImages = pData.some(p => p.image_url && p.image_url.trim() !== '');
+      if (hasRealImages) {
+        POSTERS = pData.map(p => ({
+          id: p.id,
+          kind: p.kind,
+          title: p.title,
+          cat: p.category,
+          image_url: p.image_url
+        }));
+        CATS = ['الكل', ...new Set(POSTERS.map(p => p.cat))];
+        if (!CATS.includes(st.filter)) st.filter = 'الكل';
+      }
       renderFilters();
       renderGrid();
       try {

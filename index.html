@@ -148,7 +148,7 @@
 
       <!-- Desktop Navigation Links -->
       <nav class="hidden xl:flex items-center gap-6 text-sm font-semibold text-on-surface-variant">
-        <a class="header-nav-link text-primary font-bold hover:text-primary transition-colors pb-1" href="#gallery" data-scroll="gallery">كل البوسترات</a>
+        <a class="header-nav-link text-primary font-bold hover:text-primary transition-colors pb-1" href="#gallery" data-cat-filter="الكل" data-scroll="gallery">كل البوسترات</a>
         <a class="header-nav-link hover:text-primary transition-colors pb-1" href="#gallery" data-cat-filter="أفلام ومسلسلات">سينما وأفلام</a>
         <a class="header-nav-link hover:text-primary transition-colors pb-1" href="#gallery" data-cat-filter="أنمي">أنمي</a>
         <a class="header-nav-link hover:text-primary transition-colors pb-1" href="#gallery" data-cat-filter="ألعاب">ألعاب وجيمنج</a>
@@ -657,7 +657,7 @@
 
     <!-- 3. Browse Posters You'll Love (استكشف بوسترات ستعشقها - صور فقط مع نافذة تفاصيل) -->
     <section class="w-full py-16 lg:py-24 bg-surface scroll-mt-24" id="gallery">
-      <div class="max-w-7xl mx-auto px-6 lg:px-12">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
         <!-- Section Header and Filter Pills (Displate Style) -->
         <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 text-right">
           <div>
@@ -687,8 +687,8 @@
 
     <!-- 4. Custom Metal Art Printing Section (طباعة صورتك الخاصة على معدن) -->
     <section class="w-full py-16 lg:py-24 bg-surface-container-high scroll-mt-24 border-y border-warm-gray" id="custom">
-      <div class="max-w-7xl mx-auto px-6 lg:px-12">
-        <div class="bg-surface-container-lowest rounded-2xl p-6 sm:p-10 lg:p-12 shadow-xl border border-warm-gray">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
+        <div class="bg-surface-container-lowest rounded-2xl p-4 sm:p-10 lg:p-12 shadow-xl border border-warm-gray">
           
           <div class="text-center max-w-3xl mx-auto mb-10">
             <div class="inline-flex items-center gap-2 px-3 py-1 bg-surface-container rounded-full mb-3 border border-warm-gray">
@@ -882,7 +882,7 @@
 
             <!-- Live 3D Canvas Column (Left in RTL) -->
             <div class="lg:col-span-7 sticky top-28 order-1 lg:order-2">
-              <div class="gallery-grid-bg rounded-2xl border border-warm-gray p-6 sm:p-10 relative overflow-hidden shadow-subtle-lift">
+              <div class="gallery-grid-bg rounded-2xl border border-warm-gray p-3 sm:p-6 lg:p-10 relative overflow-hidden shadow-subtle-lift">
                 <div class="flex items-center justify-between mb-8 z-10 relative">
                   <div class="flex items-center gap-2">
                     <span class="flex h-2.5 w-2.5 relative">
@@ -899,10 +899,10 @@
                 </div>
 
                 <!-- 3D Mockup Stage -->
-                <div class="relative min-h-[460px] sm:min-h-[540px] flex items-center justify-center py-4">
-                  <div class="absolute w-72 sm:w-88 h-96 bg-black/25 blur-3xl rounded-full transform -translate-y-4 pointer-events-none" id="ambient-wall-shadow"></div>
+                <div class="relative min-h-[420px] sm:min-h-[540px] flex items-center justify-center py-4">
+                  <div class="absolute w-64 sm:w-88 h-96 bg-black/25 blur-3xl rounded-full transform -translate-y-4 pointer-events-none" id="ambient-wall-shadow"></div>
 
-                  <div class="metal-edge-bevel relative transition-all duration-300 rounded-md overflow-hidden bg-pure-black flex flex-col justify-end w-[280px] sm:w-[350px] aspect-[2/3] cursor-grab active:cursor-grabbing select-none group" data-purpose="metal-poster-element" id="metal-poster-mockup">
+                  <div class="metal-edge-bevel relative transition-all duration-300 rounded-md overflow-hidden bg-pure-black flex flex-col justify-end w-[240px] xs:w-[270px] sm:w-[350px] max-w-full aspect-[2/3] cursor-grab active:cursor-grabbing select-none group" data-purpose="metal-poster-element" id="metal-poster-mockup">
                     <div class="absolute inset-0 bg-cover bg-center transition-all duration-300" id="poster-art-layer" style="background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=85'); background-size: cover; background-position: center;">
                       <div class="hidden absolute inset-0 bg-pure-black/90 flex flex-col items-center justify-center p-6 text-center text-white" id="empty-state-overlay">
                         <div class="w-14 h-14 rounded-2xl border-2 border-dashed border-white/40 flex items-center justify-center mb-3 text-white/60">
@@ -1169,9 +1169,9 @@
     <div class="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-outline">
       <p>© 2026 بوستيرا | POSTERA Metal Art. جميع الحقوق محفوظة لعلامة بوستيرا في جمهورية مصر العربية.</p>
       <div class="flex items-center gap-6">
-        <a class="hover:text-primary transition-colors" href="#">الشروط والأحكام</a>
-        <a class="hover:text-primary transition-colors" href="#">سياسة الخصوصية</a>
-        <a class="hover:text-primary transition-colors" href="#">الشحن والاسترجاع</a>
+        <a class="hover:text-primary transition-colors cursor-pointer policy-trigger" data-policy="tabShipping" href="#shipping">الشحن والتوصيل</a>
+        <a class="hover:text-primary transition-colors cursor-pointer policy-trigger" data-policy="tabReturns" href="#returns">الاستبدال والضمان</a>
+        <a class="hover:text-primary transition-colors cursor-pointer policy-trigger" data-policy="tabPrivacy" href="#privacy">سياسة الخصوصية</a>
       </div>
     </div>
   </div>
@@ -1188,7 +1188,7 @@
     <button class="iconbtn" id="closeMenu" type="button" aria-label="إغلاق القائمة">✕</button>
   </div>
   <nav class="nav-drawer-body" id="navDrawerBody" aria-label="قائمة التصفح">
-    <a href="#gallery" class="nav-item" data-scroll="gallery">
+    <a href="#gallery" class="nav-item" data-cat-filter="الكل" data-scroll="gallery">
       <span class="nav-text">كل البوسترات</span>
     </a>
     <a href="#gallery" class="nav-item" data-cat-filter="أفلام ومسلسلات">
@@ -1444,6 +1444,83 @@
   </div>
   <div class="dfoot" id="dfoot"></div>
 </aside>
+
+<!-- نافذة السياسات والأسئلة الشائعة (Policy & Trust Modal) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-pure-black/80 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300" id="policyModal" role="dialog" aria-modal="true" aria-labelledby="policyModalTitle">
+  <div class="relative w-full max-w-2xl max-h-[90vh] bg-surface rounded-2xl border border-warm-gray shadow-2xl overflow-hidden flex flex-col my-auto transition-transform duration-300 scale-95" id="policyModalCard">
+    <!-- Header -->
+    <div class="p-5 border-b border-warm-gray flex items-center justify-between bg-surface-container-low">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary text-[22px]">policy</span>
+        <h3 class="font-bold text-base text-primary" id="policyModalTitle">سياسات بوستيرا والأسئلة الشائعة</h3>
+      </div>
+      <button class="w-8 h-8 rounded-full bg-surface hover:bg-surface-container text-primary flex items-center justify-center transition-colors border border-warm-gray cursor-pointer" id="closePolicyModal" type="button" aria-label="إغلاق">
+        <span class="material-symbols-outlined text-[18px]">close</span>
+      </button>
+    </div>
+
+    <!-- Policy Tabs -->
+    <div class="flex border-b border-warm-gray bg-surface text-xs font-bold text-outline">
+      <button class="flex-1 py-3 px-4 text-center border-b-2 border-primary text-primary transition-colors cursor-pointer policy-tab-btn active" data-tab="tabShipping" type="button">الشحن والتوصيل</button>
+      <button class="flex-1 py-3 px-4 text-center border-b-2 border-transparent hover:text-primary transition-colors cursor-pointer policy-tab-btn" data-tab="tabReturns" type="button">الاستبدال والضمان</button>
+      <button class="flex-1 py-3 px-4 text-center border-b-2 border-transparent hover:text-primary transition-colors cursor-pointer policy-tab-btn" data-tab="tabPrivacy" type="button">الخصوصية والأمان</button>
+    </div>
+
+    <!-- Content -->
+    <div class="overflow-y-auto p-5 sm:p-6 text-xs sm:text-sm text-on-surface-variant leading-relaxed space-y-4">
+      <!-- Tab 1: Shipping -->
+      <div id="tabShipping" class="policy-pane space-y-3">
+        <div class="p-3.5 bg-surface-container-low rounded-xl border border-warm-gray">
+          <h4 class="font-bold text-primary mb-1">🚚 مصاريف الشحن لجميع محافظات مصر:</h4>
+          <p>تكلفة الشحن الثابتة هي <strong>60 ج.م</strong> لجميع المحافظات. ويكون الشحن <strong>مجاناً بالكامل</strong> لأي طلب يتجاوز 2500 ج.م.</p>
+        </div>
+        <div class="p-3.5 bg-surface-container-low rounded-xl border border-warm-gray">
+          <h4 class="font-bold text-primary mb-1">⏱️ مدة التجهيز والتوصيل:</h4>
+          <p>• القاهرة، الجيزة والإسكندرية: التوصيل خلال <strong>48 ساعة</strong> من تأكيد الطلب.</p>
+          <p>• مدن القناة والدلتا ومحافظات الصعيد: التوصيل خلال <strong>3 إلى 4 أيام عمل</strong>.</p>
+        </div>
+        <div class="p-3.5 bg-surface-container-low rounded-xl border border-warm-gray">
+          <h4 class="font-bold text-primary mb-1">📦 التغليف والحماية:</h4>
+          <p>كل بوستر معدني يُغلف بعناية بطبقة واقية مقاومة للصدمات والخدوش داخل كرتون مقوى مخصص لحماية حواف وزوايا المعدن حتى وصوله لباب بيتك بسلام.</p>
+        </div>
+      </div>
+
+      <!-- Tab 2: Returns -->
+      <div id="tabReturns" class="policy-pane space-y-3 hidden">
+        <div class="p-3.5 bg-surface-container-low rounded-xl border border-warm-gray">
+          <h4 class="font-bold text-primary mb-1">🛡️ مهلة الاستبدال والاسترجاع (14 يوماً):</h4>
+          <p>يحق لك طلب استبدال اللوحة خلال <strong>14 يوماً</strong> من تاريخ الاستلام في حال وجود أي عيب مصنعي، بهتان في الألوان، أو خدش/انثناء ناتج عن الشحن.</p>
+        </div>
+        <div class="p-3.5 bg-surface-container-low rounded-xl border border-warm-gray">
+          <h4 class="font-bold text-primary mb-1">🔄 خطوات الاستبدال الفوري:</h4>
+          <p>كل ما عليك هو تصوير المشكلة وإرسالها لفريق الدعم عبر واتساب. سنتكفل بإرسال قطعة جديدة فوراً واستلام القطعة المعيبة دون أي مصاريف شحن إضافية عليك.</p>
+        </div>
+        <div class="p-3.5 bg-surface-container-low rounded-xl border border-warm-gray">
+          <h4 class="font-bold text-primary mb-1">✨ ضمان جودة الطباعة UV:</h4>
+          <p>نضمن ثبات الألوان ومقاومتها للبهتان تحت أشعة الشمس المباشرة والرطوبة مدى الحياة بفضل تقنية الطباعة بالأشعة فوق البنفسجية الصناعية.</p>
+        </div>
+      </div>
+
+      <!-- Tab 3: Privacy -->
+      <div id="tabPrivacy" class="policy-pane space-y-3 hidden">
+        <div class="p-3.5 bg-surface-container-low rounded-xl border border-warm-gray">
+          <h4 class="font-bold text-primary mb-1">🔒 سرية وأمان البيانات:</h4>
+          <p>نحن نستخدم بياناتك الشخصية (الاسم، العنوان، رقم الهاتف، وصورة إيصال التحويل) فقط لغرض توصيل طلبك والتواصل معك بشأن الشحنة ومطابقة الدفع. لا يتم حفظ بيانات الدفع إطلاقاً ولا نشارك بياناتك مع أي طرف ثالث.</p>
+        </div>
+        <div class="p-3.5 bg-surface-container-low rounded-xl border border-warm-gray">
+          <h4 class="font-bold text-primary mb-1">💳 التحقق من التحويلات والعربون:</h4>
+          <p>عند التحويل عبر InstaPay أو محفظة كاش، يقوم فريق الحسابات بمطابقة رقم العملية والمبلغ خلال دقائق، وتصلك رسالة تأكيد مباشرة عبر واتساب مع رقم الشحنة وموعد التوصيل.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="p-4 border-t border-warm-gray bg-surface-container-low flex items-center justify-between">
+      <span class="text-xs text-outline">فريق الدعم متاح يومياً عبر واتساب للمساعدة</span>
+      <button class="px-5 py-2 bg-primary text-on-primary rounded text-xs font-bold hover:bg-pure-black transition-colors cursor-pointer" id="okPolicyModal" type="button">فهمت ذلك</button>
+    </div>
+  </div>
+</div>
 
 <!-- زر واتساب العائم لخدمة العملاء -->
 <a id="whatsappFloat" class="whatsapp-float" href="https://wa.me/201000000000" target="_blank" rel="noopener" aria-label="تواصل معنا عبر واتساب" title="تواصل معنا عبر واتساب">

@@ -5,6 +5,15 @@
  * ==========================================================================
  */
 
+// مزامنة المقاسات فوراً من التخزين المحلي لتفادي أي وميض بالأسعار
+try {
+  const localSizesInit = localStorage.getItem('postera_sizes');
+  if (localSizesInit && window.SHOP) {
+    const parsedSizes = JSON.parse(localSizesInit);
+    if (Array.isArray(parsedSizes) && parsedSizes.length) window.SHOP.sizes = parsedSizes;
+  }
+} catch (e) {}
+
 let pdpProduct = null;
 let pdpSize = 'm';
 let pdpFinish = 'مطفي';
@@ -45,7 +54,7 @@ function initPDP() {
   const bCat = document.getElementById('pdpBreadCat');
   if (bCat) {
     bCat.textContent = pdpProduct.cat || 'مجموعة خاصة';
-    bCat.href = `index.html#gallery`;
+    bCat.href = `index.html?cat=${encodeURIComponent(pdpProduct.cat || 'الكل')}#gallery`;
   }
 
   // 2. تحديث بيانات المنتج الرئيسية
@@ -272,6 +281,45 @@ function bindPDPEvents() {
     `;
     lightbox.addEventListener('click', () => lightbox.remove());
     document.body.appendChild(lightbox);
+  });
+
+  // المفضلة في صفحة المنتج (PDP Wishlist)
+  const updatePdpWishlistUI = () => {
+    if (!pdpProduct) return;
+    try {
+      const raw = localStorage.getItem('postera_wishlist');
+      const list = raw ? JSON.parse(raw) : [];
+      const isFav = list.includes(String(pdpProduct.id));
+      const icon = document.getElementById('pdpWishlistIcon');
+      const btn = document.getElementById('pdpWishlistBtn');
+      if (icon) icon.textContent = isFav ? 'favorite' : 'favorite_border';
+      if (btn) {
+        btn.classList.toggle('text-red-500', isFav);
+        btn.classList.toggle('border-red-300', isFav);
+        btn.classList.toggle('bg-red-50', isFav);
+      }
+    } catch (e) {}
+  };
+
+  updatePdpWishlistUI();
+
+  document.getElementById('pdpWishlistBtn')?.addEventListener('click', () => {
+    if (!pdpProduct) return;
+    try {
+      const raw = localStorage.getItem('postera_wishlist');
+      let list = raw ? JSON.parse(raw) : [];
+      const sId = String(pdpProduct.id);
+      const idx = list.indexOf(sId);
+      if (idx > -1) {
+        list.splice(idx, 1);
+        toast(`تمت إزالة "${pdpProduct.title}" من المفضلة`);
+      } else {
+        list.push(sId);
+        toast(`تمت إضافة "${pdpProduct.title}" إلى مفضلتك ❤️`);
+      }
+      localStorage.setItem('postera_wishlist', JSON.stringify(list));
+      updatePdpWishlistUI();
+    } catch (e) {}
   });
 }
 
