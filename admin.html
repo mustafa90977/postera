@@ -952,15 +952,7 @@
           <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>
         </button>
 
-        <div style="background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:20px;font-size:0.86rem;text-align:right;">
-          <div style="color:var(--fg);font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
-            <span class="material-symbols-outlined" style="font-size:18px;color:var(--patina);">key</span>
-            <span>بيانات الدخول المؤقتة لتجربة اللوحة:</span>
-          </div>
-          <div style="margin-bottom:4px;color:var(--muted);">البريد: <strong style="color:var(--fg);direction:ltr;display:inline-block;">admin@postera.com</strong></div>
-          <div style="margin-bottom:12px;color:var(--muted);">كلمة المرور: <strong style="color:var(--fg);direction:ltr;display:inline-block;">postera123</strong></div>
-          <button type="button" id="fillDemoLoginBtn" class="btn ghost sm" style="width:100%;font-size:0.82rem;padding:0.5rem;">⚡ تجربة الدخول الفوري بضغطة زر</button>
-        </div>
+
       </form>
     </div>
   </section>
@@ -968,11 +960,6 @@
   <!-- شاشة 2: لوحة الإدارة المتكاملة (تظهر بعد تسجيل الدخول) -->
   <main id="dashboardSection" class="admin-content" style="display:none;">
     <div class="wrap">
-      
-      <!-- تنبيه وضع المعاينة المؤقت -->
-      <div id="tempAdminNotice" style="display:none;background:#fefce8;border:1px solid #fef08a;border-radius:14px;padding:12px 18px;margin-bottom:20px;font-size:0.88rem;color:#854d0e;">
-        ⚡ <strong>وضع المعاينة المؤقت:</strong> أنت داخل حالياً بحساب الأدمن المؤقت لتجربة اللوحة. عند ربط Supabase سيتم التحقق الحقيقي من قاعدة البيانات السحابية.
-      </div>
       
       <!-- شريط التبويبات الرئيسي -->
       <nav class="admin-tabs" role="tablist">
@@ -1872,15 +1859,6 @@
       err.style.display = 'block';
     }
 
-    // زر الملء التلقائي للحساب المؤقت
-    const fillBtn = document.getElementById('fillDemoLoginBtn');
-    if (fillBtn) {
-      fillBtn.addEventListener('click', () => {
-        document.getElementById('adminEmail').value = 'admin@postera.com';
-        document.getElementById('adminPass').value = 'postera123';
-        document.getElementById('loginForm').dispatchEvent(new Event('submit'));
-      });
-    }
 
     // تسجيل الدخول
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
@@ -1904,13 +1882,6 @@
           onLoggedIn();
           return;
         } catch (err) {
-          if (email === 'admin@postera.com' && password === 'postera123') {
-            currentUser = { email: 'admin@postera.com', isTemporary: true };
-            sessionStorage.setItem('postera_admin_temp_session', JSON.stringify(currentUser));
-            toastAdmin('مرحباً بك! تم الدخول بالحساب التجريبي للوحة');
-            onLoggedIn();
-            return;
-          }
           showLoginError(err.message === 'Invalid login credentials' ? 'البريد الإلكتروني أو كلمة المرور غير صحيحة.' : err.message);
           return;
         } finally {
@@ -1919,18 +1890,8 @@
         }
       }
 
-      // 2. الدخول بالحساب التجريبي فقط إذا لم يكن Supabase مربوطاً
-      if (email === 'admin@postera.com' && password === 'postera123') {
-        currentUser = { email: 'admin@postera.com', isTemporary: true };
-        sessionStorage.setItem('postera_admin_temp_session', JSON.stringify(currentUser));
-        toastAdmin('مرحباً بك! تم تسجيل الدخول التجريبي بنجاح');
-        onLoggedIn();
-        btn.disabled = false;
-        btn.textContent = 'تسجيل الدخول';
-        return;
-      }
 
-      showLoginError('لم يتم ربط Supabase بعد. لتجربة اللوحة الآن استخدم الحساب التجريبي.');
+      showLoginError('خدمة المصادقة غير متاحة حالياً. تأكد من اتصال Supabase.');
       btn.disabled = false;
       btn.textContent = 'تسجيل الدخول';
     });
