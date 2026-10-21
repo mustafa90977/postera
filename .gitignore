@@ -15,5 +15,7 @@ desktop.ini
 supabase/.temp/
 .vercel
 .env*
+inkoraa/
+clean_posters.csv
 
 .vercel

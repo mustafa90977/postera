@@ -64,6 +64,8 @@ function initPDP() {
   if (pCat) pCat.textContent = pdpProduct.cat || 'مجموعة بوستيرا';
   const pTag = document.getElementById('pdpTag');
   if (pTag) pTag.textContent = pdpProduct.tag || 'إصدار أصلي 2026';
+  const pDesc = document.getElementById('pdpDesc');
+  if (pDesc) pDesc.textContent = pdpProduct.desc || '';
 
   // 3. تحديث الصور المصغرة والصورة الكبيرة
   const mainImg = document.getElementById('pdpMainImg');
